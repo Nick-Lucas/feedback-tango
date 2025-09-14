@@ -13,7 +13,9 @@ export const projectAccess = {
     data: Omit<NewProject, 'id' | 'createdAt'>
   ): Promise<Project> => {
     const [project] = await db.insert(projects).values(data).returning()
-
+    if (!project) {
+      throw new Error('Failed to create project')
+    }
     return project
   },
 
@@ -76,6 +78,9 @@ export const feedbackAccess = {
     data: Omit<NewFeedback, 'id' | 'createdAt'>
   ): Promise<Feedback> => {
     const [feedbackItem] = await db.insert(feedback).values(data).returning()
+    if (!feedbackItem) {
+      throw new Error('Failed to create feedback')
+    }
     return feedbackItem
   },
 
