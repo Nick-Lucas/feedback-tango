@@ -9,9 +9,9 @@
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
     "type-check": "pnpm -r type-check",
-    "db:generate": "pnpm -C libs/core db:generate",
-    "db:migrate": "pnpm -C libs/core db:migrate",
-    "db:studio": "pnpm -C libs/core db:studio"
+    "db:generate": "pnpm -C libs/db db:generate",
+    "db:migrate": "pnpm -C libs/db db:migrate",
+    "db:studio": "pnpm -C libs/db db:studio"
   },
   "keywords": [],
   "author": "",

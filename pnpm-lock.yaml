@@ -10,6 +10,12 @@ importers:
 
   libs/core:
     dependencies:
+      '@feedback-thing/db':
+        specifier: workspace:*
+        version: link:../db
+
+  libs/db:
+    dependencies:
       better-sqlite3:
         specifier: ^12.2.0
         version: 12.2.0

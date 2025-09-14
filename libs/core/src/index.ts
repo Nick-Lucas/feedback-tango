@@ -1,2 +1,2 @@
-export { db } from './db';
-export * from './schema';
+export * from './access';
+export type { Project, NewProject, Feedback, NewFeedback } from './access';
