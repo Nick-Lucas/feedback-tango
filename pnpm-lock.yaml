@@ -4,12 +4,30 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@types/better-sqlite3':
+      specifier: ^7.6.13
+      version: 7.6.13
+    better-sqlite3:
+      specifier: ^12.2.0
+      version: 12.2.0
+    drizzle-kit:
+      specifier: ^0.31.4
+      version: 0.31.4
+    drizzle-orm:
+      specifier: ^0.44.5
+      version: 0.44.5
+    typescript:
+      specifier: ^5.9.2
+      version: 5.9.2
+
 importers:
 
   .:
     dependencies:
       typescript:
-        specifier: ^5.9.2
+        specifier: 'catalog:'
         version: 5.9.2
 
   libs/core:
@@ -21,17 +39,17 @@ importers:
   libs/db:
     dependencies:
       better-sqlite3:
-        specifier: ^12.2.0
+        specifier: 'catalog:'
         version: 12.2.0
       drizzle-orm:
-        specifier: ^0.44.5
+        specifier: 'catalog:'
         version: 0.44.5(@types/better-sqlite3@7.6.13)(better-sqlite3@12.2.0)
     devDependencies:
       '@types/better-sqlite3':
-        specifier: ^7.6.13
+        specifier: 'catalog:'
         version: 7.6.13
       drizzle-kit:
-        specifier: ^0.31.4
+        specifier: 'catalog:'
         version: 0.31.4
 
 packages:
