@@ -8,7 +8,10 @@
     "dev": "pnpm -r dev",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
-    "type-check": "pnpm -r type-check"
+    "type-check": "pnpm -r type-check",
+    "db:generate": "pnpm -C libs/core db:generate",
+    "db:migrate": "pnpm -C libs/core db:migrate",
+    "db:studio": "pnpm -C libs/core db:studio"
   },
   "keywords": [],
   "author": "",
