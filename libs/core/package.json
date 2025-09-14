@@ -2,17 +2,18 @@
   "name": "@feedback-thing/core",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --build --dry"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
-    "@feedback-thing/db": "workspace:*"
+    "@feedback-thing/db": "workspace:*",
+    "drizzle-orm": "catalog:"
   }
 }

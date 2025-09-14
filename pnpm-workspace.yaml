@@ -9,7 +9,7 @@ catalog:
   '@typescript-eslint/parser': ^8.43.0
   better-sqlite3: ^12.2.0
   drizzle-kit: ^0.31.4
-  drizzle-orm: ^0.44.5
+  drizzle-orm: 0.44.5
   eslint: ^9.35.0
   eslint-config-prettier: ^10.1.8
   eslint-plugin-prettier: ^5.5.4

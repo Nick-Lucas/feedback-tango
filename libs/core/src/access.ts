@@ -13,6 +13,7 @@ export const projectAccess = {
     data: Omit<NewProject, 'id' | 'createdAt'>
   ): Promise<Project> => {
     const [project] = await db.insert(projects).values(data).returning()
+
     return project
   },
 
