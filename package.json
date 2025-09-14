@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm -r dev",
     "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
-    "type-check": "pnpm -r type-check",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "typecheck": "pnpm -r typecheck",
     "db:generate": "pnpm -C libs/db db:generate",
     "db:migrate": "pnpm -C libs/db db:migrate",
     "db:studio": "pnpm -C libs/db db:studio"
@@ -19,5 +23,14 @@
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "typescript": "catalog:"
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-prettier": "catalog:",
+    "prettier": "catalog:"
   }
 }
