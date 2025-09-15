@@ -91,23 +91,22 @@ class ChatCLI {
 
     // After streaming text, handle tool calls and wait for execution
     try {
-      console.log(chalk.gray('\n\n🔧 Processing tools...'))
-
       const toolCalls = await stream.toolCalls
-      console.log(chalk.gray(`Found ${toolCalls?.length || 0} tool calls`))
 
       if (toolCalls && toolCalls.length > 0) {
+        console.log(chalk.gray(`Found ${toolCalls?.length || 0} tool calls`))
+
         for (const toolCall of toolCalls) {
           console.log(chalk.gray(`📞 Calling tool: ${toolCall.toolName}`))
-          console.log(chalk.gray(`   Args: ${JSON.stringify(toolCall.args)}`))
+          console.log(chalk.gray(`   Args: ${JSON.stringify(toolCall.input)}`))
         }
       }
 
       const toolResults = await stream.toolResults
-      console.log(chalk.gray(`Got ${toolResults?.length || 0} tool results`))
 
       if (toolResults && toolResults.length > 0) {
-        console.log(chalk.gray('\n📊 Tool Results:'))
+        console.log(chalk.gray(`Got ${toolResults?.length || 0} tool results:`))
+
         toolResults.forEach((toolResult: unknown, index: number) => {
           // Check if this is an error result
           if (
