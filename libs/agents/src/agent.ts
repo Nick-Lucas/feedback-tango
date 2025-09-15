@@ -1,7 +1,7 @@
 import { generateText, generateObject } from 'ai'
 import { z } from 'zod'
 import { google } from '@ai-sdk/google'
-import { databaseTools } from './tools.js'
+import { databaseTools } from './tools.ts'
 
 export class FeedbackAgent {
   private model = google('gemini-2.5-flash-lite')

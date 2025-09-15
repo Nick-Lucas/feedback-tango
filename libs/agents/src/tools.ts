@@ -21,7 +21,7 @@ import {
   feedbackProjectSchema,
   feedbackFeatureSchema,
   feedbackCreatorSchema,
-} from './schemas.js'
+} from './schemas.ts'
 
 // Project tools
 export const createProjectTool = tool({

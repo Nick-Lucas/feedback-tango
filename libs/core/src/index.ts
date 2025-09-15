@@ -1,2 +1,2 @@
-export * from './access.js'
-export type { Project, NewProject, Feedback, NewFeedback } from './access.js'
+export * from './access.ts'
+export type { Project, NewProject, Feedback, NewFeedback } from './access.ts'

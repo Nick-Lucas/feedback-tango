@@ -1,4 +1,4 @@
-import { FeedbackAgent } from './agent.js'
+import { FeedbackAgent } from './agent.ts'
 
 // Example usage of the FeedbackAgent
 async function example() {

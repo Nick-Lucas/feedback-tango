@@ -1,6 +1,6 @@
-export { FeedbackAgent } from './agent.js'
-export { databaseTools } from './tools.js'
-export * from './schemas.js'
+export { FeedbackAgent } from './agent.ts'
+export { databaseTools } from './tools.ts'
+export * from './schemas.ts'
 
 // Export individual tools for granular usage
 export {
@@ -33,4 +33,4 @@ export {
   updateFeedbackTool,
   deleteFeedbackTool,
   getFeedbackByCreatorTool,
-} from './tools.js'
+} from './tools.ts'
