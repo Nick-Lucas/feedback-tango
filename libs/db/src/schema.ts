@@ -3,7 +3,7 @@ import { relations, sql } from 'drizzle-orm'
 
 export const Projects = sqliteTable('projects', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name').notNull(),
+  name: text('name').notNull().unique(),
   createdAt: text('created_at')
     .default(sql`(datetime('now'))`)
     .notNull(),
@@ -20,7 +20,7 @@ export const Features = sqliteTable('features', {
   projectId: integer('project_id')
     .notNull()
     .references(() => Projects.id),
-  name: text('name').notNull(),
+  name: text('name').notNull().unique(),
   description: text('description').notNull(),
   createdBy: text('created_by').notNull(),
   createdAt: text('created_at')

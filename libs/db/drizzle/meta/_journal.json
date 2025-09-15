@@ -15,6 +15,13 @@
       "when": 1757932937038,
       "tag": "0001_noisy_reptil",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1757949523060,
+      "tag": "0002_boring_the_spike",
+      "breakpoints": true
     }
   ]
 }

@@ -19,6 +19,10 @@ export const projectCreatorSchema = z.object({
   createdBy: z.string().min(1, 'Creator is required'),
 })
 
+export const projectSearchSchema = z.object({
+  searchTerm: z.string().min(1, 'Search term is required'),
+})
+
 // Feature schemas
 export const featureCreateSchema = z.object({
   name: z.string().min(1, 'Feature name is required'),
@@ -43,6 +47,11 @@ export const featureProjectSchema = z.object({
 
 export const featureCreatorSchema = z.object({
   createdBy: z.string().min(1, 'Creator is required'),
+})
+
+export const featureSearchSchema = z.object({
+  projectId: z.number().int().positive('ProjectID fetched from another tool'),
+  searchTerm: z.string().min(1, 'Search term is required'),
 })
 
 // Feedback schemas

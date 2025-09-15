@@ -4,33 +4,9 @@ export * from './schemas.ts'
 
 // Export individual tools for granular usage
 export {
-  // Project tools
+  searchProjectsTool,
   createProjectTool,
-  getAllProjectsTool,
-  getProjectByIdTool,
-  getProjectWithFeedbackTool,
-  updateProjectTool,
-  deleteProjectTool,
-  getProjectsByCreatorTool,
-
-  // Feature tools
+  searchFeaturesTool,
   createFeatureTool,
-  getAllFeaturesTool,
-  getFeatureByIdTool,
-  getFeatureWithFeedbackTool,
-  getFeaturesByProjectTool,
-  updateFeatureTool,
-  deleteFeatureTool,
-  getFeaturesByCreatorTool,
-
-  // Feedback tools
   createFeedbackTool,
-  getAllFeedbackTool,
-  getFeedbackByIdTool,
-  getFeedbackWithProjectTool,
-  getFeedbackByProjectTool,
-  getFeedbackByFeatureTool,
-  updateFeedbackTool,
-  deleteFeedbackTool,
-  getFeedbackByCreatorTool,
 } from './tools.ts'

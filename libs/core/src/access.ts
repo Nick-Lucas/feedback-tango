@@ -1,5 +1,5 @@
 import { db, Projects, Features, Feedbacks } from '@feedback-thing/db'
-import { eq } from 'drizzle-orm'
+import { and, eq, like } from 'drizzle-orm'
 
 export type Project = typeof Projects.$inferSelect
 export type NewProject = typeof Projects.$inferInsert
@@ -11,14 +11,15 @@ export type NewFeedback = typeof Feedbacks.$inferInsert
 // Project CRUD operations
 export const projectAccess = {
   // Create a new project
-  create: async (
-    data: Omit<NewProject, 'id' | 'createdAt'>
-  ): Promise<Project> => {
+  create: async (data: Omit<NewProject, 'id' | 'createdAt'>) => {
     const [project] = await db.insert(Projects).values(data).returning()
     if (!project) {
       throw new Error('Failed to create project')
     }
-    return project
+    return {
+      id: project.id,
+      name: project.name,
+    }
   },
 
   // Get all projects
@@ -72,19 +73,37 @@ export const projectAccess = {
       .from(Projects)
       .where(eq(Projects.createdBy, createdBy))
   },
+
+  // Search projects by name
+  search: async (searchTerm: string) => {
+    const results = await db
+      .select()
+      .from(Projects)
+      .where(like(Projects.name, `%${searchTerm}%`))
+
+    return results.map((project) => {
+      return {
+        id: project.id,
+        name: project.name,
+      }
+    })
+  },
 }
 
 // Feature CRUD operations
 export const featureAccess = {
   // Create a new feature
-  create: async (
-    data: Omit<NewFeature, 'id' | 'createdAt'>
-  ): Promise<Feature> => {
+  create: async (data: Omit<NewFeature, 'id' | 'createdAt'>) => {
     const [feature] = await db.insert(Features).values(data).returning()
     if (!feature) {
       throw new Error('Failed to create feature')
     }
-    return feature
+
+    return {
+      id: feature.id,
+      name: feature.name,
+      description: feature.description,
+    }
   },
 
   // Get all features
@@ -146,19 +165,41 @@ export const featureAccess = {
       .from(Features)
       .where(eq(Features.createdBy, createdBy))
   },
+
+  // Search features by name
+  search: async (projectId: number, searchTerm: string) => {
+    const results = await db
+      .select()
+      .from(Features)
+      .where(
+        and(
+          like(Features.name, `%${searchTerm}%`),
+          eq(Features.projectId, projectId)
+        )
+      )
+
+    return results.map((feature) => {
+      return {
+        id: feature.id,
+        name: feature.name,
+        description: feature.description,
+      }
+    })
+  },
 }
 
 // Feedback CRUD operations
 export const feedbackAccess = {
   // Create new feedback
-  create: async (
-    data: Omit<NewFeedback, 'id' | 'createdAt'>
-  ): Promise<Feedback> => {
+  create: async (data: Omit<NewFeedback, 'id' | 'createdAt'>) => {
     const [feedbackItem] = await db.insert(Feedbacks).values(data).returning()
     if (!feedbackItem) {
       throw new Error('Failed to create feedback')
     }
-    return feedbackItem
+    return {
+      id: feedbackItem.id,
+      feedback: feedbackItem.feedback,
+    }
   },
 
   // Get all feedback
