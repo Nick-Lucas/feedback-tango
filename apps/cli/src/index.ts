@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
+import { config } from 'dotenv'
 import chalk from 'chalk'
 import { createInterface, Interface } from 'readline'
 import { FeedbackAgent } from '@feedback-thing/agents'
+
+config({ override: true, path: '../../.env' })
 
 class ChatCLI {
   private rl: Interface

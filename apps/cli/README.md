@@ -89,7 +89,14 @@ You: exit
 
 ## Environment Variables
 
-Make sure to set up your Google API key:
+The CLI automatically loads environment variables from a `.env` file in your project root. Create a `.env` file with your Google API key:
+
+```bash
+# .env
+GOOGLE_GENERATIVE_AI_API_KEY=your_api_key_here
+```
+
+Alternatively, you can set the environment variable directly:
 
 ```bash
 export GOOGLE_GENERATIVE_AI_API_KEY=your_api_key_here
