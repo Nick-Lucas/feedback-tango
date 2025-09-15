@@ -105,6 +105,19 @@ class ChatCLI {
             )
           )
           break
+        case 'start':
+        case 'start-step':
+        case 'tool-input-start':
+        case 'tool-input-delta':
+        case 'tool-input-end':
+        case 'tool-call':
+          // Ignore these
+          break
+        default:
+          process.stdout.write(
+            chalk.gray(`\n[${chunk.type}] ${JSON.stringify(chunk)}\n`)
+          )
+          break
       }
     }
 
