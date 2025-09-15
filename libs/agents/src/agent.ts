@@ -1,9 +1,4 @@
-import {
-  stepCountIs,
-  streamText,
-  type ModelMessage,
-  type ToolResultPart,
-} from 'ai'
+import { stepCountIs, streamText, type ModelMessage } from 'ai'
 import { google } from '@ai-sdk/google'
 import { databaseTools } from './tools.ts'
 
@@ -15,7 +10,7 @@ export class FeedbackAgent {
     const userName = 'CLI User' // Replace with actual user name when available
 
     const history = this.conversationHistory
-    // Add user message to conversation history
+
     history.push({
       role: 'user',
       content: prompt,
@@ -29,62 +24,33 @@ export class FeedbackAgent {
 
         # Definitions
 
-        - A "Project" is a high-level initiative or product that encompasses multiple features and feedback items. Never put feedback in here, it describes the application only.
-        - A "Feature" is a specific existing or non-existing functionality within a project. Never put feedback in here, it describes the feature only.
-        - "Feedback" is user comments, suggestions, or issues related to projects and features. User comments should be stored verbatim here.
+        - A "Project" is a high-level initiative or product that encompasses multiple features and feedback items. Never put feedback in here, it describes the application only
+        - A "Feature" is a specific existing or non-existing functionality within a project. Never put feedback in here, it describes the feature only
+        - "Feedback" is user comments, suggestions, or issues related to projects and features. User comments should be stored verbatim here and are linked to a project and feature.
 
         # Guidelines
         
-        - You have tools available to help you search for existing projects and features
+        - You have tools available to search for existing projects and features
         - Never ask the user for an ID. If you need to reference an ID, use the relevant search tool to find it
         - You can create new projects, features, and feedback entries as needed without asking for permission
-        - If something is ambiguous, ask the user for clarification and ideally present them with options.
+        - If something is ambiguous, ask the user for clarification and ideally present them with options/suggestions to accept.
         - ALWAYS summarise the output of your tool calls in your response to the user
 
         # Tone
 
-        - Always respond in a direct and professional manner.
-        - Be concise and clear.
+        - Respond in a direct and professional manner
+        - Be concise and clear
 
         # Minor Context
 
         The user's name is: ${userName}
         The date today is: ${new Date().toLocaleDateString()} is it a ${new Date().toLocaleDateString('en-US', { weekday: 'long' })}
       `,
-      messages: this.conversationHistory,
+      messages: history,
       tools: databaseTools,
-      // maxOutputTokens: options?.maxTokens ?? 10000,
       stopWhen: stepCountIs(20),
-      onStepFinish(step) {
-        // Add tool results into context
-        if (step.toolResults.length > 0) {
-          console.log(
-            ` -- Tool calls: ${JSON.stringify(
-              step.toolResults.map((t) => {
-                return {
-                  toolName: t.toolName,
-                  input: t.input,
-                  output: t.output,
-                }
-              }),
-              null,
-              2
-            )}`
-          )
-          history.push({
-            role: 'tool',
-            content: step.toolResults.map<ToolResultPart>((r) => {
-              return {
-                type: 'tool-result',
-                toolName: r.toolName,
-                toolCallId: r.toolCallId,
-                output: { type: 'json', value: JSON.stringify(r.output) },
-              }
-            }),
-          })
-        }
-
-        console.log(` -- Step finished`) //, JSON.stringify(step, null, 2))
+      onFinish(finish) {
+        history.push(...finish.response.messages)
       },
     })
 
