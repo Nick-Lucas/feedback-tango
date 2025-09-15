@@ -15,7 +15,9 @@
     "typecheck": "pnpm -r typecheck",
     "db:generate": "pnpm -C libs/db db:generate",
     "db:migrate": "pnpm -C libs/db db:migrate",
-    "db:studio": "pnpm -C libs/db db:studio"
+    "db:studio": "pnpm -C libs/db db:studio",
+    "cli-install": "pnpm install -g ./apps/cli",
+    "cli-uninstall": "pnpm uninstall -g @feedback-thing/cli"
   },
   "keywords": [],
   "author": "",
