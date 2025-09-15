@@ -31,21 +31,8 @@ class ChatCLI {
     console.log(
       chalk.gray('I can help you manage projects, features, and feedback.')
     )
-    console.log(chalk.gray('\nAvailable commands:'))
     console.log(
-      chalk.blue('  /analyze <projectId>') + ' - Analyze project feedback'
-    )
-    console.log(
-      chalk.blue('  /suggest <featureId>') +
-        ' - Get feature improvement suggestions'
-    )
-    console.log(chalk.blue('  /summary <projectId>') + ' - Get project summary')
-    console.log(
-      chalk.blue('  /recommendations <creator>') +
-        ' - Get personalized recommendations'
-    )
-    console.log(
-      chalk.gray('Or just chat naturally about your feedback management needs!')
+      chalk.gray('Just chat naturally about your feedback management needs!')
     )
     console.log(chalk.gray('Type "clear" to reset conversation history.'))
     console.log(chalk.gray('Type "exit" or "quit" to leave.\n'))
@@ -80,13 +67,7 @@ class ChatCLI {
     }
 
     try {
-      // Handle special commands
-      if (input.startsWith('/')) {
-        await this.handleCommand(input)
-      } else {
-        // Regular chat with streaming
-        await this.handleStreamingChat(input)
-      }
+      await this.handleStreamingChat(input)
     } catch (error) {
       console.error(chalk.red('Error: ') + (error as Error).message)
     }
@@ -126,82 +107,6 @@ class ChatCLI {
 
     // Add the complete response to conversation history
     this.agent.addAssistantMessage(fullText)
-  }
-
-  private async handleCommand(input: string): Promise<void> {
-    const [command, ...args] = input.slice(1).split(' ')
-
-    if (!command) {
-      console.log(chalk.red('No command specified'))
-      return
-    }
-
-    switch (command.toLowerCase()) {
-      case 'analyze': {
-        if (args.length === 0) {
-          console.log(chalk.red('Usage: /analyze <projectId>'))
-          return
-        }
-        const projectId = parseInt(args[0]!)
-        if (isNaN(projectId)) {
-          console.log(chalk.red('Project ID must be a number'))
-          return
-        }
-        const analysis = await this.agent.analyzeProjectFeedback(projectId)
-        console.log(chalk.blue.bold('AI: ') + analysis.text)
-        break
-      }
-
-      case 'suggest': {
-        if (args.length === 0) {
-          console.log(chalk.red('Usage: /suggest <featureId>'))
-          return
-        }
-        const featureId = parseInt(args[0]!)
-        if (isNaN(featureId)) {
-          console.log(chalk.red('Feature ID must be a number'))
-          return
-        }
-        const suggestions =
-          await this.agent.suggestFeatureImprovements(featureId)
-        console.log(chalk.blue.bold('AI: ') + suggestions.text)
-        break
-      }
-
-      case 'summary': {
-        if (args.length === 0) {
-          console.log(chalk.red('Usage: /summary <projectId>'))
-          return
-        }
-        const summaryProjectId = parseInt(args[0]!)
-        if (isNaN(summaryProjectId)) {
-          console.log(chalk.red('Project ID must be a number'))
-          return
-        }
-        const summary = await this.agent.createProjectSummary(summaryProjectId)
-        console.log(chalk.blue.bold('AI: ') + summary.text)
-        break
-      }
-
-      case 'recommendations': {
-        if (args.length === 0) {
-          console.log(chalk.red('Usage: /recommendations <creator>'))
-          return
-        }
-        const creator = args.join(' ')
-        const recommendations = await this.agent.recommendNextActions(creator)
-        console.log(chalk.blue.bold('AI: ') + recommendations.text)
-        break
-      }
-
-      default:
-        console.log(chalk.red(`Unknown command: /${command}`))
-        console.log(
-          chalk.gray(
-            'Available commands: /analyze, /suggest, /summary, /recommendations'
-          )
-        )
-    }
   }
 
   private exit(): void {
