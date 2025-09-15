@@ -2,6 +2,9 @@ import { stepCountIs, streamText, type ModelMessage } from 'ai'
 import { google } from '@ai-sdk/google'
 import { databaseTools } from './tools.ts'
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+;(globalThis as any).AI_SDK_LOG_WARNINGS = false
+
 export class FeedbackAgent {
   private model = google('gemini-2.5-flash-lite')
   private conversationHistory: ModelMessage[] = []
@@ -36,6 +39,7 @@ export class FeedbackAgent {
         - Never ask for permission to call a tool, just do it
         - If something is ambiguous, ask the user for clarification and present the user with a suggestion to accept
         - ALWAYS summarise the output of your tool calls in your response to the user
+        - When searching/naming things, think carefully about what the name should be. For instance a user saying "the invoices app" should never produce a project called "invoices app" but instead "invoices", or could even be referring to the "billing" app so you should check for similar names too
 
         # Tone
 

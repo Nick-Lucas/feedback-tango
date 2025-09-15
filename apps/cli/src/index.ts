@@ -87,30 +87,39 @@ class ChatCLI {
         case 'text-delta':
           process.stdout.write(chunk.text)
           break
-        case 'reasoning-delta':
-          process.stdout.write(chalk.gray(`[Reasoning]: ${chunk.text}\n`))
+        case 'text-end':
+          process.stdout.write('\n')
           break
+        case 'reasoning-delta': {
+          process.stdout.write(
+            chalk.gray(
+              `[Reasoning] ${chalk.italic(chunk.text.replace(/\n+/g, '\n'))}\n`
+            )
+          )
+          break
+        }
         case 'tool-result':
           process.stdout.write(
             chalk.gray(
-              `[Tool Used: ${chunk.toolName} | Input: ${JSON.stringify(
+              `[Tool Used: ${chalk.blue.bold(chunk.toolName)}] Input: ${JSON.stringify(
                 chunk.input
-              )} | Output: ${JSON.stringify(chunk.output)}]\n`
+              )} | Output: ${JSON.stringify(chunk.output)}\n`
             )
           )
           break
         case 'tool-error':
           process.stdout.write(
             chalk.red(
-              `[Tool Error: ${chunk.toolName} | Input: ${JSON.stringify(
+              `[Tool Error: ${chunk.toolName}] Input: ${JSON.stringify(
                 chunk.input
-              )} | Error: ${String(chunk.error)}]\n`
+              )} | Error: ${String(chunk.error)}\n`
             )
           )
           break
+        case 'finish-step':
+        case 'finish':
         case 'start':
         case 'start-step':
-        case 'text-end':
         case 'tool-input-start':
         case 'tool-input-delta':
         case 'tool-input-end':
