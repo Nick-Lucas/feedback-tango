@@ -47,6 +47,7 @@ class ChatCLI {
     console.log(
       chalk.gray('Or just chat naturally about your feedback management needs!')
     )
+    console.log(chalk.gray('Type "clear" to reset conversation history.'))
     console.log(chalk.gray('Type "exit" or "quit" to leave.\n'))
 
     this.rl.prompt()
@@ -71,25 +72,20 @@ class ChatCLI {
       return
     }
 
-    try {
-      console.log(chalk.blue.bold('AI: ') + chalk.gray('Thinking...'))
+    if (input.toLowerCase() === 'clear') {
+      this.agent.clearConversation()
+      console.log(chalk.yellow('Conversation history cleared.'))
+      this.rl.prompt()
+      return
+    }
 
+    try {
       // Handle special commands
       if (input.startsWith('/')) {
         await this.handleCommand(input)
       } else {
-        // Regular chat
-        const response = await this.agent.chat(input)
-        console.log(chalk.blue.bold('AI: ') + response.text)
-
-        if (response.toolResults && response.toolResults.length > 0) {
-          console.log(chalk.gray('\n📊 Tool Results:'))
-          response.toolResults.forEach((result, index) => {
-            console.log(
-              chalk.gray(`${index + 1}. ${JSON.stringify(result, null, 2)}`)
-            )
-          })
-        }
+        // Regular chat with streaming
+        await this.handleStreamingChat(input)
       }
     } catch (error) {
       console.error(chalk.red('Error: ') + (error as Error).message)
@@ -97,6 +93,39 @@ class ChatCLI {
 
     console.log()
     this.rl.prompt()
+  }
+
+  private async handleStreamingChat(input: string): Promise<void> {
+    const stream = this.agent.chatStream(input)
+
+    process.stdout.write(chalk.blue.bold('AI: '))
+
+    let fullText = ''
+
+    for await (const chunk of stream.textStream) {
+      process.stdout.write(chunk)
+      fullText += chunk
+    }
+
+    // Handle tool calls and results
+    const toolCalls = await stream.toolCalls
+    const toolResults = await stream.toolResults
+
+    if (toolCalls && toolCalls.length > 0) {
+      console.log(chalk.gray('\n\n🔧 Using tools...'))
+
+      if (toolResults && toolResults.length > 0) {
+        console.log(chalk.gray('\n📊 Tool Results:'))
+        toolResults.forEach((result: unknown, index: number) => {
+          console.log(
+            chalk.gray(`${index + 1}. ${JSON.stringify(result, null, 2)}`)
+          )
+        })
+      }
+    }
+
+    // Add the complete response to conversation history
+    this.agent.addAssistantMessage(fullText)
   }
 
   private async handleCommand(input: string): Promise<void> {

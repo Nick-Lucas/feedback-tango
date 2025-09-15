@@ -1,17 +1,30 @@
-import { generateText, generateObject } from 'ai'
+import { generateText, generateObject, streamText, type CoreMessage } from 'ai'
 import { z } from 'zod'
 import { google } from '@ai-sdk/google'
 import { databaseTools } from './tools.ts'
 
 export class FeedbackAgent {
   private model = google('gemini-2.5-flash-lite')
+  private conversationHistory: CoreMessage[] = []
 
   async chat(prompt: string, options?: { maxTokens?: number }) {
+    // Add user message to conversation history
+    this.conversationHistory.push({
+      role: 'user',
+      content: prompt,
+    })
+
     const result = await generateText({
       model: this.model,
-      prompt,
+      messages: this.conversationHistory,
       tools: databaseTools,
       maxTokens: options?.maxTokens ?? 1000,
+    })
+
+    // Add assistant response to conversation history
+    this.conversationHistory.push({
+      role: 'assistant',
+      content: result.text,
     })
 
     return {
@@ -19,6 +32,39 @@ export class FeedbackAgent {
       toolCalls: result.toolCalls,
       toolResults: result.toolResults,
     }
+  }
+
+  chatStream(prompt: string, options?: { maxTokens?: number }) {
+    // Add user message to conversation history
+    this.conversationHistory.push({
+      role: 'user',
+      content: prompt,
+    })
+
+    const result = streamText({
+      model: this.model,
+      messages: this.conversationHistory,
+      tools: databaseTools,
+      maxTokens: options?.maxTokens ?? 1000,
+    })
+
+    return result
+  }
+
+  addAssistantMessage(content: string) {
+    // Add assistant response to conversation history after streaming is complete
+    this.conversationHistory.push({
+      role: 'assistant',
+      content,
+    })
+  }
+
+  clearConversation() {
+    this.conversationHistory = []
+  }
+
+  getConversationHistory() {
+    return [...this.conversationHistory]
   }
 
   async generateStructuredResponse<T>(
