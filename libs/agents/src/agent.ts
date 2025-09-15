@@ -1,4 +1,4 @@
-import { streamText, type CoreMessage } from 'ai'
+import { stepCountIs, streamText, type CoreMessage } from 'ai'
 import { google } from '@ai-sdk/google'
 import { databaseTools } from './tools.ts'
 
@@ -33,6 +33,10 @@ export class FeedbackAgent {
       messages: this.conversationHistory,
       tools: databaseTools,
       maxOutputTokens: options?.maxTokens ?? 1000,
+      stopWhen: stepCountIs(20),
+      onStepFinish() {
+        console.log(` -- Step finished`) //, JSON.stringify(step, null, 2))
+      },
     })
 
     return result
