@@ -1,6 +1,7 @@
 import js from '@eslint/js'
 import tseslint from '@typescript-eslint/eslint-plugin'
 import tsparser from '@typescript-eslint/parser'
+import globals from 'globals'
 
 export default [
   js.configs.recommended,
@@ -11,7 +12,10 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        project: ['./tsconfig.base.json', './libs/*/tsconfig.json'],
+        project: ['./tsconfig.base.json', './libs/*/tsconfig.json', './apps/*/tsconfig.json'],
+      },
+      globals: {
+        ...globals.node,
       },
     },
     plugins: {
