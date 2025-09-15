@@ -1,10 +1,12 @@
-import { db, projects, feedback } from '@feedback-thing/db'
+import { db, Projects, Features, Feedbacks } from '@feedback-thing/db'
 import { eq } from 'drizzle-orm'
 
-export type Project = typeof projects.$inferSelect
-export type NewProject = typeof projects.$inferInsert
-export type Feedback = typeof feedback.$inferSelect
-export type NewFeedback = typeof feedback.$inferInsert
+export type Project = typeof Projects.$inferSelect
+export type NewProject = typeof Projects.$inferInsert
+export type Feature = typeof Features.$inferSelect
+export type NewFeature = typeof Features.$inferInsert
+export type Feedback = typeof Feedbacks.$inferSelect
+export type NewFeedback = typeof Feedbacks.$inferInsert
 
 // Project CRUD operations
 export const projectAccess = {
@@ -12,7 +14,7 @@ export const projectAccess = {
   create: async (
     data: Omit<NewProject, 'id' | 'createdAt'>
   ): Promise<Project> => {
-    const [project] = await db.insert(projects).values(data).returning()
+    const [project] = await db.insert(Projects).values(data).returning()
     if (!project) {
       throw new Error('Failed to create project')
     }
@@ -21,24 +23,25 @@ export const projectAccess = {
 
   // Get all projects
   getAll: async (): Promise<Project[]> => {
-    return await db.select().from(projects)
+    return await db.select().from(Projects)
   },
 
   // Get project by ID
   getById: async (id: number): Promise<Project | undefined> => {
     const [project] = await db
       .select()
-      .from(projects)
-      .where(eq(projects.id, id))
+      .from(Projects)
+      .where(eq(Projects.id, id))
     return project
   },
 
-  // Get project with its feedback
+  // Get project with its feedback and features
   getWithFeedback: async (id: number) => {
-    return await db.query.projects.findFirst({
-      where: eq(projects.id, id),
+    return await db.query.Projects.findFirst({
+      where: eq(Projects.id, id),
       with: {
         feedbacks: true,
+        features: true,
       },
     })
   },
@@ -49,16 +52,16 @@ export const projectAccess = {
     data: Partial<Omit<NewProject, 'id' | 'createdAt'>>
   ): Promise<Project | undefined> => {
     const [project] = await db
-      .update(projects)
+      .update(Projects)
       .set(data)
-      .where(eq(projects.id, id))
+      .where(eq(Projects.id, id))
       .returning()
     return project
   },
 
   // Delete a project
   delete: async (id: number): Promise<boolean> => {
-    const result = await db.delete(projects).where(eq(projects.id, id))
+    const result = await db.delete(Projects).where(eq(Projects.id, id))
     return result.changes > 0
   },
 
@@ -66,8 +69,82 @@ export const projectAccess = {
   getByCreator: async (createdBy: string): Promise<Project[]> => {
     return await db
       .select()
-      .from(projects)
-      .where(eq(projects.createdBy, createdBy))
+      .from(Projects)
+      .where(eq(Projects.createdBy, createdBy))
+  },
+}
+
+// Feature CRUD operations
+export const featureAccess = {
+  // Create a new feature
+  create: async (
+    data: Omit<NewFeature, 'id' | 'createdAt'>
+  ): Promise<Feature> => {
+    const [feature] = await db.insert(Features).values(data).returning()
+    if (!feature) {
+      throw new Error('Failed to create feature')
+    }
+    return feature
+  },
+
+  // Get all features
+  getAll: async (): Promise<Feature[]> => {
+    return await db.select().from(Features)
+  },
+
+  // Get feature by ID
+  getById: async (id: number): Promise<Feature | undefined> => {
+    const [feature] = await db
+      .select()
+      .from(Features)
+      .where(eq(Features.id, id))
+    return feature
+  },
+
+  // Get feature with its feedback
+  getWithFeedback: async (id: number) => {
+    return await db.query.Features.findFirst({
+      where: eq(Features.id, id),
+      with: {
+        feedbacks: true,
+        project: true,
+      },
+    })
+  },
+
+  // Get all features for a project
+  getByProject: async (projectId: number): Promise<Feature[]> => {
+    return await db
+      .select()
+      .from(Features)
+      .where(eq(Features.projectId, projectId))
+  },
+
+  // Update a feature
+  update: async (
+    id: number,
+    data: Partial<Omit<NewFeature, 'id' | 'createdAt' | 'projectId'>>
+  ): Promise<Feature | undefined> => {
+    const [feature] = await db
+      .update(Features)
+      .set(data)
+      .where(eq(Features.id, id))
+      .returning()
+    return feature
+  },
+
+  // Delete a feature
+  delete: async (id: number): Promise<boolean> => {
+    const result = await db.delete(Features).where(eq(Features.id, id))
+    return result.changes > 0
+  },
+
+  // Get features by creator
+  getByCreator: async (createdBy: string): Promise<Feature[]> => {
+    return await db
+      .select()
+      .from(Features)
+      .where(eq(Features.createdBy, createdBy))
   },
 }
 
@@ -77,7 +154,7 @@ export const feedbackAccess = {
   create: async (
     data: Omit<NewFeedback, 'id' | 'createdAt'>
   ): Promise<Feedback> => {
-    const [feedbackItem] = await db.insert(feedback).values(data).returning()
+    const [feedbackItem] = await db.insert(Feedbacks).values(data).returning()
     if (!feedbackItem) {
       throw new Error('Failed to create feedback')
     }
@@ -86,24 +163,25 @@ export const feedbackAccess = {
 
   // Get all feedback
   getAll: async (): Promise<Feedback[]> => {
-    return await db.select().from(feedback)
+    return await db.select().from(Feedbacks)
   },
 
   // Get feedback by ID
   getById: async (id: number): Promise<Feedback | undefined> => {
     const [feedbackItem] = await db
       .select()
-      .from(feedback)
-      .where(eq(feedback.id, id))
+      .from(Feedbacks)
+      .where(eq(Feedbacks.id, id))
     return feedbackItem
   },
 
-  // Get feedback with project info
+  // Get feedback with project and feature info
   getWithProject: async (id: number) => {
-    return await db.query.feedback.findFirst({
-      where: eq(feedback.id, id),
+    return await db.query.Feedbacks.findFirst({
+      where: eq(Feedbacks.id, id),
       with: {
         project: true,
+        feature: true,
       },
     })
   },
@@ -112,26 +190,36 @@ export const feedbackAccess = {
   getByProject: async (projectId: number): Promise<Feedback[]> => {
     return await db
       .select()
-      .from(feedback)
-      .where(eq(feedback.projectId, projectId))
+      .from(Feedbacks)
+      .where(eq(Feedbacks.projectId, projectId))
+  },
+
+  // Get all feedback for a feature
+  getByFeature: async (featureId: number): Promise<Feedback[]> => {
+    return await db
+      .select()
+      .from(Feedbacks)
+      .where(eq(Feedbacks.featureId, featureId))
   },
 
   // Update feedback
   update: async (
     id: number,
-    data: Partial<Omit<NewFeedback, 'id' | 'createdAt' | 'projectId'>>
+    data: Partial<
+      Omit<NewFeedback, 'id' | 'createdAt' | 'projectId' | 'featureId'>
+    >
   ): Promise<Feedback | undefined> => {
     const [feedbackItem] = await db
-      .update(feedback)
+      .update(Feedbacks)
       .set(data)
-      .where(eq(feedback.id, id))
+      .where(eq(Feedbacks.id, id))
       .returning()
     return feedbackItem
   },
 
   // Delete feedback
   delete: async (id: number): Promise<boolean> => {
-    const result = await db.delete(feedback).where(eq(feedback.id, id))
+    const result = await db.delete(Feedbacks).where(eq(Feedbacks.id, id))
     return result.changes > 0
   },
 
@@ -139,7 +227,7 @@ export const feedbackAccess = {
   getByCreator: async (createdBy: string): Promise<Feedback[]> => {
     return await db
       .select()
-      .from(feedback)
-      .where(eq(feedback.createdBy, createdBy))
+      .from(Feedbacks)
+      .where(eq(Feedbacks.createdBy, createdBy))
   },
 }
