@@ -12,7 +12,11 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        project: ['./tsconfig.base.json', './libs/*/tsconfig.json', './apps/*/tsconfig.json'],
+        project: [
+          './tsconfig.base.json',
+          './libs/*/tsconfig.json',
+          './apps/*/tsconfig.json',
+        ],
       },
       globals: {
         ...globals.node,

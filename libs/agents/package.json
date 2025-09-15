@@ -1,0 +1,21 @@
+{
+  "name": "@feedback-thing/agents",
+  "version": "1.0.0",
+  "description": "AI agents for feedback management",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "@feedback-thing/core": "workspace:*",
+    "ai": "^4.0.0",
+    "@ai-sdk/google": "^1.0.0",
+    "zod": "^3.22.0"
+  }
+}
