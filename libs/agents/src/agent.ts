@@ -105,6 +105,14 @@ export class FeedbackAgent {
       onFinish(finish) {
         history.push(...finish.response.messages)
       },
+      providerOptions: {
+        google: {
+          thinkingConfig: {
+            thinkingBudget: 8192,
+            includeThoughts: true,
+          },
+        },
+      },
     })
 
     return result

@@ -87,6 +87,9 @@ class ChatCLI {
         case 'text-delta':
           process.stdout.write(chunk.text)
           break
+        case 'reasoning-delta':
+          process.stdout.write(chalk.gray(`[Reasoning]: ${chunk.text}\n`))
+          break
         case 'tool-result':
           process.stdout.write(
             chalk.gray(
@@ -107,10 +110,13 @@ class ChatCLI {
           break
         case 'start':
         case 'start-step':
+        case 'text-end':
         case 'tool-input-start':
         case 'tool-input-delta':
         case 'tool-input-end':
         case 'tool-call':
+        case 'reasoning-start':
+        case 'reasoning-end':
           // Ignore these
           break
         default:
