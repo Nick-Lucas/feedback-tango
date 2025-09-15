@@ -83,26 +83,66 @@ class ChatCLI {
 
     let fullText = ''
 
+    // Stream the text response
     for await (const chunk of stream.textStream) {
       process.stdout.write(chunk)
       fullText += chunk
     }
 
-    // Handle tool calls and results
-    const toolCalls = await stream.toolCalls
-    const toolResults = await stream.toolResults
+    // After streaming text, handle tool calls and wait for execution
+    try {
+      console.log(chalk.gray('\n\n🔧 Processing tools...'))
 
-    if (toolCalls && toolCalls.length > 0) {
-      console.log(chalk.gray('\n\n🔧 Using tools...'))
+      const toolCalls = await stream.toolCalls
+      console.log(chalk.gray(`Found ${toolCalls?.length || 0} tool calls`))
+
+      if (toolCalls && toolCalls.length > 0) {
+        for (const toolCall of toolCalls) {
+          console.log(chalk.gray(`📞 Calling tool: ${toolCall.toolName}`))
+          console.log(chalk.gray(`   Args: ${JSON.stringify(toolCall.args)}`))
+        }
+      }
+
+      const toolResults = await stream.toolResults
+      console.log(chalk.gray(`Got ${toolResults?.length || 0} tool results`))
 
       if (toolResults && toolResults.length > 0) {
         console.log(chalk.gray('\n📊 Tool Results:'))
-        toolResults.forEach((result: unknown, index: number) => {
-          console.log(
-            chalk.gray(`${index + 1}. ${JSON.stringify(result, null, 2)}`)
-          )
+        toolResults.forEach((toolResult: unknown, index: number) => {
+          // Check if this is an error result
+          if (
+            toolResult &&
+            typeof toolResult === 'object' &&
+            'error' in toolResult
+          ) {
+            const errorResult = toolResult as { error: string; stack?: string }
+            console.log(
+              chalk.red(`${index + 1}. ❌ Tool Error: ${errorResult.error}`)
+            )
+            if (errorResult.stack) {
+              console.log(chalk.red(`   Stack: ${errorResult.stack}`))
+            }
+          } else if (toolResult instanceof Error) {
+            console.log(
+              chalk.red(`${index + 1}. ❌ Tool Error: ${toolResult.message}`)
+            )
+            if (toolResult.stack) {
+              console.log(chalk.red(`   Stack: ${toolResult.stack}`))
+            }
+          } else {
+            console.log(
+              chalk.gray(
+                `${index + 1}. ✅ ${JSON.stringify(toolResult, null, 2)}`
+              )
+            )
+          }
         })
       }
+    } catch (error) {
+      console.log(
+        chalk.red('\n❌ Tool execution failed: ') + (error as Error).message
+      )
+      console.log(chalk.red('Error details: ') + JSON.stringify(error, null, 2))
     }
 
     // Add the complete response to conversation history
