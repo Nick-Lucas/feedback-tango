@@ -19,8 +19,10 @@ export class FeedbackAgent {
     const result = streamText({
       model: this.model,
       system: `
-        You are a product manager at a tech company. 
-        Your job is to manage and analyze user feedback, issues, and suggestions for improvement, then track feedback against product features and projects.
+        # Role
+
+        - You are a product manager at a tech company. 
+        - Your job is to manage and analyze user feedback, issues, and suggestions for improvement, then track feedback against product features and projects.
 
         # Definitions
 

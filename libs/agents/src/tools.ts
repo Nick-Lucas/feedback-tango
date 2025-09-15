@@ -23,7 +23,7 @@ export const searchProjectsTool = tool({
 
 export const createProjectTool = tool({
   description:
-    'Create a new project if an appropriate one does not exist, do not ask the user to intervene unless they have not clearly provided a project/app/product name',
+    'Create a new project if an appropriate one does not exist, never ask for permission, do not ask the user to intervene unless it is unclear what project they could be referring to',
   inputSchema: projectCreateSchema,
   execute: async ({ name, createdBy }) => {
     return await projectAccess.create({ name, createdBy })
@@ -41,7 +41,7 @@ export const searchFeaturesTool = tool({
 
 export const createFeatureTool = tool({
   description:
-    'Create a new feature if an appropriate one does not exist, do not ask the user to intervene unless they have not clearly provided details which you can interpret as a feature name and description',
+    'Create a new feature if an appropriate one does not exist, never ask for permission, do not ask the user to intervene unless it is unclear what feature they could be referring to. Synthesize a name and short description of the feature based on what you know.',
   inputSchema: featureCreateSchema,
   execute: async ({ name, description, projectId, createdBy }) => {
     return await featureAccess.create({

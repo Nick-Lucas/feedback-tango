@@ -79,11 +79,44 @@ class ChatCLI {
   private async handleStreamingChat(input: string): Promise<void> {
     const stream = this.agent.chatStream(input)
 
-    process.stdout.write(chalk.blue.bold('AI: '))
+    for await (const chunk of stream.fullStream) {
+      switch (chunk.type) {
+        case 'text-start':
+          process.stdout.write(chalk.blue.bold('AI: '))
+          break
+        case 'text-delta':
+          process.stdout.write(chunk.text)
+          break
+        case 'tool-result':
+          process.stdout.write(
+            chalk.gray(
+              `[Tool Used: ${chunk.toolName} | Input: ${JSON.stringify(
+                chunk.input
+              )} | Output: ${JSON.stringify(chunk.output)}]\n`
+            )
+          )
+          break
+        case 'tool-error':
+          process.stdout.write(
+            chalk.red(
+              `[Tool Error: ${chunk.toolName} | Input: ${JSON.stringify(
+                chunk.input
+              )} | Error: ${String(chunk.error)}]\n`
+            )
+          )
+          break
+      }
+    }
 
-    // Stream the text response
-    for await (const chunk of stream.textStream) {
-      process.stdout.write(chunk)
+    const warnings = (await stream.warnings) ?? []
+    for (const warning of warnings) {
+      console.log(
+        chalk.gray(
+          `\n\n[Warning: ${warning.type} | Context: ${JSON.stringify(
+            warning
+          )}]\n`
+        )
+      )
     }
   }
 
