@@ -32,10 +32,6 @@ class ChatCLI {
     const authCookie = await this.checkAuthentication()
     console.log('Session cookie:', authCookie)
 
-    const session = await authClient.getSession({
-      fetchOptions: { headers: { cookie: authCookie } },
-    })
-
     console.log(
       chalk.yellow('Welcome to the interactive feedback management AI!')
     )
@@ -160,75 +156,58 @@ class ChatCLI {
   }
 
   private async checkAuthentication(): Promise<string> {
-    try {
-      console.log(chalk.blue('🔐 Checking authentication...'))
+    console.log(chalk.blue('🔐 Checking authentication...'))
 
-      const { data: session, error } = await authClient.getSession()
+    const { data: session, error } = await authClient.getSession()
 
-      if (error || !session) {
-        console.log(chalk.red('❌ Not authenticated'))
-        return await this.handleUnauthenticated()
-      }
-
-      console.log(
-        chalk.green(
-          `✅ Welcome back, ${session.user?.name || session.user?.email || 'User'}!`
-        )
-      )
-
-      // TODO: will never hit this branch since we don't persist the cookie right now, need to add persistence
-      return ''
-    } catch (error) {
-      console.log(
-        chalk.red('❌ Authentication check failed:'),
-        (error as Error).message
-      )
-      return await this.handleUnauthenticated()
+    if (error || !session) {
+      console.log(chalk.red('❌ Not authenticated'))
+      return await this.authenticateUserAndReturnCookie()
     }
+
+    console.log(
+      chalk.green(
+        `✅ Welcome back, ${session.user?.name || session.user?.email || 'User'}!`
+      )
+    )
+
+    // TODO: will never hit this branch since we don't persist the cookie right now, need to add persistence
+    return ''
   }
 
-  private async handleUnauthenticated(): Promise<string> {
+  private async authenticateUserAndReturnCookie(): Promise<string> {
     console.log(chalk.yellow("\n🚀 Let's get you signed in!"))
     console.log(chalk.gray('Starting authentication flow with GitHub...'))
 
-    try {
-      const authUrl = await authClient.signIn.social({
-        provider: 'github',
-        callbackURL: 'http://localhost:3001/callback',
-      })
-      if (authUrl.error) {
-        console.log(JSON.stringify(authUrl, null, 2))
+    const authUrl = await authClient.signIn.social({
+      provider: 'github',
+      callbackURL: 'http://localhost:3001/callback',
+    })
 
-        throw new Error(authUrl.error.message || 'Failed to get auth URL')
-      }
-      if (!authUrl.data?.url) {
-        console.log(JSON.stringify(authUrl, null, 2))
-        throw new Error('No authentication URL returned')
-      }
+    if (authUrl.error) {
+      console.log(JSON.stringify(authUrl, null, 2))
 
-      console.log(chalk.cyan('\n📋 Please visit this URL to authenticate:'))
-      console.log(chalk.underline.cyan(authUrl.data?.url))
-
-      console.log(chalk.blue('\n⏳ Waiting for authentication...'))
-      console.log(
-        chalk.gray(
-          'Once you complete authentication in your browser, the CLI will continue automatically.'
-        )
-      )
-      const authCompleted = await this.startCallbackServer()
-
-      return authCompleted
-    } catch (error) {
-      console.error(
-        chalk.red('❌ Failed to initiate authentication:'),
-        (error as Error).message
-      )
-      this.rl.close()
-      process.exit(1)
+      throw new Error(authUrl.error.message || 'Failed to get auth URL')
     }
+
+    if (!authUrl.data?.url) {
+      console.log(JSON.stringify(authUrl, null, 2))
+      throw new Error('No authentication URL returned')
+    }
+
+    console.log(chalk.cyan('\n📋 Please visit this URL to authenticate:'))
+    console.log(chalk.underline.cyan(authUrl.data?.url))
+
+    console.log(chalk.blue('\n⏳ Waiting for authentication...'))
+    console.log(
+      chalk.gray(
+        'Once you complete authentication in your browser, the CLI will continue automatically.'
+      )
+    )
+    return await this.startCallbackServerAndGrabCookies()
   }
 
-  private async startCallbackServer(): Promise<string> {
+  private async startCallbackServerAndGrabCookies(): Promise<string> {
     const { createServer } = await import('http')
 
     return new Promise((resolve, reject) => {
