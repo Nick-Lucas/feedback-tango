@@ -29,10 +29,8 @@ class ChatCLI {
     console.log(chalk.bold.magenta('🤖 Feedback AI Assistant'))
     console.log(chalk.gray('='.repeat(60)))
 
-    const isAuthenticated = await this.checkAuthentication()
-    if (!isAuthenticated) {
-      return
-    }
+    const authCookie = await this.checkAuthentication()
+    console.log('Session cookie:', authCookie)
 
     console.log(
       chalk.yellow('Welcome to the interactive feedback management AI!')
@@ -157,7 +155,7 @@ class ChatCLI {
     }
   }
 
-  private async checkAuthentication(): Promise<boolean> {
+  private async checkAuthentication(): Promise<string> {
     try {
       console.log(chalk.blue('🔐 Checking authentication...'))
 
@@ -165,8 +163,7 @@ class ChatCLI {
 
       if (error || !session) {
         console.log(chalk.red('❌ Not authenticated'))
-        await this.handleUnauthenticated()
-        return false
+        return await this.handleUnauthenticated()
       }
 
       console.log(
@@ -174,24 +171,23 @@ class ChatCLI {
           `✅ Welcome back, ${session.user?.name || session.user?.email || 'User'}!`
         )
       )
-      return true
+
+      // TODO: will never hit this branch since we don't persist the cookie right now, need to add persistence
+      return ''
     } catch (error) {
       console.log(
         chalk.red('❌ Authentication check failed:'),
         (error as Error).message
       )
-      await this.handleUnauthenticated()
-      return false
+      return await this.handleUnauthenticated()
     }
   }
 
-  private async handleUnauthenticated(): Promise<void> {
+  private async handleUnauthenticated(): Promise<string> {
     console.log(chalk.yellow("\n🚀 Let's get you signed in!"))
     console.log(chalk.gray('Starting authentication flow with GitHub...'))
 
     try {
-      await this.startCallbackServer()
-
       const authUrl = await authClient.signIn.social({
         provider: 'github',
         callbackURL: 'http://localhost:3001/callback',
@@ -215,6 +211,9 @@ class ChatCLI {
           'Once you complete authentication in your browser, the CLI will continue automatically.'
         )
       )
+      const authCompleted = await this.startCallbackServer()
+
+      return authCompleted
     } catch (error) {
       console.error(
         chalk.red('❌ Failed to initiate authentication:'),
@@ -225,37 +224,50 @@ class ChatCLI {
     }
   }
 
-  private async startCallbackServer(): Promise<void> {
+  private async startCallbackServer(): Promise<string> {
     const { createServer } = await import('http')
 
-    const server = createServer((req, res) => {
-      if (req.url?.startsWith('/callback')) {
-        res.writeHead(200, { 'Content-Type': 'text/html' })
-        res.end(`
-          <html>
-            <body>
-              <h2>Authentication successful!</h2>
-              <p>You can now close this tab and return to the CLI.</p>
-            </body>
-          </html>
-        `)
+    return new Promise((resolve, reject) => {
+      const server = createServer((req, res) => {
+        if (req.url?.startsWith('/callback')) {
+          res.writeHead(200, { 'Content-Type': 'text/html' })
+          res.end(`
+            <html>
+              <body>
+                <h2>Authentication successful!</h2>
+                <p>You can now close this tab and return to the CLI.</p>
+              </body>
+            </html>
+          `)
 
+          console.log(
+            chalk.green('\n✅ Authentication completed! Starting CLI...')
+          )
+
+          const cookies = req.headers['cookie']
+          if (!cookies || !cookies.includes('better-auth.session_token')) {
+            reject(
+              new Error(
+                'No better-auth.session_token cookies found in callback request'
+              )
+            )
+            return
+          }
+
+          setImmediate(() => server.close())
+          resolve(cookies)
+        }
+      })
+
+      server.on('error', (error) => {
+        reject(error)
+      })
+
+      server.listen(3001, () => {
         console.log(
-          chalk.green('\n✅ Authentication completed! Starting CLI...')
+          chalk.blue('🌐 Temporary callback server started on port 3001')
         )
-
-        server.close(() => {
-          setTimeout(() => {
-            void this.start()
-          }, 1000)
-        })
-      }
-    })
-
-    server.listen(3001, () => {
-      console.log(
-        chalk.blue('🌐 Temporary callback server started on port 3001')
-      )
+      })
     })
   }
 
