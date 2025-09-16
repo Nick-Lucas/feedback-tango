@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck": "tsc --noEmit",
-    "db:generate": "drizzle-kit generate",
+    "auth:generate": "pnpx @better-auth/cli generate --config=src/auth.ts --output=src/db/auth-schema.ts --yes",
+    "db:generate": "drizzle-kit generate && pnpm auth:generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
   },
@@ -16,6 +17,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "better-auth": "catalog:",
     "better-sqlite3": "catalog:",
     "drizzle-orm": "catalog:"
   },
