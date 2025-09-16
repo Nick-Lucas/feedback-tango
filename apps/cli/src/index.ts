@@ -32,6 +32,10 @@ class ChatCLI {
     const authCookie = await this.checkAuthentication()
     console.log('Session cookie:', authCookie)
 
+    const session = await authClient.getSession({
+      fetchOptions: { headers: { cookie: authCookie } },
+    })
+
     console.log(
       chalk.yellow('Welcome to the interactive feedback management AI!')
     )
