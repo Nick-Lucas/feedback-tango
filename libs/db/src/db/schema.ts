@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
+export * from './auth-schema.ts'
 
 export const Projects = sqliteTable('projects', {
   id: integer('id').primaryKey({ autoIncrement: true }),

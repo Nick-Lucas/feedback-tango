@@ -1,0 +1,19 @@
+{
+  "name": "@feedback-thing/auth-api",
+  "type": "module",
+  "scripts": {
+    "dev": "DOTENV_CONFIG_PATH=../../.env node -r dotenv/config --watch src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@feedback-thing/db": "workspace:*",
+    "@hono/node-server": "^1.19.3",
+    "dotenv": "catalog:",
+    "hono": "^4.9.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}

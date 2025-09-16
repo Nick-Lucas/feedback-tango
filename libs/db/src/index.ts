@@ -1,2 +1,2 @@
-export { db } from './db.ts'
-export * from './schema.ts'
+export * from './db/index.ts'
+export * from './auth.ts'

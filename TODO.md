@@ -1,6 +1,6 @@
 # Now
 
-[ ] add a CLI with an agent loop for managing feedbacks and development
+[X] add a CLI with an agent loop for managing feedbacks and development
 
 # Later
 
