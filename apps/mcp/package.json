@@ -6,9 +6,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@feedback-thing/core": "workspace:*",
+    "@feedback-thing/agents": "workspace:*",
     "@feedback-thing/db": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
-    "dotenv": "catalog:"
+    "dotenv": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
