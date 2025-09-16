@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "build": "pnpm -r build",
-    "dev": "pnpm -r dev",
+    "dev": "pnpm -r --stream=true dev",
     "test": "pnpm -r test",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
@@ -17,7 +17,7 @@
     "db:generate": "pnpm -C libs/db db:generate",
     "db:migrate": "pnpm -C libs/db db:migrate",
     "db:studio": "pnpm -C libs/db db:studio",
-    "cli": "pnpm -C apps/cli dev",
+    "cli": "pnpm -C apps/cli cli",
     "cli-install": "pnpm install -g ./apps/cli",
     "cli-uninstall": "pnpm uninstall -g @feedback-thing/cli"
   },

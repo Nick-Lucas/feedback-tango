@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
-import { config } from 'dotenv'
 import chalk from 'chalk'
 import { createInterface, Interface } from 'readline'
 import { FeedbackAgent } from '@feedback-thing/agents'
+import { createAuthClient } from 'better-auth/client'
 
-config({ override: true, path: '../../.env' })
+const authClient = createAuthClient({
+  baseURL: 'http://localhost:3000/',
+  // baseURL: 'http://localhost:3000/api/auth',
+})
 
 class ChatCLI {
   private rl: Interface
@@ -21,10 +24,16 @@ class ChatCLI {
     this.agent = new FeedbackAgent()
   }
 
-  start(): void {
+  async start(): Promise<void> {
     console.clear()
     console.log(chalk.bold.magenta('🤖 Feedback AI Assistant'))
     console.log(chalk.gray('='.repeat(60)))
+
+    const isAuthenticated = await this.checkAuthentication()
+    if (!isAuthenticated) {
+      return
+    }
+
     console.log(
       chalk.yellow('Welcome to the interactive feedback management AI!')
     )
@@ -148,6 +157,108 @@ class ChatCLI {
     }
   }
 
+  private async checkAuthentication(): Promise<boolean> {
+    try {
+      console.log(chalk.blue('🔐 Checking authentication...'))
+
+      const { data: session, error } = await authClient.getSession()
+
+      if (error || !session) {
+        console.log(chalk.red('❌ Not authenticated'))
+        await this.handleUnauthenticated()
+        return false
+      }
+
+      console.log(
+        chalk.green(
+          `✅ Welcome back, ${session.user?.name || session.user?.email || 'User'}!`
+        )
+      )
+      return true
+    } catch (error) {
+      console.log(
+        chalk.red('❌ Authentication check failed:'),
+        (error as Error).message
+      )
+      await this.handleUnauthenticated()
+      return false
+    }
+  }
+
+  private async handleUnauthenticated(): Promise<void> {
+    console.log(chalk.yellow("\n🚀 Let's get you signed in!"))
+    console.log(chalk.gray('Starting authentication flow with GitHub...'))
+
+    try {
+      await this.startCallbackServer()
+
+      const authUrl = await authClient.signIn.social({
+        provider: 'github',
+        callbackURL: 'http://localhost:3001/callback',
+      })
+      if (authUrl.error) {
+        console.log(JSON.stringify(authUrl, null, 2))
+
+        throw new Error(authUrl.error.message || 'Failed to get auth URL')
+      }
+      if (!authUrl.data?.url) {
+        console.log(JSON.stringify(authUrl, null, 2))
+        throw new Error('No authentication URL returned')
+      }
+
+      console.log(chalk.cyan('\n📋 Please visit this URL to authenticate:'))
+      console.log(chalk.underline.cyan(authUrl.data?.url))
+
+      console.log(chalk.blue('\n⏳ Waiting for authentication...'))
+      console.log(
+        chalk.gray(
+          'Once you complete authentication in your browser, the CLI will continue automatically.'
+        )
+      )
+    } catch (error) {
+      console.error(
+        chalk.red('❌ Failed to initiate authentication:'),
+        (error as Error).message
+      )
+      this.rl.close()
+      process.exit(1)
+    }
+  }
+
+  private async startCallbackServer(): Promise<void> {
+    const { createServer } = await import('http')
+
+    const server = createServer((req, res) => {
+      if (req.url?.startsWith('/callback')) {
+        res.writeHead(200, { 'Content-Type': 'text/html' })
+        res.end(`
+          <html>
+            <body>
+              <h2>Authentication successful!</h2>
+              <p>You can now close this tab and return to the CLI.</p>
+            </body>
+          </html>
+        `)
+
+        console.log(
+          chalk.green('\n✅ Authentication completed! Starting CLI...')
+        )
+
+        server.close(() => {
+          setTimeout(() => {
+            void this.start()
+          }, 1000)
+        })
+      }
+    })
+
+    server.listen(3001, () => {
+      console.log(
+        chalk.blue('🌐 Temporary callback server started on port 3001')
+      )
+    })
+  }
+
   private exit(): void {
     console.log(chalk.yellow('\n👋 Thanks for chatting! Goodbye!'))
     this.rl.close()
@@ -156,4 +267,4 @@ class ChatCLI {
 }
 
 const cli = new ChatCLI()
-cli.start()
+void cli.start()

@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck": "tsc --noEmit",
     "auth:generate": "pnpx @better-auth/cli generate --config=src/auth.ts --output=src/db/auth-schema.ts --yes",
-    "db:generate": "drizzle-kit generate && pnpm auth:generate",
+    "db:generate": "pnpm auth:generate && drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
   },

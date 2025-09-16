@@ -8,12 +8,13 @@
     "feedback": "./src/index.ts"
   },
   "scripts": {
-    "start": "node src/index.ts",
-    "dev": "node src/index.ts",
+    "cli": "DOTENV_CONFIG_PATH=../../.env node -r dotenv/config src/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@feedback-thing/agents": "workspace:*",
+    "@feedback-thing/db": "workspace:*",
+    "better-auth": "catalog:",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.0"
   },
