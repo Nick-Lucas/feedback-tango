@@ -19,7 +19,8 @@
   "dependencies": {
     "better-auth": "catalog:",
     "better-sqlite3": "catalog:",
-    "drizzle-orm": "catalog:"
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/better-sqlite3": "catalog:",
