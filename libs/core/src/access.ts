@@ -29,7 +29,6 @@ export const projectAccess = {
 
   // Get project by ID
   getById: async (id: number): Promise<Project | undefined> => {
-    eq(Projects.id, id)
     const [project] = await db
       .select()
       .from(Projects)

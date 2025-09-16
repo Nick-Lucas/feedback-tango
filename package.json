@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "clean": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "build": "pnpm -r build",
     "dev": "pnpm -r dev",
     "test": "pnpm -r test",
