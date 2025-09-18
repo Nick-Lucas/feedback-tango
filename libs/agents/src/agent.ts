@@ -1,14 +1,27 @@
-import { stepCountIs, streamText, type ModelMessage } from 'ai'
+import {
+  stepCountIs,
+  streamText,
+  type ModelMessage,
+  experimental_createMCPClient,
+} from 'ai'
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+// import { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.js'
 import { google } from '@ai-sdk/google'
-import { databaseTools } from './tools.ts'
+// import { databaseTools } from './tools.ts'
 
 globalThis.AI_SDK_LOG_WARNINGS = false
+
+const mcpClient = await experimental_createMCPClient({
+  transport: new StreamableHTTPClientTransport(
+    new URL('http://localhost:3001/mcp')
+  ),
+})
 
 export class FeedbackAgent {
   private model = google('gemini-2.5-flash-lite')
   private conversationHistory: ModelMessage[] = []
 
-  chatStream(prompt: string, _options?: { maxTokens?: number }) {
+  async chatStream(prompt: string, _options?: { maxTokens?: number }) {
     const userName = 'CLI User' // Replace with actual user name when available
 
     const history = this.conversationHistory
@@ -103,7 +116,7 @@ export class FeedbackAgent {
       //   The date today is: ${new Date().toLocaleDateString()} is it a ${new Date().toLocaleDateString('en-US', { weekday: 'long' })}
       // `,
       messages: history,
-      tools: databaseTools,
+      tools: await mcpClient.tools(),
       stopWhen: stepCountIs(20),
       onFinish(finish) {
         history.push(...finish.response.messages)
