@@ -6,36 +6,27 @@ import {
   feedbackAccess,
 } from '@feedback-thing/core'
 import { randomUUID } from 'node:crypto'
+import { createServer } from 'node:http'
+
+// We have to use zod3 for now because of https://github.com/modelcontextprotocol/typescript-sdk/issues/925
+import { z } from 'zod'
 
 // Create server instance
 const server = new McpServer({
   name: 'feedback-thing',
   version: '1.0.0',
-  capabilities: {
-    resources: {},
-    tools: {},
-  },
 })
 
 // Search projects tool
 server.tool(
   'searchProjects',
+  'Search projects by name using ilike matching, you can run this multiple times to try out different variations',
   {
-    description:
-      'Search projects by name using ilike matching, you can run this multiple times to try out different variations',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        searchTerm: {
-          type: 'string',
-          description: 'Search term for project name',
-        },
-      },
-      required: ['searchTerm'],
-    },
+    searchTerm: z.string().describe('Search term for project name'),
   },
-  async ({ searchTerm }) => {
-    const result = await projectAccess.search(searchTerm as string)
+  async (input) => {
+    const result = await projectAccess.search(input.searchTerm)
+
     return {
       content: [
         {
@@ -50,28 +41,15 @@ server.tool(
 // Create project tool
 server.tool(
   'createProject',
+  'Create a new project if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what project they could be referring to',
   {
-    description:
-      'Create a new project if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what project they could be referring to',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-          description: 'Project name',
-        },
-        createdBy: {
-          type: 'string',
-          description: 'Creator of the project',
-        },
-      },
-      required: ['name', 'createdBy'],
-    },
+    name: z.string().describe('Project name'),
+    createdBy: z.string().describe('Creator of the project'),
   },
-  async ({ name, createdBy }) => {
+  async (input) => {
     const result = await projectAccess.create({
-      name: name as string,
-      createdBy: createdBy as string,
+      name: input.name,
+      createdBy: input.createdBy,
     })
     return {
       content: [
@@ -87,29 +65,14 @@ server.tool(
 // Search features tool
 server.tool(
   'searchFeatures',
+  'Search features by name using ilike matching, you can run this multiple times to try out different variations',
   {
-    description:
-      'Search features by name using ilike matching, you can run this multiple times to try out different variations',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        projectId: {
-          type: 'number',
-          description: 'Project ID to search features within',
-        },
-        searchTerm: {
-          type: 'string',
-          description: 'Search term for feature name',
-        },
-      },
-      required: ['projectId', 'searchTerm'],
-    },
+    projectId: z.number().describe('Project ID to search features within'),
+    searchTerm: z.string().describe('Search term for feature name'),
   },
-  async ({ projectId, searchTerm }) => {
-    const result = await featureAccess.search(
-      projectId as number,
-      searchTerm as string
-    )
+  async (input) => {
+    const result = await featureAccess.search(input.projectId, input.searchTerm)
+
     return {
       content: [
         {
@@ -124,38 +87,19 @@ server.tool(
 // Create feature tool
 server.tool(
   'createFeature',
+  'Create a new feature if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what feature they could be referring to. Synthesize a name and short description of the feature based on what you know.',
   {
-    description:
-      'Create a new feature if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what feature they could be referring to. Synthesize a name and short description of the feature based on what you know.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-          description: 'Feature name',
-        },
-        description: {
-          type: 'string',
-          description: 'Feature description',
-        },
-        projectId: {
-          type: 'number',
-          description: 'Project ID this feature belongs to',
-        },
-        createdBy: {
-          type: 'string',
-          description: 'Creator of the feature',
-        },
-      },
-      required: ['name', 'description', 'projectId', 'createdBy'],
-    },
+    name: z.string().describe('Feature name'),
+    description: z.string().describe('Feature description'),
+    projectId: z.number().describe('Project ID this feature belongs to'),
+    createdBy: z.string().describe('Creator of the feature'),
   },
-  async ({ name, description, projectId, createdBy }) => {
+  async (input) => {
     const result = await featureAccess.create({
-      name: name as string,
-      description: description as string,
-      projectId: projectId as number,
-      createdBy: createdBy as string,
+      name: input.name,
+      description: input.description,
+      projectId: input.projectId,
+      createdBy: input.createdBy,
     })
     return {
       content: [
@@ -171,38 +115,19 @@ server.tool(
 // Create feedback tool
 server.tool(
   'createFeedback',
+  'Create new feedback when the user has submitted some. use the search tools to find the relevant project and feature ID, you may create a new project/feature first if needed',
   {
-    description:
-      'Create new feedback when the user has submitted some. use the search tools to find the relevant project and feature ID, you may create a new project/feature first if needed',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        feedback: {
-          type: 'string',
-          description: 'Feedback content',
-        },
-        projectId: {
-          type: 'number',
-          description: 'Project ID this feedback belongs to',
-        },
-        featureId: {
-          type: 'number',
-          description: 'Feature ID this feedback belongs to',
-        },
-        createdBy: {
-          type: 'string',
-          description: 'Creator of the feedback',
-        },
-      },
-      required: ['feedback', 'projectId', 'featureId', 'createdBy'],
-    },
+    feedback: z.string().describe('Feedback content'),
+    projectId: z.number().describe('Project ID this feedback belongs to'),
+    featureId: z.number().describe('Feature ID this feedback belongs to'),
+    createdBy: z.string().describe('Creator of the feedback'),
   },
-  async ({ feedback, projectId, featureId, createdBy }) => {
+  async (input) => {
     const result = await feedbackAccess.create({
-      feedback: feedback as string,
-      projectId: projectId as number,
-      featureId: featureId as number,
-      createdBy: createdBy as string,
+      feedback: input.feedback,
+      projectId: input.projectId,
+      featureId: input.featureId,
+      createdBy: input.createdBy,
     })
     return {
       content: [
@@ -223,8 +148,38 @@ async function main() {
     },
     // TODO: DNS rebinding protection, origin checks etc
   })
+
+  console.log('Connecting server to transport...')
   await server.connect(transport)
-  console.error('Feedback Thing MCP Server running on stdio')
+  console.log('Server connected successfully')
+
+  const httpServer = createServer(async (req, res) => {
+    try {
+      console.log('Incoming MCP request:', req.method, req.url)
+
+      // Add CORS headers
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+      res.setHeader('Access-Control-Expose-Headers', 'mcp-session-id')
+
+      if (req.method === 'OPTIONS') {
+        res.writeHead(200).end()
+        return
+      }
+
+      await transport.handleRequest(req, res)
+    } catch (error) {
+      console.error('Error handling request:', error)
+      if (!res.headersSent) {
+        res.writeHead(500).end()
+      }
+    }
+  })
+
+  httpServer.listen(3001, '127.0.0.1', () => {
+    console.error('Feedback Thing MCP Server running on port 3001')
+  })
 }
 
 main().catch((error) => {

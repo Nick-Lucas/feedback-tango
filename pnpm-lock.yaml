@@ -13,8 +13,8 @@ catalogs:
       specifier: ^9.35.0
       version: 9.35.0
     '@modelcontextprotocol/sdk':
-      specifier: ^1.18.0
-      version: 1.18.0
+      specifier: ^1.18.1
+      version: 1.18.1
     '@types/better-sqlite3':
       specifier: ^7.6.13
       version: 7.6.13
@@ -151,13 +151,13 @@ importers:
         version: link:../../libs/db
       '@modelcontextprotocol/sdk':
         specifier: 'catalog:'
-        version: 1.18.0
+        version: 1.18.1
       dotenv:
         specifier: 'catalog:'
         version: 16.6.1
       zod:
-        specifier: 'catalog:'
-        version: 4.1.8
+        specifier: ^3
+        version: 3.25.76
     devDependencies:
       '@types/node':
         specifier: ^20.11.17
@@ -610,8 +610,8 @@ packages:
   '@levischuck/tiny-cbor@0.2.11':
     resolution: {integrity: sha512-llBRm4dT4Z89aRsm6u2oEZ8tfwL/2l6BwpZ7JcyieouniDECM5AqNgr/y08zalEIvW3RSK4upYyybDcmjXqAow==}
 
-  '@modelcontextprotocol/sdk@1.18.0':
-    resolution: {integrity: sha512-JvKyB6YwS3quM+88JPR0axeRgvdDu3Pv6mdZUy+w4qVkCzGgumb9bXG/TmtDRQv+671yaofVfXSQmFLlWU5qPQ==}
+  '@modelcontextprotocol/sdk@1.18.1':
+    resolution: {integrity: sha512-d//GE8/Yh7aC3e7p+kZG8JqqEAwwDUmAfvH1quogtbk+ksS6E0RR6toKKESPYYZVre0meqkJb27zb+dhqE9Sgw==}
     engines: {node: '>=18'}
 
   '@noble/ciphers@2.0.0':
@@ -2012,7 +2012,7 @@ snapshots:
 
   '@levischuck/tiny-cbor@0.2.11': {}
 
-  '@modelcontextprotocol/sdk@1.18.0':
+  '@modelcontextprotocol/sdk@1.18.1':
     dependencies:
       ajv: 6.12.6
       content-type: 1.0.5
