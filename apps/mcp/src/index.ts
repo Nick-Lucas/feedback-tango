@@ -15,14 +15,20 @@ import { z } from 'zod'
 const server = new McpServer({
   name: 'feedback-thing',
   version: '1.0.0',
+  title: 'Feedback Thing',
 })
 
 // Search projects tool
-server.tool(
+server.registerTool(
   'searchProjects',
-  'Search projects by name using ilike matching, you can run this multiple times to try out different variations',
   {
-    searchTerm: z.string().describe('Search term for project name'),
+    title: 'Search Projects',
+    description:
+      'Search projects by name using ilike matching, you can run this multiple times to try out different variations',
+    inputSchema: {
+      searchTerm: z.string().describe('Search term for project name'),
+    },
+    annotations: { readOnlyHint: true },
   },
   async (input) => {
     const result = await projectAccess.search(input.searchTerm)
@@ -39,12 +45,16 @@ server.tool(
 )
 
 // Create project tool
-server.tool(
+server.registerTool(
   'createProject',
-  'Create a new project if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what project they could be referring to',
   {
-    name: z.string().describe('Project name'),
-    createdBy: z.string().describe('Creator of the project'),
+    title: 'Create Project',
+    description:
+      'Create a new project if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what project they could be referring to',
+    inputSchema: {
+      name: z.string().describe('Project name'),
+      createdBy: z.string().describe('Creator of the project'),
+    },
   },
   async (input) => {
     const result = await projectAccess.create({
@@ -63,12 +73,17 @@ server.tool(
 )
 
 // Search features tool
-server.tool(
+server.registerTool(
   'searchFeatures',
-  'Search features by name using ilike matching, you can run this multiple times to try out different variations',
   {
-    projectId: z.number().describe('Project ID to search features within'),
-    searchTerm: z.string().describe('Search term for feature name'),
+    title: 'Search Features',
+    description:
+      'Search features by name using ilike matching, you can run this multiple times to try out different variations',
+    inputSchema: {
+      projectId: z.number().describe('Project ID to search features within'),
+      searchTerm: z.string().describe('Search term for feature name'),
+    },
+    annotations: { readOnlyHint: true },
   },
   async (input) => {
     const result = await featureAccess.search(input.projectId, input.searchTerm)
@@ -85,14 +100,18 @@ server.tool(
 )
 
 // Create feature tool
-server.tool(
+server.registerTool(
   'createFeature',
-  'Create a new feature if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what feature they could be referring to. Synthesize a name and short description of the feature based on what you know.',
   {
-    name: z.string().describe('Feature name'),
-    description: z.string().describe('Feature description'),
-    projectId: z.number().describe('Project ID this feature belongs to'),
-    createdBy: z.string().describe('Creator of the feature'),
+    title: 'Create Feature',
+    description:
+      'Create a new feature if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what feature they could be referring to. Synthesize a name and short description of the feature based on what you know.',
+    inputSchema: {
+      name: z.string().describe('Feature name'),
+      description: z.string().describe('Feature description'),
+      projectId: z.number().describe('Project ID this feature belongs to'),
+      createdBy: z.string().describe('Creator of the feature'),
+    },
   },
   async (input) => {
     const result = await featureAccess.create({
@@ -113,14 +132,18 @@ server.tool(
 )
 
 // Create feedback tool
-server.tool(
+server.registerTool(
   'createFeedback',
-  'Create new feedback when the user has submitted some. use the search tools to find the relevant project and feature ID, you may create a new project/feature first if needed',
   {
-    feedback: z.string().describe('Feedback content'),
-    projectId: z.number().describe('Project ID this feedback belongs to'),
-    featureId: z.number().describe('Feature ID this feedback belongs to'),
-    createdBy: z.string().describe('Creator of the feedback'),
+    title: 'Create Feedback',
+    description:
+      'Create new feedback when the user has submitted some. use the search tools to find the relevant project and feature ID, you may create a new project/feature first if needed',
+    inputSchema: {
+      feedback: z.string().describe('Feedback content'),
+      projectId: z.number().describe('Project ID this feedback belongs to'),
+      featureId: z.number().describe('Feature ID this feedback belongs to'),
+      createdBy: z.string().describe('Creator of the feedback'),
+    },
   },
   async (input) => {
     const result = await feedbackAccess.create({
@@ -161,6 +184,8 @@ async function main() {
       res.setHeader('Access-Control-Allow-Origin', '*')
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+      // Essential to expose so that agents can use this for future requests
       res.setHeader('Access-Control-Expose-Headers', 'mcp-session-id')
 
       if (req.method === 'OPTIONS') {
