@@ -54,9 +54,7 @@
       "indexes": {
         "features_name_unique": {
           "name": "features_name_unique",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": true
         }
       },
@@ -65,12 +63,8 @@
           "name": "features_project_id_projects_id_fk",
           "tableFrom": "features",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -132,12 +126,8 @@
           "name": "feedback_project_id_projects_id_fk",
           "tableFrom": "feedback",
           "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -145,12 +135,8 @@
           "name": "feedback_feature_id_features_id_fk",
           "tableFrom": "feedback",
           "tableTo": "features",
-          "columnsFrom": [
-            "feature_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["feature_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -195,9 +181,7 @@
       "indexes": {
         "projects_name_unique": {
           "name": "projects_name_unique",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": true
         }
       },
@@ -308,12 +292,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -399,16 +379,12 @@
       "indexes": {
         "oauth_access_token_access_token_unique": {
           "name": "oauth_access_token_access_token_unique",
-          "columns": [
-            "access_token"
-          ],
+          "columns": ["access_token"],
           "isUnique": true
         },
         "oauth_access_token_refresh_token_unique": {
           "name": "oauth_access_token_refresh_token_unique",
-          "columns": [
-            "refresh_token"
-          ],
+          "columns": ["refresh_token"],
           "isUnique": true
         }
       },
@@ -417,12 +393,8 @@
           "name": "oauth_access_token_client_id_oauth_application_client_id_fk",
           "tableFrom": "oauth_access_token",
           "tableTo": "oauth_application",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "client_id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["client_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -430,12 +402,8 @@
           "name": "oauth_access_token_user_id_user_id_fk",
           "tableFrom": "oauth_access_token",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -536,9 +504,7 @@
       "indexes": {
         "oauth_application_client_id_unique": {
           "name": "oauth_application_client_id_unique",
-          "columns": [
-            "client_id"
-          ],
+          "columns": ["client_id"],
           "isUnique": true
         }
       },
@@ -547,12 +513,8 @@
           "name": "oauth_application_user_id_user_id_fk",
           "tableFrom": "oauth_application",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -620,12 +582,8 @@
           "name": "oauth_consent_client_id_oauth_application_client_id_fk",
           "tableFrom": "oauth_consent",
           "tableTo": "oauth_application",
-          "columnsFrom": [
-            "client_id"
-          ],
-          "columnsTo": [
-            "client_id"
-          ],
+          "columnsFrom": ["client_id"],
+          "columnsTo": ["client_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -633,12 +591,8 @@
           "name": "oauth_consent_user_id_user_id_fk",
           "tableFrom": "oauth_consent",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -711,9 +665,7 @@
       "indexes": {
         "session_token_unique": {
           "name": "session_token_unique",
-          "columns": [
-            "token"
-          ],
+          "columns": ["token"],
           "isUnique": true
         }
       },
@@ -722,12 +674,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -795,9 +743,7 @@
       "indexes": {
         "user_email_unique": {
           "name": "user_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },

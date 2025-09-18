@@ -5,15 +5,18 @@ import {
   experimental_createMCPClient,
 } from 'ai'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
-// import { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.js'
 import { google } from '@ai-sdk/google'
+import { MemoryOAuthProvider } from './MemoryOAuthProvider.ts'
 // import { databaseTools } from './tools.ts'
 
 globalThis.AI_SDK_LOG_WARNINGS = false
 
 const mcpClient = await experimental_createMCPClient({
   transport: new StreamableHTTPClientTransport(
-    new URL('http://localhost:3001/mcp')
+    new URL('http://localhost:3001/mcp'),
+    {
+      authProvider: new MemoryOAuthProvider(),
+    }
   ),
 })
 
@@ -116,7 +119,7 @@ export class FeedbackAgent {
       //   The date today is: ${new Date().toLocaleDateString()} is it a ${new Date().toLocaleDateString('en-US', { weekday: 'long' })}
       // `,
       messages: history,
-      tools: await mcpClient.tools(),
+      tools: (await mcpClient.tools()) as any, // TODO: 'any' to avoid a type portability issue caused by the ai-sdk
       stopWhen: stepCountIs(20),
       onFinish(finish) {
         history.push(...finish.response.messages)
