@@ -8,6 +8,11 @@ import { bearerTokenMiddleware, oauthProxyMiddleware } from './oauth.ts'
 
 const app = express()
 
+app.use((req, res, next) => {
+  console.log(`${req.method.padEnd(5)} ${req.url}`)
+
+  next()
+})
 app.use(
   cors({
     exposedHeaders: ['mcp-session-id'],
@@ -15,9 +20,9 @@ app.use(
     methods: '*',
   })
 )
+app.use(express.json())
 app.use(oauthProxyMiddleware)
 app.use(bearerTokenMiddleware)
-app.use(express.json())
 
 // Cache of MCP sessions, likely not suited to horizontal scaling without sticky routing but fine for dev
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {}

@@ -10,7 +10,7 @@ const proxyProvider = new ProxyOAuthServerProvider({
   endpoints: {
     authorizationUrl: 'http://localhost:3000/api/auth/mcp/authorize',
     tokenUrl: 'http://localhost:3000/api/auth/mcp/token',
-    // revocationUrl: "https://auth.external.com/oauth2/v1/revoke",
+    registrationUrl: 'http://localhost:3000/api/auth/mcp/register',
   },
   verifyAccessToken: async (token) => {
     // client.getSession({})
@@ -25,7 +25,7 @@ const proxyProvider = new ProxyOAuthServerProvider({
     console.log('[ProxyOAuthServerProvider] getClient', client_id)
     return {
       client_id,
-      redirect_uris: ['http://localhost:3000/callback'],
+      redirect_uris: ['http://localhost:3001/callback'],
     }
   },
 })
@@ -40,7 +40,8 @@ export const oauthProxyMiddleware = mcpAuthRouter({
 export const bearerTokenMiddleware = requireBearerAuth({
   requiredScopes: ['default'],
   resourceMetadataUrl: new URL(
-    'http://localhost:3000/api/auth/.well-known/oauth-authorization-server'
+    'http://localhost:3000/'
+    // 'http://localhost:3000/api/auth/.well-known/oauth-authorization-server'
   ).toString(),
   verifier: {
     verifyAccessToken: async (token: string) => {
