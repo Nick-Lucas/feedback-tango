@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "build": "pnpm -r build",
-    "dev": "pnpm -r --stream=true dev",
+    "dev": "pnpm -r --parallel --stream=true dev",
     "test": "pnpm -r test",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
