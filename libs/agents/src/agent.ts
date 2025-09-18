@@ -2,8 +2,7 @@ import { stepCountIs, streamText, type ModelMessage } from 'ai'
 import { google } from '@ai-sdk/google'
 import { databaseTools } from './tools.ts'
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-;(globalThis as any).AI_SDK_LOG_WARNINGS = false
+globalThis.AI_SDK_LOG_WARNINGS = false
 
 export class FeedbackAgent {
   private model = google('gemini-2.5-flash-lite')
