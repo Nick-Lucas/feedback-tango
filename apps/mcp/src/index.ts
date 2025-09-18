@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js'
 import { mcp } from './mcp.ts'
+import { bearerTokenMiddleware, oauthProxyMiddleware } from './oauth.ts'
 
 const app = express()
 
@@ -14,6 +15,8 @@ app.use(
     methods: '*',
   })
 )
+app.use(oauthProxyMiddleware)
+app.use(bearerTokenMiddleware)
 app.use(express.json())
 
 // Cache of MCP sessions, likely not suited to horizontal scaling without sticky routing but fine for dev

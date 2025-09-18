@@ -12,6 +12,7 @@
     "@modelcontextprotocol/sdk": "catalog:",
     "@types/cors": "catalog:",
     "@types/express": "catalog:",
+    "better-auth": "catalog:",
     "cors": "catalog:",
     "dotenv": "catalog:",
     "express": "catalog:",

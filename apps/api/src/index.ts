@@ -4,6 +4,11 @@ import { serve } from '@hono/node-server'
 import { auth } from '@feedback-thing/db'
 
 const app = new Hono()
+app.use('*', async (c, next) => {
+  // Log all requests
+  console.log(`${c.req.method} ${c.req.url}`)
+  await next()
+})
 
 app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw))
 

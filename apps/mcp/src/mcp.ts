@@ -26,7 +26,12 @@ mcp.registerTool(
     },
     annotations: { readOnlyHint: true },
   },
-  async (input) => {
+  async (input, extra) => {
+    const userId = extra.authInfo?.extra?.userId || ''
+    if (typeof userId !== 'string' || userId.length === 0) {
+      throw new Error('No user ID found in token.')
+    }
+
     const result = await projectAccess.search(input.searchTerm)
 
     return {
@@ -51,10 +56,15 @@ mcp.registerTool(
       createdBy: z.string().describe('Creator of the project'),
     },
   },
-  async (input) => {
+  async (input, extra) => {
+    const userId = extra.authInfo?.extra?.userId || ''
+    if (typeof userId !== 'string' || userId.length === 0) {
+      throw new Error('No user ID found in token.')
+    }
+
     const result = await projectAccess.create({
       name: input.name,
-      createdBy: input.createdBy,
+      createdBy: userId,
     })
     return {
       content: [
@@ -79,7 +89,12 @@ mcp.registerTool(
     },
     annotations: { readOnlyHint: true },
   },
-  async (input) => {
+  async (input, extra) => {
+    const userId = extra.authInfo?.extra?.userId || ''
+    if (typeof userId !== 'string' || userId.length === 0) {
+      throw new Error('No user ID found in token.')
+    }
+
     const result = await featureAccess.search(input.projectId, input.searchTerm)
 
     return {
@@ -106,12 +121,17 @@ mcp.registerTool(
       createdBy: z.string().describe('Creator of the feature'),
     },
   },
-  async (input) => {
+  async (input, extra) => {
+    const userId = extra.authInfo?.extra?.userId || ''
+    if (typeof userId !== 'string' || userId.length === 0) {
+      throw new Error('No user ID found in token.')
+    }
+
     const result = await featureAccess.create({
       name: input.name,
       description: input.description,
       projectId: input.projectId,
-      createdBy: input.createdBy,
+      createdBy: userId,
     })
     return {
       content: [
@@ -137,12 +157,17 @@ mcp.registerTool(
       createdBy: z.string().describe('Creator of the feedback'),
     },
   },
-  async (input) => {
+  async (input, extra) => {
+    const userId = extra.authInfo?.extra?.userId || ''
+    if (typeof userId !== 'string' || userId.length === 0) {
+      throw new Error('No user ID found in token.')
+    }
+
     const result = await feedbackAccess.create({
       feedback: input.feedback,
       projectId: input.projectId,
       featureId: input.featureId,
-      createdBy: input.createdBy,
+      createdBy: userId,
     })
     return {
       content: [
