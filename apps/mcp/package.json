@@ -6,11 +6,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@feedback-thing/core": "workspace:*",
     "@feedback-thing/agents": "workspace:*",
+    "@feedback-thing/core": "workspace:*",
     "@feedback-thing/db": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
+    "@types/cors": "catalog:",
+    "@types/express": "catalog:",
+    "cors": "catalog:",
     "dotenv": "catalog:",
+    "express": "catalog:",
     "zod": "^3"
   },
   "devDependencies": {

@@ -1,213 +1,90 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
-import {
-  projectAccess,
-  featureAccess,
-  feedbackAccess,
-} from '@feedback-thing/core'
+import express from 'express'
+import cors from 'cors'
 import { randomUUID } from 'node:crypto'
-import { createServer } from 'node:http'
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js'
+import { mcp } from './mcp.ts'
 
-// We have to use zod3 for now because of https://github.com/modelcontextprotocol/typescript-sdk/issues/925
-import { z } from 'zod'
+const app = express()
 
-// Create server instance
-const server = new McpServer({
-  name: 'feedback-thing',
-  version: '1.0.0',
-  title: 'Feedback Thing',
+app.use(
+  cors({
+    exposedHeaders: ['mcp-session-id'],
+    origin: '*',
+    methods: '*',
+  })
+)
+app.use(express.json())
+
+// Cache of MCP sessions, likely not suited to horizontal scaling without sticky routing but fine for dev
+const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {}
+
+app.post('/mcp', async (req, res) => {
+  const sessionId = req.headers['mcp-session-id'] as string | undefined
+  let transport: StreamableHTTPServerTransport
+
+  if (sessionId && transports[sessionId]) {
+    transport = transports[sessionId]
+  } else if (!sessionId && isInitializeRequest(req.body)) {
+    transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => randomUUID(),
+      onsessioninitialized: (sessionId) => {
+        transports[sessionId] = transport
+      },
+      // TODO: configure for deployed location
+      enableDnsRebindingProtection: true,
+      allowedHosts: ['localhost:3001'],
+    })
+
+    transport.onclose = () => {
+      if (transport.sessionId) {
+        delete transports[transport.sessionId]
+      }
+    }
+
+    await mcp.connect(transport)
+  } else {
+    // Invalid request
+    res.status(400).json({
+      jsonrpc: '2.0',
+      error: {
+        code: -32000,
+        message: 'Bad Request: No valid session ID provided',
+      },
+      id: null,
+    })
+    return
+  }
+
+  // Handle the request
+  await transport.handleRequest(req, res, req.body)
 })
 
-// Search projects tool
-server.registerTool(
-  'searchProjects',
-  {
-    title: 'Search Projects',
-    description:
-      'Search projects by name using ilike matching, you can run this multiple times to try out different variations',
-    inputSchema: {
-      searchTerm: z.string().describe('Search term for project name'),
-    },
-    annotations: { readOnlyHint: true },
-  },
-  async (input) => {
-    const result = await projectAccess.search(input.searchTerm)
-
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    }
+// Reusable handler for GET and DELETE requests
+const handleSessionRequest = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const sessionId = req.headers['mcp-session-id'] as string | undefined
+  if (!sessionId || !transports[sessionId]) {
+    res.status(400).send('Invalid or missing session ID')
+    return
   }
-)
 
-// Create project tool
-server.registerTool(
-  'createProject',
-  {
-    title: 'Create Project',
-    description:
-      'Create a new project if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what project they could be referring to',
-    inputSchema: {
-      name: z.string().describe('Project name'),
-      createdBy: z.string().describe('Creator of the project'),
-    },
-  },
-  async (input) => {
-    const result = await projectAccess.create({
-      name: input.name,
-      createdBy: input.createdBy,
-    })
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    }
-  }
-)
-
-// Search features tool
-server.registerTool(
-  'searchFeatures',
-  {
-    title: 'Search Features',
-    description:
-      'Search features by name using ilike matching, you can run this multiple times to try out different variations',
-    inputSchema: {
-      projectId: z.number().describe('Project ID to search features within'),
-      searchTerm: z.string().describe('Search term for feature name'),
-    },
-    annotations: { readOnlyHint: true },
-  },
-  async (input) => {
-    const result = await featureAccess.search(input.projectId, input.searchTerm)
-
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    }
-  }
-)
-
-// Create feature tool
-server.registerTool(
-  'createFeature',
-  {
-    title: 'Create Feature',
-    description:
-      'Create a new feature if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what feature they could be referring to. Synthesize a name and short description of the feature based on what you know.',
-    inputSchema: {
-      name: z.string().describe('Feature name'),
-      description: z.string().describe('Feature description'),
-      projectId: z.number().describe('Project ID this feature belongs to'),
-      createdBy: z.string().describe('Creator of the feature'),
-    },
-  },
-  async (input) => {
-    const result = await featureAccess.create({
-      name: input.name,
-      description: input.description,
-      projectId: input.projectId,
-      createdBy: input.createdBy,
-    })
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    }
-  }
-)
-
-// Create feedback tool
-server.registerTool(
-  'createFeedback',
-  {
-    title: 'Create Feedback',
-    description:
-      'Create new feedback when the user has submitted some. use the search tools to find the relevant project and feature ID, you may create a new project/feature first if needed',
-    inputSchema: {
-      feedback: z.string().describe('Feedback content'),
-      projectId: z.number().describe('Project ID this feedback belongs to'),
-      featureId: z.number().describe('Feature ID this feedback belongs to'),
-      createdBy: z.string().describe('Creator of the feedback'),
-    },
-  },
-  async (input) => {
-    const result = await feedbackAccess.create({
-      feedback: input.feedback,
-      projectId: input.projectId,
-      featureId: input.featureId,
-      createdBy: input.createdBy,
-    })
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    }
-  }
-)
-
-async function main() {
-  const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator() {
-      // TODO: probably use the better-auth token to generate this
-      return randomUUID()
-    },
-    // TODO: DNS rebinding protection, origin checks etc
-  })
-
-  console.log('Connecting server to transport...')
-  await server.connect(transport)
-  console.log('Server connected successfully')
-
-  const httpServer = createServer(async (req, res) => {
-    try {
-      console.log('Incoming MCP request:', req.method, req.url)
-
-      // Add CORS headers
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-
-      // Essential to expose so that agents can use this for future requests
-      res.setHeader('Access-Control-Expose-Headers', 'mcp-session-id')
-
-      if (req.method === 'OPTIONS') {
-        res.writeHead(200).end()
-        return
-      }
-
-      await transport.handleRequest(req, res)
-    } catch (error) {
-      console.error('Error handling request:', error)
-      if (!res.headersSent) {
-        res.writeHead(500).end()
-      }
-    }
-  })
-
-  httpServer.listen(3001, '127.0.0.1', () => {
-    console.error('Feedback Thing MCP Server running on port 3001')
-  })
+  const transport = transports[sessionId]
+  await transport.handleRequest(req, res)
 }
 
-main().catch((error) => {
-  console.error('Fatal error in main():', error)
-  process.exit(1)
+// Handle GET requests for server-to-client notifications via SSE
+app.get('/mcp', handleSessionRequest)
+
+// Handle DELETE requests for session termination
+app.delete('/mcp', handleSessionRequest)
+
+app.listen(3001, (error) => {
+  if (error) {
+    console.error('Failed to start MCP server:', error)
+    throw error
+  }
+  console.log('MCP server listening on http://localhost:3001/mcp')
 })
