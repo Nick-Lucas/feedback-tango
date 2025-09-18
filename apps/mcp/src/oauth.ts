@@ -1,5 +1,8 @@
 import { ProxyOAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/providers/proxyProvider.js'
-import { mcpAuthRouter } from '@modelcontextprotocol/sdk/server/auth/router.js'
+import {
+  getOAuthProtectedResourceMetadataUrl,
+  mcpAuthRouter,
+} from '@modelcontextprotocol/sdk/server/auth/router.js'
 import { requireBearerAuth } from '@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js'
 
 // import { createAuthClient } from 'better-auth/client'
@@ -32,17 +35,16 @@ const proxyProvider = new ProxyOAuthServerProvider({
 
 export const oauthProxyMiddleware = mcpAuthRouter({
   provider: proxyProvider,
-  issuerUrl: new URL('http://localhost:3000'),
-  baseUrl: new URL('http://localhost:3000/api/auth'),
-  serviceDocumentationUrl: new URL('https://docs.example.com/'),
+  issuerUrl: new URL('http://localhost:3001'),
+  baseUrl: new URL('http://localhost:3001/api/auth'),
+  // serviceDocumentationUrl: new URL('https://docs.example.com/'),
 })
 
 export const bearerTokenMiddleware = requireBearerAuth({
   requiredScopes: ['default'],
-  resourceMetadataUrl: new URL(
-    'http://localhost:3000/'
-    // 'http://localhost:3000/api/auth/.well-known/oauth-authorization-server'
-  ).toString(),
+  resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(
+    new URL('http://localhost:3001/')
+  ),
   verifier: {
     verifyAccessToken: async (token: string) => {
       // Here you would typically verify the token with your OAuth server
