@@ -2,7 +2,6 @@ export { FeedbackAgent } from './agent.ts'
 export { databaseTools } from './tools.ts'
 export * from './schemas.ts'
 
-// Export individual tools for granular usage
 export {
   searchProjectsTool,
   createProjectTool,
@@ -10,3 +9,5 @@ export {
   createFeatureTool,
   createFeedbackTool,
 } from './tools.ts'
+
+export { mcpServer } from './mcp.ts'

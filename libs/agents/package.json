@@ -15,6 +15,7 @@
   "dependencies": {
     "@ai-sdk/google": "catalog:",
     "@feedback-thing/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "catalog:",
     "ai": "catalog:",
     "zod": "catalog:"
   }

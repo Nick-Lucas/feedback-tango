@@ -6,7 +6,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@feedback-thing/agents": "workspace:*",
     "@feedback-thing/db": "workspace:*",
+    "@hono/mcp": "catalog:",
     "@hono/node-server": "^1.19.3",
     "dotenv": "catalog:",
     "hono": "^4.9.7"

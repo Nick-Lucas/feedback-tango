@@ -9,7 +9,9 @@
     "types": ["node"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    // @hono/mcp has a type mismatch on mcpServer.connect(transport)
+    "exactOptionalPropertyTypes": false
   },
   "exclude": ["node_modules"]
 }

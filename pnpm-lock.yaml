@@ -12,8 +12,11 @@ catalogs:
     '@eslint/js':
       specifier: ^9.35.0
       version: 9.35.0
+    '@hono/mcp':
+      specifier: ^0.1.4
+      version: 0.1.4
     '@modelcontextprotocol/sdk':
-      specifier: ^1.18.0
+      specifier: 1.18.0
       version: 1.18.0
     '@types/better-sqlite3':
       specifier: ^7.6.13
@@ -87,6 +90,37 @@ importers:
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
+
+  apps/api:
+    dependencies:
+      '@feedback-thing/agents':
+        specifier: workspace:*
+        version: link:../../libs/agents
+      '@feedback-thing/db':
+        specifier: workspace:*
+        version: link:../../libs/db
+      '@hono/mcp':
+        specifier: 'catalog:'
+        version: 0.1.4(@modelcontextprotocol/sdk@1.18.0)(hono@4.9.7)
+      '@hono/node-server':
+        specifier: ^1.19.3
+        version: 1.19.3(hono@4.9.7)
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.6.1
+      hono:
+        specifier: ^4.9.7
+        version: 4.9.7
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.17
+        version: 20.19.15
+      tsx:
+        specifier: ^4.7.1
+        version: 4.20.5
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.2
 
   apps/auth-api:
     dependencies:
@@ -177,6 +211,9 @@ importers:
       '@feedback-thing/core':
         specifier: workspace:*
         version: link:../core
+      '@modelcontextprotocol/sdk':
+        specifier: 'catalog:'
+        version: 1.18.0
       ai:
         specifier: 'catalog:'
         version: 5.0.44(zod@4.1.8)
@@ -584,6 +621,12 @@ packages:
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
+
+  '@hono/mcp@0.1.4':
+    resolution: {integrity: sha512-OOMZCXaCcKw6MZoXJH1caO1FAPjJoTKRVstgzRVE8GJ/LMXvm/3OTynZYex0b5NYdMQRemd+FUjdCcYkH1pxMQ==}
+    peerDependencies:
+      '@modelcontextprotocol/sdk': ^1.12.0
+      hono: '>=4.0.0'
 
   '@hono/node-server@1.19.3':
     resolution: {integrity: sha512-Fjyxfux0rMPXMSob79OmddfpK5ArJa2xLkLCV+zamHkbeXQtSNKOi0keiBKyHZ/hCRKjigjmKGp4AJnDFq8PUw==}
@@ -1994,6 +2037,11 @@ snapshots:
       levn: 0.4.1
 
   '@hexagon/base64@1.1.28': {}
+
+  '@hono/mcp@0.1.4(@modelcontextprotocol/sdk@1.18.0)(hono@4.9.7)':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.18.0
+      hono: 4.9.7
 
   '@hono/node-server@1.19.3(hono@4.9.7)':
     dependencies:

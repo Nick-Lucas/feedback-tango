@@ -1,14 +1,11 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import {
   projectAccess,
   featureAccess,
   feedbackAccess,
 } from '@feedback-thing/core'
-import { randomUUID } from 'node:crypto'
 
-// Create server instance
-const server = new McpServer({
+export const mcpServer = new McpServer({
   name: 'feedback-thing',
   version: '1.0.0',
   capabilities: {
@@ -17,8 +14,7 @@ const server = new McpServer({
   },
 })
 
-// Search projects tool
-server.tool(
+mcpServer.tool(
   'searchProjects',
   {
     description:
@@ -47,8 +43,7 @@ server.tool(
   }
 )
 
-// Create project tool
-server.tool(
+mcpServer.tool(
   'createProject',
   {
     description:
@@ -84,8 +79,7 @@ server.tool(
   }
 )
 
-// Search features tool
-server.tool(
+mcpServer.tool(
   'searchFeatures',
   {
     description:
@@ -121,8 +115,7 @@ server.tool(
   }
 )
 
-// Create feature tool
-server.tool(
+mcpServer.tool(
   'createFeature',
   {
     description:
@@ -168,8 +161,7 @@ server.tool(
   }
 )
 
-// Create feedback tool
-server.tool(
+mcpServer.tool(
   'createFeedback',
   {
     description:
@@ -214,20 +206,3 @@ server.tool(
     }
   }
 )
-
-async function main() {
-  const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator() {
-      // TODO: probably use the better-auth token to generate this
-      return randomUUID()
-    },
-    // TODO: DNS rebinding protection, origin checks etc
-  })
-  await server.connect(transport)
-  console.error('Feedback Thing MCP Server running on stdio')
-}
-
-main().catch((error) => {
-  console.error('Fatal error in main():', error)
-  process.exit(1)
-})
