@@ -12,10 +12,13 @@
     "@modelcontextprotocol/sdk": "catalog:",
     "@types/cors": "catalog:",
     "@types/express": "catalog:",
+    "@types/qs": "catalog:",
     "better-auth": "catalog:",
     "cors": "catalog:",
     "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
     "express": "catalog:",
+    "qs": "catalog:",
     "zod": "^3"
   },
   "devDependencies": {

@@ -15,7 +15,8 @@ app.use((req, res, next) => {
 })
 app.use(
   cors({
-    exposedHeaders: ['mcp-session-id'],
+    exposedHeaders: '*',
+    // exposedHeaders: ['mcp-session-id'],
     origin: '*',
     methods: '*',
   })
