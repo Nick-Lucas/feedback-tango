@@ -2,6 +2,7 @@ import { ProxyOAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/
 import {
   getOAuthProtectedResourceMetadataUrl,
   mcpAuthRouter,
+  mcpAuthMetadataRouter,
 } from '@modelcontextprotocol/sdk/server/auth/router.js'
 import { requireBearerAuth } from '@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js'
 
@@ -28,7 +29,10 @@ const proxyProvider = new ProxyOAuthServerProvider({
     console.log('[ProxyOAuthServerProvider] getClient', client_id)
     return {
       client_id,
-      redirect_uris: ['http://localhost:3001/callback'],
+      redirect_uris: [
+        'http://localhost:3001/callback',
+        'http://localhost:3000/callback',
+      ],
     }
   },
 })
@@ -36,8 +40,6 @@ const proxyProvider = new ProxyOAuthServerProvider({
 export const oauthProxyMiddleware = mcpAuthRouter({
   provider: proxyProvider,
   issuerUrl: new URL('http://localhost:3001'),
-  baseUrl: new URL('http://localhost:3001/api/auth'),
-  // serviceDocumentationUrl: new URL('https://docs.example.com/'),
 })
 
 export const bearerTokenMiddleware = requireBearerAuth({

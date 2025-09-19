@@ -9,11 +9,13 @@ import type {
 
 // TODO: review this implementation as it was claudecode generated boilerplate
 export class MemoryOAuthProvider implements OAuthClientProvider {
-  private _redirectUrl: string = 'http://localhost:3000/auth/callback'
+  // TODO: redirect flow, where is it mean to go? MCP? CLI?
+  private _redirectUrl: string = 'http://localhost:3000/callback'
   private _clientMetadata: OAuthClientMetadata = {
     client_name: 'Feedback Thing CLI',
     redirect_uris: [this._redirectUrl],
-    scope: 'read write',
+    scope: '',
+    // scope: 'openid email profile',
     grant_types: ['authorization_code', 'refresh_token'],
     response_types: ['code'],
     token_endpoint_auth_method: 'client_secret_basic',
