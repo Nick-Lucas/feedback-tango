@@ -9,6 +9,10 @@ app.use('*', async (c, next) => {
     `${c.req.method.padEnd(5)} ${c.req.url}`,
     JSON.stringify(c.req.header(), null, 2)
   )
+  // if (c.req.path.endsWith('/token')) {
+  //   const body = await c.req.raw.clone().text()
+  //   console.log('Body:', body)
+  // }
 
   await next()
 
@@ -17,7 +21,9 @@ app.use('*', async (c, next) => {
   return
 })
 
-app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw))
+app.on(['POST', 'GET'], '/api/auth/*', async (c) => {
+  return await auth.handler(c.req.raw)
+})
 
 serve(
   {

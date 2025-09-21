@@ -20,6 +20,9 @@ const proxyProvider = new ProxyOAuthServerProvider({
     registrationUrl: 'http://localhost:3000/api/auth/mcp/register',
   },
   verifyAccessToken,
+  fetch(uri, init) {
+    return fetch(uri, init)
+  },
   getClient: async (client_id) => {
     console.log('[ProxyOAuthServerProvider] getClient', client_id)
 
@@ -35,6 +38,7 @@ const proxyProvider = new ProxyOAuthServerProvider({
 
     return {
       client_id,
+      client_secret: client.clientSecret!,
       redirect_uris: [client.redirectURLs!],
       // TODO: more stuff here?
     }

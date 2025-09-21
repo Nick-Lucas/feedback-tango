@@ -7,6 +7,7 @@ import {
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { google } from '@ai-sdk/google'
 import { MemoryOAuthProvider } from './MemoryOAuthProvider.ts'
+import type { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.js'
 // import { databaseTools } from './tools.ts'
 
 globalThis.AI_SDK_LOG_WARNINGS = false
@@ -15,17 +16,23 @@ export class FeedbackAgent {
   private model = google('gemini-2.5-flash-lite')
   private conversationHistory: ModelMessage[] = []
 
+  private authProvider: OAuthClientProvider | null = null
+
   private mcpClientInstance: Awaited<
     ReturnType<typeof experimental_createMCPClient>
   > | null = null
 
   private async getMcpClient() {
+    if (!this.authProvider) {
+      this.authProvider = await MemoryOAuthProvider.createWithPreparedRedirect()
+    }
+
     if (!this.mcpClientInstance) {
       this.mcpClientInstance = await experimental_createMCPClient({
         transport: new StreamableHTTPClientTransport(
           new URL('http://localhost:3001/mcp'),
           {
-            authProvider: new MemoryOAuthProvider(),
+            authProvider: this.authProvider,
           }
         ),
       })
