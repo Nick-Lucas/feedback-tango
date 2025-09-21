@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
+    "@tanstack/eslint-config": "catalog:",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "eslint": "catalog:",

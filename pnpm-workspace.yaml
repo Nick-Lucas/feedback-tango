@@ -4,8 +4,10 @@ packages:
 
 catalog:
   '@ai-sdk/google': ^2.0.14
+  '@daveyplate/better-auth-ui': ^3.1.10
   '@eslint/js': ^9.35.0
   '@modelcontextprotocol/sdk': 1.18.1
+  '@tanstack/eslint-config': ^0.3.2
   '@types/better-sqlite3': ^7.6.13
   '@types/cookie': ^1.0.0
   '@types/cookie-parser': ^1.4.9

@@ -2,8 +2,20 @@ import { Hono } from 'hono'
 import { serve } from '@hono/node-server'
 // import { cors } from 'hono/cors'
 import { auth } from '@feedback-thing/db'
+import { cors } from 'hono/cors'
 
 const app = new Hono()
+
+app.use(
+  '*',
+  cors({
+    origin: 'http://localhost:3002',
+    allowMethods: ['*'],
+    // allowHeaders: ['*'],
+    credentials: true,
+  })
+)
+
 app.use('*', async (c, next) => {
   console.log(
     `${c.req.method.padEnd(5)} ${c.req.url}`,
@@ -16,7 +28,10 @@ app.use('*', async (c, next) => {
 
   await next()
 
-  console.log(`${c.req.method.padEnd(5)} ${c.req.url} - ${c.res.status}`)
+  console.log(
+    `${c.req.method.padEnd(5)} ${c.req.url} - ${c.res.status}`,
+    JSON.stringify(Object.fromEntries(c.res.headers.entries()), null, 2)
+  )
 
   return
 })
