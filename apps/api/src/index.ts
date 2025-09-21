@@ -5,9 +5,16 @@ import { auth } from '@feedback-thing/db'
 
 const app = new Hono()
 app.use('*', async (c, next) => {
-  console.log(`${c.req.method.padEnd(5)} ${c.req.url}`)
+  console.log(
+    `${c.req.method.padEnd(5)} ${c.req.url}`,
+    JSON.stringify(c.req.header(), null, 2)
+  )
 
   await next()
+
+  console.log(`${c.req.method.padEnd(5)} ${c.req.url} - ${c.res.status}`)
+
+  return
 })
 
 app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw))

@@ -9,10 +9,26 @@ import { bearerTokenMiddleware, oauthProxyMiddleware } from './oauth.ts'
 const app = express()
 
 app.use((req, res, next) => {
-  console.log(`${req.method.padEnd(5)} ${req.url}`)
+  console.log(
+    `${req.method.padEnd(5)} ${req.url}`,
+    JSON.stringify(req.headers, null, 2)
+  )
+
+  res.once('finish', () => {
+    console.log(`${req.method.padEnd(5)} ${req.url} - ${res.statusCode}`)
+    return
+  })
 
   next()
 })
+app.use(
+  cors({
+    exposedHeaders: '*',
+    // exposedHeaders: ['mcp-session-id'],
+    origin: '*',
+    methods: '*',
+  })
+)
 app.use(
   cors({
     exposedHeaders: '*',

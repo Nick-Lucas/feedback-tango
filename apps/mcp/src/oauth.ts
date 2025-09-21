@@ -21,6 +21,8 @@ const proxyProvider = new ProxyOAuthServerProvider({
   },
   verifyAccessToken,
   getClient: async (client_id) => {
+    console.log('[ProxyOAuthServerProvider] getClient', client_id)
+
     const client = await db.query.oauthApplication.findFirst({
       where(fields, operators) {
         return operators.eq(fields.clientId, client_id)
@@ -31,7 +33,6 @@ const proxyProvider = new ProxyOAuthServerProvider({
       throw new Error('Client not found')
     }
 
-    console.log('[ProxyOAuthServerProvider] getClient', client_id)
     return {
       client_id,
       redirect_uris: [client.redirectURLs!],
@@ -123,6 +124,9 @@ async function verifyAccessToken(token: string): Promise<AuthInfo> {
     token,
     clientId: session.oauth_access_token.clientId!,
     scopes: session.oauth_access_token.scopes!.split(' '),
+    expiresAt: Math.floor(
+      session.oauth_access_token.accessTokenExpiresAt!.valueOf()
+    ),
     extra: {
       userId: session.user.id,
       userEmail: session.user.email,
