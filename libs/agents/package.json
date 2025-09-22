@@ -15,7 +15,12 @@
   "dependencies": {
     "@ai-sdk/google": "catalog:",
     "@feedback-thing/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "@types/cookie": "catalog:",
     "ai": "catalog:",
+    "better-auth": "catalog:",
+    "chalk": "catalog:",
+    "cookie": "catalog:",
     "zod": "catalog:"
   }
 }

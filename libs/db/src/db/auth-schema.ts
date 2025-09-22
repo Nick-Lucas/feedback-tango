@@ -73,3 +73,49 @@ export const verification = sqliteTable('verification', {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 })
+
+export const oauthApplication = sqliteTable('oauth_application', {
+  id: text('id').primaryKey(),
+  name: text('name'),
+  icon: text('icon'),
+  metadata: text('metadata'),
+  clientId: text('client_id').unique(),
+  clientSecret: text('client_secret'),
+  redirectURLs: text('redirect_ur_ls'),
+  type: text('type'),
+  disabled: integer('disabled', { mode: 'boolean' }).default(false),
+  userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+  createdAt: integer('created_at', { mode: 'timestamp' }),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }),
+})
+
+export const oauthAccessToken = sqliteTable('oauth_access_token', {
+  id: text('id').primaryKey(),
+  accessToken: text('access_token').unique(),
+  refreshToken: text('refresh_token').unique(),
+  accessTokenExpiresAt: integer('access_token_expires_at', {
+    mode: 'timestamp',
+  }),
+  refreshTokenExpiresAt: integer('refresh_token_expires_at', {
+    mode: 'timestamp',
+  }),
+  clientId: text('client_id').references(() => oauthApplication.clientId, {
+    onDelete: 'cascade',
+  }),
+  userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+  scopes: text('scopes'),
+  createdAt: integer('created_at', { mode: 'timestamp' }),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }),
+})
+
+export const oauthConsent = sqliteTable('oauth_consent', {
+  id: text('id').primaryKey(),
+  clientId: text('client_id').references(() => oauthApplication.clientId, {
+    onDelete: 'cascade',
+  }),
+  userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+  scopes: text('scopes'),
+  createdAt: integer('created_at', { mode: 'timestamp' }),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }),
+  consentGiven: integer('consent_given', { mode: 'boolean' }),
+})

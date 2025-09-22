@@ -3,6 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from './db/db.ts'
 import { z } from 'zod'
 import * as schemas from './db/index.ts'
+import { mcp } from 'better-auth/plugins'
 
 const parsed = z
   .object({
@@ -23,8 +24,16 @@ export const auth = betterAuth({
     provider: 'sqlite',
     schema: schemas,
   }),
-
-  trustedOrigins: ['http://localhost:3000', 'http://localhost:3001'],
+  plugins: [
+    mcp({
+      loginPage: 'http://localhost:3002/cli/signin',
+    }),
+  ],
+  trustedOrigins: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+  ],
   socialProviders: {
     github: {
       enabled: true,
