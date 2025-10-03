@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { createDb } from '@feedback-thing/db'
+import { createDb, Projects } from '@feedback-thing/db'
 import z from 'zod'
 
 const db = createDb()
@@ -7,6 +7,25 @@ const db = createDb()
 export const getProjects = createServerFn().handler(() => {
   return db.query.Projects.findMany()
 })
+
+export const createProject = createServerFn()
+  .inputValidator(
+    z.object({
+      name: z.string().min(1),
+      createdBy: z.string(),
+    })
+  )
+  .handler(async (ctx) => {
+    const [project] = await db
+      .insert(Projects)
+      .values({
+        name: ctx.data.name,
+        createdBy: ctx.data.createdBy,
+      })
+      .returning()
+
+    return project
+  })
 
 export const getFeatures = createServerFn()
   .inputValidator(

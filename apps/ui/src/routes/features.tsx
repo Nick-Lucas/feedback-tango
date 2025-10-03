@@ -1,4 +1,9 @@
-import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  useRouter,
+} from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   Sidebar,
@@ -12,7 +17,7 @@ import {
   SidebarProvider,
 } from '@/components/ui/sidebar'
 import { Input } from '@/components/ui/input'
-import { getFeatures, getProjects } from '@/server-functions'
+import { createProject, getFeatures, getProjects } from '@/server-functions'
 import { ProjectPicker } from '@/components/project-picker'
 import z from 'zod'
 
@@ -46,12 +51,23 @@ export const Route = createFileRoute('/features')({
 
 function App() {
   const data = Route.useLoaderData()
+  const router = useRouter()
 
   const [search, setSearch] = useState('')
 
   const filteredFeatures = data.features.filter((feature) =>
     feature.name.toLowerCase().includes(search.toLowerCase())
   )
+
+  const handleCreateProject = async (name: string) => {
+    await createProject({
+      data: {
+        name,
+        createdBy: 'user',
+      },
+    })
+    await router.invalidate()
+  }
 
   return (
     <SidebarProvider>
@@ -62,6 +78,7 @@ function App() {
               <ProjectPicker
                 projects={data.projects}
                 selectedProject={data.project}
+                onCreateProject={handleCreateProject}
               />
 
               <Input

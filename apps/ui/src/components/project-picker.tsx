@@ -14,7 +14,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Check, ChevronsUpDown, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Project {
@@ -25,63 +35,134 @@ interface Project {
 interface ProjectPickerProps {
   projects: Project[]
   selectedProject: Project | null
+  onCreateProject?: (name: string) => Promise<void> | void
 }
 
 export function ProjectPicker({
   projects,
   selectedProject,
+  onCreateProject,
 }: ProjectPickerProps) {
   const navigate = useNavigate({ from: '/features' })
   const [open, setOpen] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [projectName, setProjectName] = useState('')
+
+  const handleCreateProject = async () => {
+    if (projectName.trim() && onCreateProject) {
+      await onCreateProject(projectName.trim())
+      setProjectName('')
+      setDialogOpen(false)
+    }
+  }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full h-8 justify-between"
-        >
-          {selectedProject?.name || 'Select project...'}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-        <Command>
-          <CommandInput placeholder="Search projects..." />
-          <CommandList>
-            <CommandEmpty>No project found.</CommandEmpty>
-            <CommandGroup>
-              {projects.map((project) => (
-                <CommandItem
-                  key={project.id}
-                  value={project.name}
-                  onSelect={async () => {
-                    await navigate({
-                      search: {
-                        projectId: project.id,
-                      },
-                    })
+    <>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Project</DialogTitle>
+            <DialogDescription>
+              Enter a name for your new project.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Project Name</Label>
+              <Input
+                id="name"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    void handleCreateProject()
+                  }
+                }}
+                placeholder="My Project"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDialogOpen(false)
+                setProjectName('')
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateProject}
+              disabled={!projectName.trim()}
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-                    setOpen(false)
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      selectedProject?.id === project.id
-                        ? 'opacity-100'
-                        : 'opacity-0'
-                    )}
-                  />
-                  {project.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full h-8 justify-between"
+          >
+            {selectedProject?.name || 'Select project...'}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+          <Command>
+            <CommandInput placeholder="Search projects..." />
+            <CommandList>
+              <CommandEmpty>No project found.</CommandEmpty>
+              <CommandGroup>
+                {projects.map((project) => (
+                  <CommandItem
+                    key={project.id}
+                    value={project.name}
+                    onSelect={async () => {
+                      await navigate({
+                        search: {
+                          projectId: project.id,
+                        },
+                      })
+
+                      setOpen(false)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        'mr-2 h-4 w-4',
+                        selectedProject?.id === project.id
+                          ? 'opacity-100'
+                          : 'opacity-0'
+                      )}
+                    />
+                    {project.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              {onCreateProject && (
+                <CommandGroup>
+                  <CommandItem
+                    onSelect={() => {
+                      setOpen(false)
+                      setDialogOpen(true)
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create project
+                  </CommandItem>
+                </CommandGroup>
+              )}
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </>
   )
 }
