@@ -25,6 +25,7 @@ interface Feature {
 
 interface MergeFeaturesModalProps {
   open: boolean
+  suggestion?: { name: string; description: string }
   onOpenChange: (open: boolean, reason?: 'cancel' | 'complete') => void
   projectId: string
   availableFeatures: Feature[]
@@ -32,13 +33,16 @@ interface MergeFeaturesModalProps {
 
 export function MergeFeaturesModal({
   open,
+  suggestion,
   onOpenChange,
   projectId,
   availableFeatures,
 }: MergeFeaturesModalProps) {
   const navigate = useNavigate()
-  const [newFeatureName, setNewFeatureName] = useState('')
-  const [newFeatureDescription, setNewFeatureDescription] = useState('')
+  const [newFeatureName, setNewFeatureName] = useState(suggestion?.name || '')
+  const [newFeatureDescription, setNewFeatureDescription] = useState(
+    suggestion?.description || ''
+  )
   const [isMerging, setIsMerging] = useState(false)
 
   // Use availableFeatures directly as they are pre-selected from sidebar

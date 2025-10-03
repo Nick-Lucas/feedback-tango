@@ -2,8 +2,12 @@ import { createServerFn } from '@tanstack/react-start'
 import { createDb, Projects, Feedbacks, Features } from '@feedback-thing/db'
 import { inArray } from 'drizzle-orm'
 import z from 'zod'
+import { generateObject } from 'ai'
+import { google } from '@ai-sdk/google'
 
 const db = createDb()
+
+const model = google('gemini-2.5-flash-lite')
 
 export const getProjects = createServerFn().handler(() => {
   return db.query.Projects.findMany()
@@ -101,4 +105,59 @@ export const mergeFeatures = createServerFn()
 
       return { success: true, newFeatureId }
     })
+  })
+
+export const suggestMergedFeatureDetails = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      featureIds: z.array(z.string()).min(2),
+    })
+  )
+  .handler(async (ctx) => {
+    const { featureIds } = ctx.data
+
+    const features = await db.query.Features.findMany({
+      where(fields) {
+        return inArray(fields.id, featureIds)
+      },
+    })
+
+    try {
+      const result = await generateObject({
+        model,
+        schema: z.object({
+          name: z.string().min(1),
+          description: z.string().min(1),
+        }),
+        system: `
+          You are a Product Owner who is combining multiple feature concepts into one overarching feature concept based on their names and descriptions.
+
+          Given the following features, generate a new name and description that accurately and concisely encapsulated all of them.
+
+          Avoid combining feature details into the name/description, instead focus on the higher level concept that encompasses them all. For instance:
+
+          - If the features are "Add dark mode", "Add light mode", and "Add system theme support", a good combined feature name might be "Add theme support" with a description of "Allow users to select and switch between different themes, including dark, light, and system default."
+          - If the features are "Improve products search speed", "Add products search filter for color", and "Enable products search suggestions", a good combined feature name might be "Products Search" with a description of "Improvements to the Products Search such as filters, performance, and intelligence."
+        `,
+        prompt: `
+          ${features
+            .map(
+              (f, i) =>
+                `${i + 1}. Name: ${f.name}, Description: ${f.description}`
+            )
+            .join('\n')}
+        `,
+      })
+
+      return {
+        success: true,
+        suggestion: result.object,
+      } as const
+    } catch (err) {
+      console.error('Error during AI Feature Suggestion generation:', err)
+
+      return {
+        success: false,
+      } as const
+    }
   })

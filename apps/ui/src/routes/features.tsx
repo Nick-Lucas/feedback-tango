@@ -19,10 +19,16 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { createProject, getFeatures, getProjects } from '@/server-functions'
+import {
+  createProject,
+  getFeatures,
+  getProjects,
+  suggestMergedFeatureDetails,
+} from '@/server-functions'
 import { ProjectPicker } from '@/components/project-picker'
 import { MergeFeaturesModal } from '@/components/merge-features-modal'
 import z from 'zod'
+import { useServerFn } from '@tanstack/react-start'
 
 export const Route = createFileRoute('/features')({
   component: App,
@@ -56,12 +62,17 @@ function App() {
   const data = Route.useLoaderData()
   const router = useRouter()
   const params = useParams({ from: '/features/$id' })
+  const requestSuggestMergedFeatureDetails = useServerFn(
+    suggestMergedFeatureDetails
+  )
 
   const [search, setSearch] = useState('')
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(
     new Set()
   )
-  const [mergeModalOpen, setMergeModalOpen] = useState(false)
+  const [mergeModalOpen, setMergeModalOpen] = useState<
+    { open: true; suggestion?: { name: string; description: string } } | false
+  >(false)
   const [hoveredFeatureId, setHoveredFeatureId] = useState<string | null>(null)
 
   const currentFeatureId = params?.id
@@ -94,8 +105,23 @@ function App() {
     setSelectedFeatureIds(newSelected)
   }
 
-  const handleMergeClick = () => {
-    setMergeModalOpen(true)
+  const handleMergeClick = async () => {
+    const result = await requestSuggestMergedFeatureDetails({
+      data: {
+        featureIds: Array.from(selectedFeatureIds),
+      },
+    })
+
+    if (result.success) {
+      setMergeModalOpen({
+        open: true,
+        suggestion: result.suggestion,
+      })
+    } else {
+      setMergeModalOpen({
+        open: true,
+      })
+    }
   }
 
   const handleMergeComplete = async () => {
@@ -204,9 +230,12 @@ function App() {
         selectedFeatures.length >= 2 &&
         selectedFeatures[0] && (
           <MergeFeaturesModal
-            open={mergeModalOpen}
+            // TODO: bit of a hack to reset internal state when suggestions change, improving internal state would be better
+            key={JSON.stringify(mergeModalOpen)}
+            suggestion={mergeModalOpen ? mergeModalOpen?.suggestion : undefined}
+            open={!!mergeModalOpen}
             onOpenChange={async (open, reason) => {
-              setMergeModalOpen(open)
+              setMergeModalOpen(open ? { open: true } : false)
               if (!open && reason === 'complete') {
                 await handleMergeComplete()
               }
