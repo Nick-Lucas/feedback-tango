@@ -9,6 +9,12 @@ export const Route = createFileRoute('/features/$id')({
   },
 })
 
+function FormattedDate({ date }: { date: Date | string }) {
+  return (
+    <span suppressHydrationWarning>{new Date(date).toLocaleDateString()}</span>
+  )
+}
+
 function RouteComponent() {
   const { feature } = Route.useLoaderData()
 
@@ -41,9 +47,7 @@ function RouteComponent() {
                     By {feedback.createdByUser?.name || feedback.createdBy}
                   </span>
                   <span className="mx-2">•</span>
-                  <span>
-                    {new Date(feedback.createdAt).toLocaleDateString()}
-                  </span>
+                  <FormattedDate date={feedback.createdAt} />
                 </div>
               </div>
             ))}
