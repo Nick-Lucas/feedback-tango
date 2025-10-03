@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "docker compose up",
     "typecheck": "tsc --noEmit",
     "auth:generate": "pnpx @better-auth/cli generate --config=src/auth.ts --output=src/db/auth-schema.ts --yes",
     "db:generate": "pnpm auth:generate && drizzle-kit generate",
@@ -18,12 +19,11 @@
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "better-auth": "catalog:",
-    "better-sqlite3": "catalog:",
     "drizzle-orm": "catalog:",
+    "postgres": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "catalog:",
     "drizzle-kit": "catalog:"
   }
 }

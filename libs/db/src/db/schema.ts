@@ -1,13 +1,11 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
-import { relations, sql } from 'drizzle-orm'
+import { pgTable, text, serial, integer, timestamp } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
 export * from './auth-schema.ts'
 
-export const Projects = sqliteTable('projects', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const Projects = pgTable('projects', {
+  id: serial('id').primaryKey(),
   name: text('name').notNull().unique(),
-  createdAt: text('created_at')
-    .default(sql`(datetime('now'))`)
-    .notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
   createdBy: text('created_by').notNull(),
 })
 
@@ -16,17 +14,15 @@ export const ProjectRelations = relations(Projects, ({ many }) => ({
   feedbacks: many(Feedbacks),
 }))
 
-export const Features = sqliteTable('features', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const Features = pgTable('features', {
+  id: serial('id').primaryKey(),
   projectId: integer('project_id')
     .notNull()
     .references(() => Projects.id),
   name: text('name').notNull().unique(),
   description: text('description').notNull(),
   createdBy: text('created_by').notNull(),
-  createdAt: text('created_at')
-    .default(sql`(datetime('now'))`)
-    .notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
 export const FeatureRelations = relations(Features, ({ one, many }) => ({
@@ -37,8 +33,8 @@ export const FeatureRelations = relations(Features, ({ one, many }) => ({
   feedbacks: many(Feedbacks),
 }))
 
-export const Feedbacks = sqliteTable('feedback', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const Feedbacks = pgTable('feedback', {
+  id: serial('id').primaryKey(),
   projectId: integer('project_id')
     .notNull()
     .references(() => Projects.id),
@@ -46,9 +42,7 @@ export const Feedbacks = sqliteTable('feedback', {
     .notNull()
     .references(() => Features.id),
   feedback: text('feedback').notNull(),
-  createdAt: text('created_at')
-    .default(sql`(datetime('now'))`)
-    .notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
   createdBy: text('created_by').notNull(),
 })
 

@@ -62,8 +62,11 @@ export const projectAccess = {
 
   // Delete a project
   delete: async (id: number): Promise<boolean> => {
-    const result = await db.delete(Projects).where(eq(Projects.id, id))
-    return result.changes > 0
+    const result = await db
+      .delete(Projects)
+      .where(eq(Projects.id, id))
+      .returning()
+    return result.length > 0
   },
 
   // Get projects by creator
@@ -154,8 +157,11 @@ export const featureAccess = {
 
   // Delete a feature
   delete: async (id: number): Promise<boolean> => {
-    const result = await db.delete(Features).where(eq(Features.id, id))
-    return result.changes > 0
+    const result = await db
+      .delete(Features)
+      .where(eq(Features.id, id))
+      .returning()
+    return result.length > 0
   },
 
   // Get features by creator
@@ -260,8 +266,11 @@ export const feedbackAccess = {
 
   // Delete feedback
   delete: async (id: number): Promise<boolean> => {
-    const result = await db.delete(Feedbacks).where(eq(Feedbacks.id, id))
-    return result.changes > 0
+    const result = await db
+      .delete(Feedbacks)
+      .where(eq(Feedbacks.id, id))
+      .returning()
+    return result.length > 0
   },
 
   // Get feedback by creator
