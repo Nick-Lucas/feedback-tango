@@ -1,4 +1,9 @@
-import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  useNavigate,
+} from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   Sidebar,
@@ -28,52 +33,44 @@ import {
 } from '@/components/ui/popover'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getFeatures, getProjects } from '@/server-functions'
+import z from 'zod'
 
 export const Route = createFileRoute('/features')({
   component: App,
+  validateSearch: z.object({
+    projectId: z.string().optional(),
+  }),
+  loaderDeps(opts) {
+    return {
+      projectId: opts.search.projectId,
+    }
+  },
+  async loader(ctx) {
+    const projects = await getProjects()
+    const projectId = ctx.deps.projectId ?? projects?.[0]?.id
+
+    return {
+      projects: await getProjects(),
+      project: projects?.find((p) => p.id === projectId) ?? null,
+      features: await getFeatures({
+        data: {
+          projectId,
+        },
+      }),
+    }
+  },
 })
 
-const mockProjects = [
-  { id: 1, name: 'E-commerce Platform' },
-  { id: 2, name: 'Mobile App' },
-  { id: 3, name: 'Admin Dashboard' },
-]
-
-const mockFeaturesByProject: Record<
-  number,
-  Array<{ id: number; name: string }>
-> = {
-  1: [
-    { id: 1, name: 'User Authentication' },
-    { id: 2, name: 'Dashboard Analytics' },
-    { id: 3, name: 'Payment Integration' },
-  ],
-  2: [
-    { id: 4, name: 'Email Notifications' },
-    { id: 5, name: 'Dark Mode Support' },
-  ],
-  3: [
-    { id: 6, name: 'API Documentation' },
-    { id: 7, name: 'User Management' },
-    { id: 8, name: 'Reporting System' },
-  ],
-}
-
 function App() {
+  const navigate = useNavigate({ from: '/features' })
+  const data = Route.useLoaderData()
+
   const [open, setOpen] = useState(false)
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(
-    mockProjects[0].id.toString()
-  )
   const [search, setSearch] = useState('')
 
-  const currentFeatures =
-    mockFeaturesByProject[parseInt(selectedProjectId)] || []
-  const filteredFeatures = currentFeatures.filter((feature) =>
+  const filteredFeatures = data.features.filter((feature) =>
     feature.name.toLowerCase().includes(search.toLowerCase())
-  )
-
-  const selectedProject = mockProjects.find(
-    (project) => project.id.toString() === selectedProjectId
   )
 
   return (
@@ -90,7 +87,7 @@ function App() {
                     aria-expanded={open}
                     className="w-full h-8 justify-between"
                   >
-                    {selectedProject?.name || 'Select project...'}
+                    {data.project?.name || 'Select project...'}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -100,19 +97,24 @@ function App() {
                     <CommandList>
                       <CommandEmpty>No project found.</CommandEmpty>
                       <CommandGroup>
-                        {mockProjects.map((project) => (
+                        {data.projects.map((project) => (
                           <CommandItem
                             key={project.id}
                             value={project.name}
-                            onSelect={() => {
-                              setSelectedProjectId(project.id.toString())
+                            onSelect={async () => {
+                              await navigate({
+                                search: {
+                                  projectId: project.id,
+                                },
+                              })
+
                               setOpen(false)
                             }}
                           >
                             <Check
                               className={cn(
                                 'mr-2 h-4 w-4',
-                                selectedProjectId === project.id.toString()
+                                data.project?.id === project.id
                                   ? 'opacity-100'
                                   : 'opacity-0'
                               )}

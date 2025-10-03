@@ -32,7 +32,7 @@ catalog:
   cookie-parser: ^1.4.7
   cors: ^2.8.5
   date-fns: ^4.1.0
-  dotenv: ^16.6.1
+  dotenv: 16.6.1
   drizzle-kit: ^0.31.4
   drizzle-orm: 0.44.5
   embla-carousel-react: ^8.6.0
@@ -56,7 +56,7 @@ catalog:
   vaul: ^1.1.2
   zod: 4.1.8
 
-catalogMode: manual
+catalogMode: prefer
 
 cleanupUnusedCatalogs: true
 
