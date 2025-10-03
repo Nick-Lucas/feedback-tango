@@ -5,6 +5,9 @@ export const Route = createFileRoute('/features/$id')({
   component: RouteComponent,
   loader: async ({ params }) => {
     const feature = await getFeature({ data: { featureId: params.id } })
+    if (!feature) {
+      throw new Error('Feature not found')
+    }
     return { feature }
   },
 })

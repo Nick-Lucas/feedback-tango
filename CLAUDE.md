@@ -1,9 +1,9 @@
 # Lint, Format, Typecheck
 
-After each change, always check you work with:
+After each change, always check your work by running the following in the project root directory:
 
-`pnpm lint` and `pnpm typecheck`
+- `pnpm lint:fix`
+- `pnpm typecheck`
+- `pnpm format:write`
 
-When running these never try to run inside a subdirectory
-
-Once your changes are complete run `pnpm format:write` before finishing
+Never try to run inside a subdirectory

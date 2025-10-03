@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { createDb, Projects } from '@feedback-thing/db'
+import { createDb, Projects, Feedbacks, Features } from '@feedback-thing/db'
+import { inArray } from 'drizzle-orm'
 import z from 'zod'
 
 const db = createDb()
@@ -59,5 +60,45 @@ export const getFeature = createServerFn()
           },
         },
       },
+    })
+  })
+
+export const mergeFeatures = createServerFn()
+  .inputValidator(
+    z.object({
+      featureIds: z.array(z.string()).min(2),
+      newFeatureName: z.string().min(1),
+      newFeatureDescription: z.string().min(1),
+      projectId: z.string(),
+    })
+  )
+  .handler(async (ctx) => {
+    const { featureIds, newFeatureName, newFeatureDescription, projectId } =
+      ctx.data
+
+    let newFeatureId: string
+
+    return await db.transaction(async (tx) => {
+      const [newFeature] = await tx
+        .insert(Features)
+        .values({
+          projectId,
+          name: newFeatureName,
+          description: newFeatureDescription,
+          createdBy: '', //TODO: current user from auth
+        })
+        .returning()
+
+      newFeatureId = newFeature!.id
+
+      await tx
+        .update(Feedbacks)
+        .set({ featureId: newFeatureId })
+        .where(inArray(Feedbacks.featureId, featureIds))
+
+      // TODO: actually just mark them as merged with a foriegnKey to the new feature so they're also searchable later
+      await tx.delete(Features).where(inArray(Features.id, featureIds))
+
+      return { success: true, newFeatureId }
     })
   })

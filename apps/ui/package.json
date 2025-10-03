@@ -54,6 +54,7 @@
     "clsx": "^2.1.1",
     "cmdk": "catalog:",
     "date-fns": "catalog:",
+    "drizzle-orm": "catalog:",
     "embla-carousel-react": "catalog:",
     "input-otp": "catalog:",
     "lucide-react": "^0.544.0",
