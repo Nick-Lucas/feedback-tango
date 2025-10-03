@@ -1,9 +1,4 @@
-import {
-  createFileRoute,
-  Link,
-  Outlet,
-  useNavigate,
-} from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   Sidebar,
@@ -17,23 +12,8 @@ import {
   SidebarProvider,
 } from '@/components/ui/sidebar'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { getFeatures, getProjects } from '@/server-functions'
+import { ProjectPicker } from '@/components/project-picker'
 import z from 'zod'
 
 export const Route = createFileRoute('/features')({
@@ -65,10 +45,8 @@ export const Route = createFileRoute('/features')({
 })
 
 function App() {
-  const navigate = useNavigate({ from: '/features' })
   const data = Route.useLoaderData()
 
-  const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
 
   const filteredFeatures = data.features.filter((feature) =>
@@ -81,54 +59,10 @@ function App() {
         <Sidebar>
           <SidebarContent>
             <div className="p-2 space-y-2">
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-full h-8 justify-between"
-                  >
-                    {data.project?.name || 'Select project...'}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-                  <Command>
-                    <CommandInput placeholder="Search projects..." />
-                    <CommandList>
-                      <CommandEmpty>No project found.</CommandEmpty>
-                      <CommandGroup>
-                        {data.projects.map((project) => (
-                          <CommandItem
-                            key={project.id}
-                            value={project.name}
-                            onSelect={async () => {
-                              await navigate({
-                                search: {
-                                  projectId: project.id,
-                                },
-                              })
-
-                              setOpen(false)
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                'mr-2 h-4 w-4',
-                                data.project?.id === project.id
-                                  ? 'opacity-100'
-                                  : 'opacity-0'
-                              )}
-                            />
-                            {project.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              <ProjectPicker
+                projects={data.projects}
+                selectedProject={data.project}
+              />
 
               <Input
                 type="search"
