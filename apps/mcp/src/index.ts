@@ -8,6 +8,7 @@ import { bearerTokenMiddleware, oauthProxyMiddleware } from './oauth.ts'
 
 const app = express()
 
+// Just a logger middleware so you can see all requests coming through
 app.use((req, res, next) => {
   console.log(
     `${req.method.padEnd(5)} ${req.url}`,
@@ -21,24 +22,24 @@ app.use((req, res, next) => {
 
   next()
 })
+
+// For production use you may want to lock cors down more
 app.use(
   cors({
     exposedHeaders: '*',
-    // exposedHeaders: ['mcp-session-id'],
     origin: '*',
     methods: '*',
   })
 )
-app.use(
-  cors({
-    exposedHeaders: '*',
-    // exposedHeaders: ['mcp-session-id'],
-    origin: '*',
-    methods: '*',
-  })
-)
+
 app.use(express.json())
+
+// The oauthProxyMiddleware will intercept requests to
+// oauth endpoints and pass them to the auth-server
 app.use(oauthProxyMiddleware)
+
+// The bearerTokenMiddleware will check for a valid bearer
+// token and extract the user/session information
 app.use(bearerTokenMiddleware)
 
 // Cache of MCP sessions, likely not suited to horizontal scaling without sticky routing but fine for dev
@@ -56,7 +57,6 @@ app.post('/mcp', async (req, res) => {
       onsessioninitialized: (sessionId) => {
         transports[sessionId] = transport
       },
-      // TODO: configure for deployed location
       enableDnsRebindingProtection: true,
       allowedHosts: ['localhost:3001'],
     })

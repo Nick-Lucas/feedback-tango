@@ -10,6 +10,13 @@ import type {
   AuthorizationServerMetadata,
 } from '@modelcontextprotocol/sdk/shared/auth.js'
 
+/**
+ * In-memory OAuthClientProvider implementation for CLI applications.
+ *
+ * A production implementation would likely persist tokens and client info to disk or secure storage.
+ *
+ * This implementation also stands up a local HTTP server to handle the OAuth redirect callback.
+ */
 export class MemoryOAuthProvider implements OAuthClientProvider {
   private _clientInfo?: OAuthClientInformation
   private _tokens?: OAuthTokens
@@ -20,10 +27,15 @@ export class MemoryOAuthProvider implements OAuthClientProvider {
   public static async createWithPreparedRedirect(): Promise<MemoryOAuthProvider> {
     const provider = new MemoryOAuthProvider()
 
-    // Stand up a local server to listen for the redirect, capture the token(s), and store
-    // Unfortunately it will need to stay running throughout the application lifecycle even if
-    // no fresh auth was needed, because OAuthClientProvider doesn't support promises in the
-    // right places to boot it on demand
+    /*
+     * Stand up a local server to listen for the redirect, capture the token(s), and store them.
+     * Unfortunately it will need to stay running throughout the application lifecycle even if
+     * no fresh auth was needed, because OAuthClientProvider doesn't support promises in the
+     * right places to boot it on demand.
+     *
+     * This could be done differently in some applications by setting up auth prior to booting the agent,
+     * however the goal here is to use the MCP SDK in the most SDK-native way possible and I can't see a different way.
+     */
     await provider.startCallbackServer()
 
     return provider
@@ -38,7 +50,6 @@ export class MemoryOAuthProvider implements OAuthClientProvider {
       client_name: 'Feedback Thing CLI',
       redirect_uris: [this.redirectUrl],
       scope: '',
-      // scope: 'openid email profile',
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
       token_endpoint_auth_method: 'client_secret_basic',
@@ -61,7 +72,7 @@ export class MemoryOAuthProvider implements OAuthClientProvider {
       client_id: clientInformation.client_id,
 
       // For some reason we receive this to store and utilise but it gets
-      // ignored and has to be loaded again by the ProxyOAuthServerProvider
+      // ignored by ProxyOAuthServerProvider and has to be loaded again in the server
       // Confused.
       client_secret: clientInformation.client_secret,
     }
@@ -108,21 +119,6 @@ export class MemoryOAuthProvider implements OAuthClientProvider {
       headers.set('Authorization', `Basic ${auth}`)
     }
   }
-
-  // Probably not needed since it's optional and has standard validation
-  // async validateResourceURL(
-  //   serverUrl: string | URL,
-  //   resource?: string
-  // ): Promise<URL | undefined> {
-  //   const server = new URL(serverUrl)
-  //   if (resource) {
-  //     const resourceUrl = new URL(resource)
-  //     if (resourceUrl.origin === server.origin) {
-  //       return resourceUrl
-  //     }
-  //   }
-  //   return new URL(server.origin)
-  // }
 
   invalidateCredentials(scope: 'all' | 'client' | 'tokens' | 'verifier'): void {
     switch (scope) {
