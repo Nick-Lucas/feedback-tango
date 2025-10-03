@@ -1,10 +1,12 @@
 import { Hono } from 'hono'
 import { serve } from '@hono/node-server'
 import { eq } from 'drizzle-orm'
-import { auth, db, oauthAccessToken, user } from '@feedback-thing/db'
+import { createDb, oauthAccessToken, user } from '@feedback-thing/db'
+import { auth } from '@feedback-thing/db/auth'
 import { cors } from 'hono/cors'
 
 const app = new Hono()
+const db = createDb()
 
 app.use(
   '*',

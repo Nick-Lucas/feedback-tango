@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { db } from './db/db.ts'
+import { createDb } from './db/db.ts'
 import { z } from 'zod'
 import * as schemas from './db/index.ts'
 import { mcp } from 'better-auth/plugins'
@@ -20,7 +20,7 @@ if (!parsed.success) {
 const env = parsed.data
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(createDb(), {
     provider: 'pg',
     schema: schemas,
   }),

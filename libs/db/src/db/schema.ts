@@ -1,6 +1,7 @@
 import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { relations, sql } from 'drizzle-orm'
 export * from './auth-schema.ts'
+import { user } from './auth-schema.ts'
 
 export const Projects = pgTable('projects', {
   id: uuid()
@@ -60,5 +61,9 @@ export const FeedbackRelations = relations(Feedbacks, ({ one }) => ({
   feature: one(Features, {
     fields: [Feedbacks.featureId],
     references: [Features.id],
+  }),
+  createdByUser: one(user, {
+    fields: [Feedbacks.createdBy],
+    references: [user.id],
   }),
 }))

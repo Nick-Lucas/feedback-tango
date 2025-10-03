@@ -53,11 +53,13 @@ export const Route = createFileRoute('/features')({
     return {
       projects: await getProjects(),
       project: projects?.find((p) => p.id === projectId) ?? null,
-      features: await getFeatures({
-        data: {
-          projectId,
-        },
-      }),
+      features: projectId
+        ? await getFeatures({
+            data: {
+              projectId,
+            },
+          })
+        : [],
     }
   },
 })

@@ -7,12 +7,12 @@ export const projectCreateSchema = z.object({
 })
 
 export const projectUpdateSchema = z.object({
-  id: z.number().int().positive('Project ID must be a positive integer'),
+  id: z.string().min(1),
   name: z.string().min(1, 'Project name is required').optional(),
 })
 
 export const projectIdSchema = z.object({
-  id: z.number().int().positive('Project ID must be a positive integer'),
+  id: z.string().min(1),
 })
 
 export const projectCreatorSchema = z.object({
@@ -27,22 +27,22 @@ export const projectSearchSchema = z.object({
 export const featureCreateSchema = z.object({
   name: z.string().min(1, 'Feature name is required'),
   description: z.string().min(1, 'Feature description is required'),
-  projectId: z.number().int().positive('Project ID must be a positive integer'),
+  projectId: z.string().min(1),
   createdBy: z.string().min(1, 'Creator is required'),
 })
 
 export const featureUpdateSchema = z.object({
-  id: z.number().int().positive('Feature ID must be a positive integer'),
+  id: z.string().min(1),
   name: z.string().min(1, 'Feature name is required').optional(),
   description: z.string().min(1, 'Feature description is required').optional(),
 })
 
 export const featureIdSchema = z.object({
-  id: z.number().int().positive('Feature ID must be a positive integer'),
+  id: z.string().min(1),
 })
 
 export const featureProjectSchema = z.object({
-  projectId: z.number().int().positive('Project ID must be a positive integer'),
+  projectId: z.string().min(1),
 })
 
 export const featureCreatorSchema = z.object({
@@ -50,33 +50,33 @@ export const featureCreatorSchema = z.object({
 })
 
 export const featureSearchSchema = z.object({
-  projectId: z.number().int().positive('ProjectID fetched from another tool'),
+  projectId: z.string().min(1),
   searchTerm: z.string().min(1, 'Search term is required'),
 })
 
 // Feedback schemas
 export const feedbackCreateSchema = z.object({
   feedback: z.string().min(1, 'Feedback content is required'),
-  projectId: z.number().int().positive('Project ID must be a positive integer'),
-  featureId: z.number().int().positive('Feature ID must be a positive integer'),
+  projectId: z.string().min(1),
+  featureId: z.string().min(1),
   createdBy: z.string().min(1, 'Creator is required'),
 })
 
 export const feedbackUpdateSchema = z.object({
-  id: z.number().int().positive('Feedback ID must be a positive integer'),
+  id: z.string().min(1),
   feedback: z.string().min(1, 'Feedback content is required').optional(),
 })
 
 export const feedbackIdSchema = z.object({
-  id: z.number().int().positive('Feedback ID must be a positive integer'),
+  id: z.string().min(1),
 })
 
 export const feedbackProjectSchema = z.object({
-  projectId: z.number().int().positive('Project ID must be a positive integer'),
+  projectId: z.string().min(1),
 })
 
 export const feedbackFeatureSchema = z.object({
-  featureId: z.number().int().positive('Feature ID must be a positive integer'),
+  featureId: z.string().min(1),
 })
 
 export const feedbackCreatorSchema = z.object({

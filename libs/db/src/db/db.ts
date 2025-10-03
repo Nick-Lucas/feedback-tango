@@ -2,8 +2,13 @@ import postgres from 'postgres'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import * as schema from './schema.ts'
 
-const connectionString = process.env.DATABASE_URL!
+export function createDb() {
+  const connectionString = process.env.POSTGRES_URI!
+  if (!connectionString) {
+    throw new Error('POSTGRES_URI is not set')
+  }
 
-const client = postgres(connectionString)
+  const client = postgres(connectionString, { username: 'postgres' })
 
-export const db = drizzle(client, { schema })
+  return drizzle(client, { schema })
+}

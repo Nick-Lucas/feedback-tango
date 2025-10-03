@@ -1,5 +1,5 @@
-import { db, Projects, Features, Feedbacks } from '@feedback-thing/db'
-import { and, eq, like } from 'drizzle-orm'
+import { createDb, Projects, Features, Feedbacks } from '@feedback-thing/db'
+import { and, eq, ilike } from 'drizzle-orm'
 
 export type Project = typeof Projects.$inferSelect
 export type NewProject = typeof Projects.$inferInsert
@@ -7,6 +7,8 @@ export type Feature = typeof Features.$inferSelect
 export type NewFeature = typeof Features.$inferInsert
 export type Feedback = typeof Feedbacks.$inferSelect
 export type NewFeedback = typeof Feedbacks.$inferInsert
+
+const db = createDb()
 
 // Project CRUD operations
 export const projectAccess = {
@@ -28,7 +30,7 @@ export const projectAccess = {
   },
 
   // Get project by ID
-  getById: async (id: number): Promise<Project | undefined> => {
+  getById: async (id: string): Promise<Project | undefined> => {
     const [project] = await db
       .select()
       .from(Projects)
@@ -37,7 +39,7 @@ export const projectAccess = {
   },
 
   // Get project with its feedback and features
-  getWithFeedback: async (id: number) => {
+  getWithFeedback: async (id: string) => {
     return await db.query.Projects.findFirst({
       where: eq(Projects.id, id),
       with: {
@@ -49,7 +51,7 @@ export const projectAccess = {
 
   // Update a project
   update: async (
-    id: number,
+    id: string,
     data: Partial<Omit<NewProject, 'id' | 'createdAt'>>
   ): Promise<Project | undefined> => {
     const [project] = await db
@@ -61,7 +63,7 @@ export const projectAccess = {
   },
 
   // Delete a project
-  delete: async (id: number): Promise<boolean> => {
+  delete: async (id: string): Promise<boolean> => {
     const result = await db
       .delete(Projects)
       .where(eq(Projects.id, id))
@@ -82,7 +84,7 @@ export const projectAccess = {
     const results = await db
       .select()
       .from(Projects)
-      .where(like(Projects.name, `%${searchTerm}%`))
+      .where(ilike(Projects.name, `%${searchTerm}%`))
 
     return results.map((project) => {
       return {
@@ -115,7 +117,7 @@ export const featureAccess = {
   },
 
   // Get feature by ID
-  getById: async (id: number): Promise<Feature | undefined> => {
+  getById: async (id: string): Promise<Feature | undefined> => {
     const [feature] = await db
       .select()
       .from(Features)
@@ -124,7 +126,7 @@ export const featureAccess = {
   },
 
   // Get feature with its feedback
-  getWithFeedback: async (id: number) => {
+  getWithFeedback: async (id: string) => {
     return await db.query.Features.findFirst({
       where: eq(Features.id, id),
       with: {
@@ -135,7 +137,7 @@ export const featureAccess = {
   },
 
   // Get all features for a project
-  getByProject: async (projectId: number): Promise<Feature[]> => {
+  getByProject: async (projectId: string): Promise<Feature[]> => {
     return await db
       .select()
       .from(Features)
@@ -144,7 +146,7 @@ export const featureAccess = {
 
   // Update a feature
   update: async (
-    id: number,
+    id: string,
     data: Partial<Omit<NewFeature, 'id' | 'createdAt' | 'projectId'>>
   ): Promise<Feature | undefined> => {
     const [feature] = await db
@@ -156,7 +158,7 @@ export const featureAccess = {
   },
 
   // Delete a feature
-  delete: async (id: number): Promise<boolean> => {
+  delete: async (id: string): Promise<boolean> => {
     const result = await db
       .delete(Features)
       .where(eq(Features.id, id))
@@ -173,13 +175,13 @@ export const featureAccess = {
   },
 
   // Search features by name
-  search: async (projectId: number, searchTerm: string) => {
+  search: async (projectId: string, searchTerm: string) => {
     const results = await db
       .select()
       .from(Features)
       .where(
         and(
-          like(Features.name, `%${searchTerm}%`),
+          ilike(Features.name, `%${searchTerm}%`),
           eq(Features.projectId, projectId)
         )
       )
@@ -214,7 +216,7 @@ export const feedbackAccess = {
   },
 
   // Get feedback by ID
-  getById: async (id: number): Promise<Feedback | undefined> => {
+  getById: async (id: string): Promise<Feedback | undefined> => {
     const [feedbackItem] = await db
       .select()
       .from(Feedbacks)
@@ -223,7 +225,7 @@ export const feedbackAccess = {
   },
 
   // Get feedback with project and feature info
-  getWithProject: async (id: number) => {
+  getWithProject: async (id: string) => {
     return await db.query.Feedbacks.findFirst({
       where: eq(Feedbacks.id, id),
       with: {
@@ -234,7 +236,7 @@ export const feedbackAccess = {
   },
 
   // Get all feedback for a project
-  getByProject: async (projectId: number): Promise<Feedback[]> => {
+  getByProject: async (projectId: string): Promise<Feedback[]> => {
     return await db
       .select()
       .from(Feedbacks)
@@ -242,7 +244,7 @@ export const feedbackAccess = {
   },
 
   // Get all feedback for a feature
-  getByFeature: async (featureId: number): Promise<Feedback[]> => {
+  getByFeature: async (featureId: string): Promise<Feedback[]> => {
     return await db
       .select()
       .from(Feedbacks)
@@ -251,7 +253,7 @@ export const feedbackAccess = {
 
   // Update feedback
   update: async (
-    id: number,
+    id: string,
     data: Partial<
       Omit<NewFeedback, 'id' | 'createdAt' | 'projectId' | 'featureId'>
     >
@@ -265,7 +267,7 @@ export const feedbackAccess = {
   },
 
   // Delete feedback
-  delete: async (id: number): Promise<boolean> => {
+  delete: async (id: string): Promise<boolean> => {
     const result = await db
       .delete(Feedbacks)
       .where(eq(Feedbacks.id, id))

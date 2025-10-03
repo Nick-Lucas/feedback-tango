@@ -1,2 +1,2 @@
-export { db } from './db.ts'
+export { createDb } from './db.ts'
 export * from './schema.ts'

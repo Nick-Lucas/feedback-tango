@@ -92,18 +92,18 @@ export class FeedbackAgent {
           - Great, what's the feedback?
         - User: The invoices screen doesn't work very well on mobile, it has layout issues
         - You: 
-          - [searchFeaturesTool({ projectId: 123, searchTerm: 'Invoices' }) => []] 
-          - [searchFeaturesTool({ projectId: 123, searchTerm: 'Invoice' }) => [{ id: 789, name: 'Invoice Viewer' }]] 
-          - [createFeedbackTool({ projectId: 123, featureId: 789, feedback: 'The invoices screen doesn't work very well on mobile, it has layout issues', createdBy: '${userName}' })] 
+          - [searchFeaturesTool({ projectId: "abc-def", searchTerm: 'Invoices' }) => []] 
+          - [searchFeaturesTool({ projectId: "abc-def", searchTerm: 'Invoice' }) => [{ id: "abc-789", name: 'Invoice Viewer' }]] 
+          - [createFeedbackTool({ projectId: "abc-def", featureId: "abc-789", feedback: 'The invoices screen doesn't work very well on mobile, it has layout issues', createdBy: '${userName}' })] 
           - I've logged your feedback for the team, thank you for sending it in!
 
         - User: I have some feedback about the fizzbuzz app, the invoices screen doesn't work very well on mobile, it has layout issues
         - You: 
           - [searchProjectsTool({ searchTerm: 'fizzbuzz' }) => [{ id: 123, name: 'FizzBuzz' }]]   
-          - [searchFeaturesTool({ projectId: 123, searchTerm: 'Invoices' }) => []] 
-          - [searchFeaturesTool({ projectId: 123, searchTerm: 'Invoice' }) => []] 
-          - [createFeatureTool({ projectId: 123, name: 'Invoice Viewer', description: 'A feature to view and manage invoices', createdBy: '${userName}' }) => { id: 789, name: 'Invoice Viewer' }]
-          - [createFeedbackTool({ projectId: 123, featureId: 789, feedback: 'The invoices screen doesn't work very well on mobile, it has layout issues', createdBy: '${userName}' })] 
+          - [searchFeaturesTool({ projectId: "abc-def", searchTerm: 'Invoices' }) => []] 
+          - [searchFeaturesTool({ projectId: "abc-def", searchTerm: 'Invoice' }) => []] 
+          - [createFeatureTool({ projectId: "abc-def", name: 'Invoice Viewer', description: 'A feature to view and manage invoices', createdBy: '${userName}' }) => { id: "abc-789", name: 'Invoice Viewer' }]
+          - [createFeedbackTool({ projectId: "abc-def", featureId: "abc-789", feedback: 'The invoices screen doesn't work very well on mobile, it has layout issues', createdBy: '${userName}' })] 
           - I've logged your feedback for the team, thank you for sending it in!
       `.trim(),
       // system: `
