@@ -12,6 +12,10 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+        jsxPragma: null,
         project: [
           './tsconfig.base.json',
           './libs/*/tsconfig.json',
@@ -43,9 +47,12 @@ export default [
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-redundant-type-constituents': 'off',
       //
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
+      // Enforced by typescript better
+      'no-undef': 'off',
     },
   },
   {
