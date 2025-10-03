@@ -5,6 +5,6 @@ export default defineConfig({
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: 'postgresql://postgres:postgres@localhost:5432/feedback',
+    url: process.env.POSTGRES_URI!,
   },
 })
