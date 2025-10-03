@@ -9,14 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FeaturesIndexRouteImport } from './routes/features.index'
+import { Route as FeaturesIdRouteImport } from './routes/features.$id'
 import { Route as CliSigninRouteImport } from './routes/cli.signin'
 import { Route as CliSigninCompleteRouteImport } from './routes/cli.signin.complete'
 
+const FeaturesRoute = FeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesIndexRoute = FeaturesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FeaturesRoute,
+} as any)
+const FeaturesIdRoute = FeaturesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => FeaturesRoute,
 } as any)
 const CliSigninRoute = CliSigninRouteImport.update({
   id: '/cli/signin',
@@ -31,41 +49,89 @@ const CliSigninCompleteRoute = CliSigninCompleteRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/features': typeof FeaturesRouteWithChildren
   '/cli/signin': typeof CliSigninRouteWithChildren
+  '/features/$id': typeof FeaturesIdRoute
+  '/features/': typeof FeaturesIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cli/signin': typeof CliSigninRouteWithChildren
+  '/features/$id': typeof FeaturesIdRoute
+  '/features': typeof FeaturesIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/features': typeof FeaturesRouteWithChildren
   '/cli/signin': typeof CliSigninRouteWithChildren
+  '/features/$id': typeof FeaturesIdRoute
+  '/features/': typeof FeaturesIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cli/signin' | '/cli/signin/complete'
+  fullPaths:
+    | '/'
+    | '/features'
+    | '/cli/signin'
+    | '/features/$id'
+    | '/features/'
+    | '/cli/signin/complete'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cli/signin' | '/cli/signin/complete'
-  id: '__root__' | '/' | '/cli/signin' | '/cli/signin/complete'
+  to:
+    | '/'
+    | '/cli/signin'
+    | '/features/$id'
+    | '/features'
+    | '/cli/signin/complete'
+  id:
+    | '__root__'
+    | '/'
+    | '/features'
+    | '/cli/signin'
+    | '/features/$id'
+    | '/features/'
+    | '/cli/signin/complete'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FeaturesRoute: typeof FeaturesRouteWithChildren
   CliSigninRoute: typeof CliSigninRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/features': {
+      id: '/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof FeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/features/': {
+      id: '/features/'
+      path: '/'
+      fullPath: '/features/'
+      preLoaderRoute: typeof FeaturesIndexRouteImport
+      parentRoute: typeof FeaturesRoute
+    }
+    '/features/$id': {
+      id: '/features/$id'
+      path: '/$id'
+      fullPath: '/features/$id'
+      preLoaderRoute: typeof FeaturesIdRouteImport
+      parentRoute: typeof FeaturesRoute
     }
     '/cli/signin': {
       id: '/cli/signin'
@@ -84,6 +150,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface FeaturesRouteChildren {
+  FeaturesIdRoute: typeof FeaturesIdRoute
+  FeaturesIndexRoute: typeof FeaturesIndexRoute
+}
+
+const FeaturesRouteChildren: FeaturesRouteChildren = {
+  FeaturesIdRoute: FeaturesIdRoute,
+  FeaturesIndexRoute: FeaturesIndexRoute,
+}
+
+const FeaturesRouteWithChildren = FeaturesRoute._addFileChildren(
+  FeaturesRouteChildren,
+)
+
 interface CliSigninRouteChildren {
   CliSigninCompleteRoute: typeof CliSigninCompleteRoute
 }
@@ -98,6 +178,7 @@ const CliSigninRouteWithChildren = CliSigninRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FeaturesRoute: FeaturesRouteWithChildren,
   CliSigninRoute: CliSigninRouteWithChildren,
 }
 export const routeTree = rootRouteImport

@@ -45,6 +45,7 @@ export default [
       '@typescript-eslint/no-unsafe-argument': 'off',
       //
       '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
     },
   },
   {
