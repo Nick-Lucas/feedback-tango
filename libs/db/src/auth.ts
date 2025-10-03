@@ -21,7 +21,7 @@ const env = parsed.data
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: 'sqlite',
+    provider: 'pg',
     schema: schemas,
   }),
   plugins: [
