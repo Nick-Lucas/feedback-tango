@@ -35,6 +35,10 @@ catalog:
   '@radix-ui/react-toggle-group': ^1.1.11
   '@radix-ui/react-tooltip': ^1.2.8
   '@tanstack/eslint-config': ^0.3.2
+  '@tanstack/react-devtools': ^0.7.2
+  '@tanstack/react-router': ^1.132.33
+  '@tanstack/react-router-devtools': ^1.132.33
+  '@tanstack/router-plugin': ^1.132.33
   '@types/better-sqlite3': ^7.6.13
   '@types/cookie': ^1.0.0
   '@types/cookie-parser': ^1.4.9
