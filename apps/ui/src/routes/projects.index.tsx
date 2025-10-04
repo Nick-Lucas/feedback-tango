@@ -26,6 +26,7 @@ function RouteComponent() {
     <Navigate
       to="/projects/$projectId/features"
       params={{ projectId: projects[0].id }}
+      replace
     />
   )
 }

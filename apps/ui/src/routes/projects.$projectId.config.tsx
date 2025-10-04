@@ -1,10 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { getProject, getProjectMembers } from '@/server-functions'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, Home, Notebook } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -39,6 +39,25 @@ function RouteComponent() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 pt-6 space-y-6">
+      <nav className="flex gap-4">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Home className="h-4 w-4" />
+          Home
+        </Link>
+
+        <Link
+          to="/projects/$projectId/features"
+          params={{ projectId: data.project.id }}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Notebook className="h-4 w-4" />
+          Feedback
+        </Link>
+      </nav>
+
       <div>
         <h1 className="text-2xl font-bold">Project Configuration</h1>
         <p className="text-muted-foreground">

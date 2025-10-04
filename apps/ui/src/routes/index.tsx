@@ -5,5 +5,5 @@ export const Route = createFileRoute('/')({
 })
 
 function App() {
-  return <Navigate to="/projects" />
+  return <Navigate to="/projects" replace />
 }
