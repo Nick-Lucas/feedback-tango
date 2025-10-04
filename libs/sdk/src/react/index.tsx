@@ -1,12 +1,19 @@
-import { sendFeedback } from '../client/index.ts'
+import { type FeedbackClient } from '../client/index.ts'
 
-export function FeedbackWidget() {
+export interface FeedbackWidgetProps {
+  client: FeedbackClient
+}
+
+export function FeedbackWidget(props: FeedbackWidgetProps) {
   return (
     <div>
       Feedback Widget
       <button
-        onClick={() => {
-          sendFeedback('Great app!')
+        style={{
+          backgroundColor: 'blue',
+        }}
+        onClick={async () => {
+          await props.client.sendFeedback('Great job!')
         }}
       >
         Send

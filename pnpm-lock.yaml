@@ -279,6 +279,9 @@ importers:
       '@feedback-thing/db':
         specifier: workspace:*
         version: link:../../libs/db
+      '@feedback-thing/sdk':
+        specifier: workspace:*
+        version: link:../../libs/sdk
       '@hookform/resolvers':
         specifier: 'catalog:'
         version: 5.2.2(react-hook-form@7.63.0(react@19.1.1))

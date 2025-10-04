@@ -6,10 +6,12 @@
   "type": "module",
   "exports": {
     "./client": {
-      "import": "./src/client/index.ts"
+      "import": "./src/client/index.ts",
+      "types": "./src/client/index.ts"
     },
     "./react": {
-      "import": "./src/react/index.ts"
+      "import": "./src/react/index.tsx",
+      "types": "./src/react/index.tsx"
     }
   },
   "scripts": {

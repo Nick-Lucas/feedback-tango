@@ -85,6 +85,12 @@ app.on(['POST', 'GET'], '/api/auth/*', async (c) => {
   return await auth.handler(c.req.raw)
 })
 
+app.post('/api/feedback', async (c) => {
+  const body = await c.req.json()
+  console.log('Feedback received:', body)
+  return c.json({ status: 'ok' })
+})
+
 serve(
   {
     fetch: app.fetch,
