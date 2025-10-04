@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { createDb, Projects, Feedbacks, Features } from '@feedback-thing/db'
-import { inArray } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import z from 'zod'
 import { generateObject } from 'ai'
 import { google } from '@ai-sdk/google'
@@ -160,4 +160,22 @@ export const suggestMergedFeatureDetails = createServerFn({ method: 'POST' })
         success: false,
       } as const
     }
+  })
+
+export const moveFeedbackToFeature = createServerFn()
+  .inputValidator(
+    z.object({
+      feedbackId: z.string().min(1),
+      featureId: z.string().min(1),
+    })
+  )
+  .handler(async (ctx) => {
+    const { feedbackId, featureId } = ctx.data
+
+    await db
+      .update(Feedbacks)
+      .set({ featureId })
+      .where(eq(Feedbacks.id, feedbackId))
+
+    return { success: true }
   })

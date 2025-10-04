@@ -37,13 +37,7 @@ function RouteComponent() {
         ) : (
           <div className="space-y-4">
             {feature.feedbacks.map((feedback) => (
-              <FeedbackCard
-                key={feedback.id}
-                feedback={feedback.feedback}
-                createdAt={feedback.createdAt}
-                createdBy={feedback.createdBy}
-                createdByUser={feedback.createdByUser}
-              />
+              <FeedbackCard key={feedback.id} feedback={feedback} />
             ))}
           </div>
         )}
