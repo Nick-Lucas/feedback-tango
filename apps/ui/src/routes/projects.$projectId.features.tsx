@@ -140,7 +140,7 @@ function App() {
                         <div className="flex items-center gap-2 w-full">
                           <SidebarMenuButton
                             asChild
-                            className="flex-1 transition-all duration-75"
+                            className="flex-1 transition-all duration-75 h-fit"
                             isActive={isCurrent}
                           >
                             <Link
