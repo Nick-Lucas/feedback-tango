@@ -79,7 +79,7 @@ export function FeaturesSelectionMenu({
             <Button
               variant={selectedCount > 0 ? 'default' : 'outline'}
               size="sm"
-              className="h-7 flex-1 justify-between"
+              className="h-8 flex-1 justify-between enabled:border enabled:border-primary"
               disabled={selectedCount === 0}
             >
               <span className="text-sm">
@@ -87,7 +87,7 @@ export function FeaturesSelectionMenu({
                   ? `${selectedCount} selected`
                   : 'No selection'}
               </span>
-              <ChevronDown className="h-4 w-4 ml-1" />
+              <ChevronDown className="size-4 ml-1" />
             </Button>
           </DropdownMenuTrigger>
 
@@ -99,7 +99,7 @@ export function FeaturesSelectionMenu({
               onClick={handleMergeClick}
               disabled={selectedCount < 2}
             >
-              <Merge className="h-4 w-4" />
+              <Merge className="size-4" />
               Merge {selectedCount} features
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -109,10 +109,10 @@ export function FeaturesSelectionMenu({
           variant="destructive"
           size="icon"
           onClick={onClearSelection}
-          className="h-7 w-7 hover:brightness-90"
+          className="h-8 w-8 hover:brightness-90"
           disabled={selectedCount === 0}
         >
-          <X className="h-4 w-4" />
+          <X className="size-4" />
         </Button>
       </div>
 
