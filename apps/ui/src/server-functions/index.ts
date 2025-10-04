@@ -74,6 +74,9 @@ export const getFeatures = createServerFn()
       where(fields, operators) {
         return operators.eq(fields.projectId, ctx.data.projectId)
       },
+      orderBy(fields, operators) {
+        return operators.asc(fields.name)
+      },
     })
   })
 
