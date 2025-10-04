@@ -9,9 +9,40 @@ const db = createDb()
 
 const model = google('gemini-2.5-flash-lite')
 
+export const getProject = createServerFn()
+  .inputValidator(
+    z.object({
+      projectId: z.string(),
+    })
+  )
+  .handler(async (ctx) => {
+    const project = await db.query.Projects.findFirst({
+      where(fields, operators) {
+        return operators.eq(fields.id, ctx.data.projectId)
+      },
+    })
+
+    if (!project) {
+      throw new Error('Project not found')
+    }
+
+    return project
+  })
+
 export const getProjects = createServerFn().handler(() => {
   return db.query.Projects.findMany()
 })
+
+export const getProjectMembers = createServerFn()
+  .inputValidator(
+    z.object({
+      projectId: z.string(),
+    })
+  )
+  .handler(async () => {
+    // TODO: add project or organisation memberships and fetch only members of the project
+    return db.query.user.findMany()
+  })
 
 export const createProject = createServerFn()
   .inputValidator(
