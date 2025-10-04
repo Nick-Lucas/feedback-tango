@@ -140,7 +140,7 @@ function App() {
                         <div className="flex items-center gap-2 w-full">
                           <SidebarMenuButton
                             asChild
-                            className="flex-1 transition-all duration-75 h-fit"
+                            className="flex-1 transition-all duration-75 h-fit [&>span:last-child]:text-wrap"
                             isActive={isCurrent}
                           >
                             <Link
@@ -150,7 +150,9 @@ function App() {
                                 featureId: feature.id.toString(),
                               }}
                             >
-                              {feature.name}
+                              <span className="line-clamp-2">
+                                {feature.name}
+                              </span>
                             </Link>
                           </SidebarMenuButton>
 
