@@ -1,9 +1,9 @@
 import {
   createFileRoute,
+  useChildMatches,
   Link,
   Outlet,
   useRouter,
-  useParams,
 } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
@@ -61,10 +61,14 @@ export const Route = createFileRoute('/features')({
 function App() {
   const data = Route.useLoaderData()
   const router = useRouter()
-  const params = useParams({ from: '/features/$id' })
   const requestSuggestMergedFeatureDetails = useServerFn(
     suggestMergedFeatureDetails
   )
+  const featureMatches = useChildMatches({
+    select(matches) {
+      return matches.filter((m) => m.routeId === '/features/$id')
+    },
+  })
 
   const [search, setSearch] = useState('')
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(
@@ -74,8 +78,6 @@ function App() {
     { open: true; suggestion?: { name: string; description: string } } | false
   >(false)
   const [hoveredFeatureId, setHoveredFeatureId] = useState<string | null>(null)
-
-  const currentFeatureId = params?.id
 
   const filteredFeatures = data.features.filter((feature) =>
     feature.name.toLowerCase().includes(search.toLowerCase())
@@ -176,7 +178,9 @@ function App() {
                   {filteredFeatures.map((feature) => {
                     const isSelected = selectedFeatureIds.has(feature.id)
                     const isHovered = hoveredFeatureId === feature.id
-                    const isCurrent = currentFeatureId === feature.id
+                    const isCurrent = featureMatches.some(
+                      (match) => match.params.id === feature.id
+                    )
                     const showCheckbox = isSelected || isHovered || isCurrent
 
                     return (
@@ -186,7 +190,11 @@ function App() {
                         onMouseLeave={() => setHoveredFeatureId(null)}
                       >
                         <div className="flex items-center gap-2 w-full group">
-                          <SidebarMenuButton asChild className="flex-1">
+                          <SidebarMenuButton
+                            asChild
+                            className="flex-1"
+                            isActive={isCurrent}
+                          >
                             <Link
                               to="/features/$id"
                               params={{ id: feature.id.toString() }}
