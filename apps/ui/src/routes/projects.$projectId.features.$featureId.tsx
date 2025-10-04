@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getFeature } from '../server-functions'
+import { Card } from '@/components/ui/card'
 
 export const Route = createFileRoute(
   '/projects/$projectId/features/$featureId'
@@ -42,19 +43,21 @@ function RouteComponent() {
         ) : (
           <div className="space-y-4">
             {feature.feedbacks.map((feedback) => (
-              <div
-                key={feedback.id}
-                className="border rounded-lg p-4 bg-white shadow-sm"
-              >
-                <p className="text-gray-800 mb-2">{feedback.feedback}</p>
-                <div className="text-sm text-gray-500">
-                  <span>
-                    By {feedback.createdByUser?.name || feedback.createdBy}
-                  </span>
-                  <span className="mx-2">•</span>
+              <Card key={feedback.id} className="p-4">
+                <p className="text-card-foreground italic">
+                  "{feedback.feedback.trim()}"
+                </p>
+
+                <div className="text-sm text-card-foreground/70">
                   <FormattedDate date={feedback.createdAt} />
+
+                  <span className="mx-2">•</span>
+
+                  <span>
+                    {feedback.createdByUser?.name || feedback.createdBy}
+                  </span>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
