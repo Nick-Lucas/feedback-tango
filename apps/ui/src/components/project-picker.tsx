@@ -1,0 +1,197 @@
+import { useState } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Check, ChevronsUpDown, Cog, Plus } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+interface Project {
+  id: string
+  name: string
+}
+
+interface ProjectPickerProps {
+  projects: Project[]
+  selectedProject: Project
+  onCreateProject?: (name: string) => Promise<void> | void
+  className?: string
+}
+
+export function ProjectPicker({
+  projects,
+  selectedProject,
+  onCreateProject,
+  className,
+}: ProjectPickerProps) {
+  const navigate = useNavigate({ from: '/projects/$projectId/features/' })
+  const [open, setOpen] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [projectName, setProjectName] = useState('')
+
+  const handleCreateProject = async () => {
+    if (projectName.trim() && onCreateProject) {
+      await onCreateProject(projectName.trim())
+      setProjectName('')
+      setDialogOpen(false)
+    }
+  }
+
+  return (
+    <>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Project</DialogTitle>
+            <DialogDescription>
+              Enter a name for your new project.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Project Name</Label>
+              <Input
+                id="name"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    void handleCreateProject()
+                  }
+                }}
+                placeholder="My Project"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDialogOpen(false)
+                setProjectName('')
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateProject}
+              disabled={!projectName.trim()}
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div className="w-full flex flex-row">
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className={cn(
+                'flex-1 h-8 justify-between rounded-tr-none',
+                className
+              )}
+            >
+              {selectedProject.name || 'Select project...'}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              aria-expanded={open}
+              className={cn(
+                'flex-0 h-8 justify-between ml-[-1px] rounded-tl-none',
+                className
+              )}
+              asChild
+            >
+              <Link
+                to="/projects/$projectId/config"
+                params={{ projectId: selectedProject.id }}
+              >
+                <Cog className="m-2 h-4 w-4 shrink-0 opacity-50" />
+              </Link>
+            </Button>
+          </div>
+        </PopoverTrigger>
+
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+          <Command>
+            <CommandInput placeholder="Search projects..." />
+            <CommandList>
+              <CommandEmpty>No project found.</CommandEmpty>
+              <CommandGroup>
+                {projects.map((project) => (
+                  <CommandItem
+                    key={project.id}
+                    value={project.name}
+                    onSelect={async () => {
+                      await navigate({
+                        to: '/projects/$projectId/features',
+                        params: {
+                          projectId: project.id,
+                        },
+                      })
+
+                      setOpen(false)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        'mr-2 h-4 w-4',
+                        selectedProject.id === project.id
+                          ? 'opacity-100'
+                          : 'opacity-0'
+                      )}
+                    />
+                    {project.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              {onCreateProject && (
+                <CommandGroup>
+                  <CommandItem
+                    onSelect={() => {
+                      setOpen(false)
+                      setDialogOpen(true)
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create project
+                  </CommandItem>
+                </CommandGroup>
+              )}
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </>
+  )
+}

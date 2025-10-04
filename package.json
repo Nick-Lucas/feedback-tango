@@ -17,6 +17,7 @@
     "db:generate": "pnpm -C libs/db db:generate",
     "db:migrate": "pnpm -C libs/db db:migrate",
     "db:studio": "pnpm -C libs/db db:studio",
+    "db:wipe": "pnpm -C libs/db db:wipe",
     "cli": "pnpm -C apps/cli cli",
     "cli-install": "pnpm install -g ./apps/cli",
     "cli-uninstall": "pnpm uninstall -g @feedback-thing/cli"

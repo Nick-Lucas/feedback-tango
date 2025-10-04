@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import { createFileRoute } from '@tanstack/react-router'
 import { createAuthClient } from 'better-auth/client'
 
@@ -12,8 +13,7 @@ export const Route = createFileRoute('/cli/signin')({
 function RouteComponent() {
   return (
     <div>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      <Button
         onClick={async () => {
           await authClient.signIn.social({
             provider: 'github',
@@ -22,7 +22,7 @@ function RouteComponent() {
         }}
       >
         Sign In with GitHub
-      </button>
+      </Button>
     </div>
   )
 }

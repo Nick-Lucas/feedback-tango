@@ -1,12 +1,15 @@
-import { pgTable, text, serial, integer, timestamp } from 'drizzle-orm/pg-core'
-import { relations } from 'drizzle-orm'
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { relations, sql } from 'drizzle-orm'
 export * from './auth-schema.ts'
+import { user } from './auth-schema.ts'
 
 export const Projects = pgTable('projects', {
-  id: serial('id').primaryKey(),
-  name: text('name').notNull().unique(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  createdBy: text('created_by').notNull(),
+  id: uuid()
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  name: text().notNull().unique(),
+  createdAt: timestamp().defaultNow().notNull(),
+  createdBy: text().notNull(),
 })
 
 export const ProjectRelations = relations(Projects, ({ many }) => ({
@@ -15,14 +18,16 @@ export const ProjectRelations = relations(Projects, ({ many }) => ({
 }))
 
 export const Features = pgTable('features', {
-  id: serial('id').primaryKey(),
-  projectId: integer('project_id')
+  id: uuid()
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  projectId: uuid()
     .notNull()
     .references(() => Projects.id),
-  name: text('name').notNull().unique(),
-  description: text('description').notNull(),
-  createdBy: text('created_by').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+  name: text().notNull().unique(),
+  description: text().notNull(),
+  createdBy: text().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
 })
 
 export const FeatureRelations = relations(Features, ({ one, many }) => ({
@@ -34,16 +39,18 @@ export const FeatureRelations = relations(Features, ({ one, many }) => ({
 }))
 
 export const Feedbacks = pgTable('feedback', {
-  id: serial('id').primaryKey(),
-  projectId: integer('project_id')
+  id: uuid()
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  projectId: uuid()
     .notNull()
     .references(() => Projects.id),
-  featureId: integer('feature_id')
+  featureId: uuid()
     .notNull()
     .references(() => Features.id),
-  feedback: text('feedback').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  createdBy: text('created_by').notNull(),
+  feedback: text().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  createdBy: text().notNull(),
 })
 
 export const FeedbackRelations = relations(Feedbacks, ({ one }) => ({
@@ -54,5 +61,9 @@ export const FeedbackRelations = relations(Feedbacks, ({ one }) => ({
   feature: one(Features, {
     fields: [Feedbacks.featureId],
     references: [Features.id],
+  }),
+  createdByUser: one(user, {
+    fields: [Feedbacks.createdBy],
+    references: [user.id],
   }),
 }))

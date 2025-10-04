@@ -84,7 +84,7 @@ mcp.registerTool(
     description:
       'Search features by name using ilike matching, you can run this multiple times to try out different variations',
     inputSchema: {
-      projectId: z.number().describe('Project ID to search features within'),
+      projectId: z.string().min(1).describe('Project ID to search within'),
       searchTerm: z.string().describe('Search term for feature name'),
     },
     annotations: { readOnlyHint: true },
@@ -117,7 +117,10 @@ mcp.registerTool(
     inputSchema: {
       name: z.string().describe('Feature name'),
       description: z.string().describe('Feature description'),
-      projectId: z.number().describe('Project ID this feature belongs to'),
+      projectId: z
+        .string()
+        .min(1)
+        .describe('Project ID this feature belongs to'),
       createdBy: z.string().describe('Creator of the feature'),
     },
   },
@@ -152,8 +155,8 @@ mcp.registerTool(
       'Create new feedback when the user has submitted some. use the search tools to find the relevant project and feature ID, you may create a new project/feature first if needed',
     inputSchema: {
       feedback: z.string().describe('Feedback content'),
-      projectId: z.number().describe('Project ID this feedback belongs to'),
-      featureId: z.number().describe('Feature ID this feedback belongs to'),
+      projectId: z.string().describe('Project ID this feedback belongs to'),
+      featureId: z.string().describe('Feature ID this feedback belongs to'),
       createdBy: z.string().describe('Creator of the feedback'),
     },
   },

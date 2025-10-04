@@ -11,3 +11,4 @@ package-lock.json
 yarn.lock
 .claude/
 .vscode/
+routeTree.gen.ts

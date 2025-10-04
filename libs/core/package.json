@@ -15,5 +15,8 @@
   "dependencies": {
     "@feedback-thing/db": "workspace:*",
     "drizzle-orm": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
   }
 }

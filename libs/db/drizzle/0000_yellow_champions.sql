@@ -1,27 +1,27 @@
 CREATE TABLE "features" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"project_id" integer NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
+	"projectId" uuid NOT NULL,
 	"name" text NOT NULL,
 	"description" text NOT NULL,
-	"created_by" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
+	"createdBy" text NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "features_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE "feedback" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"project_id" integer NOT NULL,
-	"feature_id" integer NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
+	"projectId" uuid NOT NULL,
+	"featureId" uuid NOT NULL,
 	"feedback" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"created_by" text NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"createdBy" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "projects" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
 	"name" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"created_by" text NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"createdBy" text NOT NULL,
 	CONSTRAINT "projects_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
@@ -114,9 +114,9 @@ CREATE TABLE "verification" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "features" ADD CONSTRAINT "features_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "feedback" ADD CONSTRAINT "feedback_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "feedback" ADD CONSTRAINT "feedback_feature_id_features_id_fk" FOREIGN KEY ("feature_id") REFERENCES "public"."features"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "features" ADD CONSTRAINT "features_projectId_projects_id_fk" FOREIGN KEY ("projectId") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "feedback" ADD CONSTRAINT "feedback_projectId_projects_id_fk" FOREIGN KEY ("projectId") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "feedback" ADD CONSTRAINT "feedback_featureId_features_id_fk" FOREIGN KEY ("featureId") REFERENCES "public"."features"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "oauth_access_token" ADD CONSTRAINT "oauth_access_token_client_id_oauth_application_client_id_fk" FOREIGN KEY ("client_id") REFERENCES "public"."oauth_application"("client_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "oauth_access_token" ADD CONSTRAINT "oauth_access_token_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
