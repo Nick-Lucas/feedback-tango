@@ -36,6 +36,9 @@ catalogs:
     '@types/qs':
       specifier: ^6.14.0
       version: 6.14.0
+    '@types/react':
+      specifier: ^19.1.13
+      version: 19.1.13
     '@typescript-eslint/eslint-plugin':
       specifier: ^8.45.0
       version: 8.45.0
@@ -102,6 +105,9 @@ catalogs:
     qs:
       specifier: ^6.14.0
       version: 6.14.0
+    react:
+      specifier: ^19.1.1
+      version: 19.1.1
     react-hook-form:
       specifier: ^7.63.0
       version: 7.63.0
@@ -559,6 +565,15 @@ importers:
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.31.4
+
+  libs/sdk:
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.1.13
+      react:
+        specifier: 'catalog:'
+        version: 19.1.1
 
 packages:
 
