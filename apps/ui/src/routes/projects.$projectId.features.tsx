@@ -29,7 +29,7 @@ import { ProjectPicker } from '@/components/project-picker'
 import { MergeFeaturesModal } from '@/components/merge-features-modal'
 import { useServerFn } from '@tanstack/react-start'
 import { cn } from '@/lib/utils'
-import { X, ChevronDown, Merge } from 'lucide-react'
+import { X, ChevronDown, Merge, Plus, Check, Minus, Cross } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -229,25 +229,29 @@ function App() {
                             </Link>
                           </SidebarMenuButton>
 
-                          <div
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             className={cn(
+                              'w-7 h-7',
                               `flex items-center justify-center transition-opacity duration-75 opacity-0`,
                               'group-hover/menu-item:opacity-100',
                               isCurrent ? 'active opacity-100' : '',
-                              isSelected ? 'selected opacity-100' : ''
+                              isSelected
+                                ? 'selected opacity-100 text-destructive'
+                                : ''
                             )}
                             onClick={(e) => {
                               e.preventDefault()
                               toggleFeatureSelection(feature.id)
                             }}
                           >
-                            <Checkbox
-                              checked={isSelected}
-                              onCheckedChange={() =>
-                                toggleFeatureSelection(feature.id)
-                              }
-                            />
-                          </div>
+                            {isSelected ? (
+                              <X className="w-4 h-4 stroke-3" />
+                            ) : (
+                              <Plus className="w-4 h-4" />
+                            )}
+                          </Button>
                         </div>
                       </SidebarMenuItem>
                     )
