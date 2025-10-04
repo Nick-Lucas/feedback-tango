@@ -55,7 +55,7 @@ export function FeedbackCard({ feedback }: FeedbackCardProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setDialogOpen(true)}>
-                Change Feature
+                Move to Feature
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
