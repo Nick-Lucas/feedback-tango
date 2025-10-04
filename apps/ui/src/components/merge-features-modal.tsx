@@ -53,8 +53,9 @@ export function MergeFeaturesModal({
       selectedFeatures.length < 2 ||
       !newFeatureName ||
       !newFeatureDescription
-    )
+    ) {
       return
+    }
 
     setIsMerging(true)
     try {
@@ -66,7 +67,13 @@ export function MergeFeaturesModal({
           projectId: projectId,
         },
       })
-      void navigate({ to: `/features/${result.newFeatureId}` })
+      await navigate({
+        to: '/projects/$projectId/features/$featureId',
+        params: {
+          projectId,
+          featureId: result.newFeatureId,
+        },
+      })
     } catch (error) {
       console.error('Failed to merge features:', error)
     } finally {
