@@ -29,6 +29,7 @@ import { ProjectPicker } from '@/components/project-picker'
 import { MergeFeaturesModal } from '@/components/merge-features-modal'
 import z from 'zod'
 import { useServerFn } from '@tanstack/react-start'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/features')({
   component: App,
@@ -77,7 +78,6 @@ function App() {
   const [mergeModalOpen, setMergeModalOpen] = useState<
     { open: true; suggestion?: { name: string; description: string } } | false
   >(false)
-  const [hoveredFeatureId, setHoveredFeatureId] = useState<string | null>(null)
 
   const filteredFeatures = data.features.filter((feature) =>
     feature.name.toLowerCase().includes(search.toLowerCase())
@@ -177,22 +177,16 @@ function App() {
                 <SidebarMenu>
                   {filteredFeatures.map((feature) => {
                     const isSelected = selectedFeatureIds.has(feature.id)
-                    const isHovered = hoveredFeatureId === feature.id
                     const isCurrent = featureMatches.some(
                       (match) => match.params.id === feature.id
                     )
-                    const showCheckbox = isSelected || isHovered || isCurrent
 
                     return (
-                      <SidebarMenuItem
-                        key={feature.id}
-                        onMouseEnter={() => setHoveredFeatureId(feature.id)}
-                        onMouseLeave={() => setHoveredFeatureId(null)}
-                      >
-                        <div className="flex items-center gap-2 w-full group">
+                      <SidebarMenuItem key={feature.id}>
+                        <div className="flex items-center gap-2 w-full">
                           <SidebarMenuButton
                             asChild
-                            className="flex-1"
+                            className="flex-1 transition-all duration-75"
                             isActive={isCurrent}
                           >
                             <Link
@@ -204,9 +198,12 @@ function App() {
                           </SidebarMenuButton>
 
                           <div
-                            className={`flex items-center justify-center transition-opacity ${
-                              showCheckbox ? 'opacity-100' : 'opacity-0'
-                            }`}
+                            className={cn(
+                              `flex items-center justify-center transition-opacity duration-75 opacity-0`,
+                              'group-hover/menu-item:opacity-100',
+                              isCurrent ? 'active opacity-100' : '',
+                              isSelected ? 'selected opacity-100' : ''
+                            )}
                             onClick={(e) => {
                               e.preventDefault()
                               toggleFeatureSelection(feature.id)
