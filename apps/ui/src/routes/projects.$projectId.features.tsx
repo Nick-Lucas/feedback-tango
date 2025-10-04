@@ -203,7 +203,7 @@ function App() {
 
             <SidebarGroup>
               <SidebarGroupContent>
-                <SidebarMenu>
+                <SidebarMenu className="gap-0">
                   {filteredFeatures.map((feature) => {
                     const isSelected = selectedFeatureIds.has(feature.id)
                     const isCurrent = featureMatches.some(
