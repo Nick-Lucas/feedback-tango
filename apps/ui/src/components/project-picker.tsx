@@ -34,7 +34,7 @@ interface Project {
 
 interface ProjectPickerProps {
   projects: Project[]
-  selectedProject: Project | null
+  selectedProject: Project
   onCreateProject?: (name: string) => Promise<void> | void
 }
 
@@ -43,7 +43,7 @@ export function ProjectPicker({
   selectedProject,
   onCreateProject,
 }: ProjectPickerProps) {
-  const navigate = useNavigate({ from: '/features' })
+  const navigate = useNavigate({ from: '/projects/$projectId/features/' })
   const [open, setOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [projectName, setProjectName] = useState('')
@@ -126,7 +126,8 @@ export function ProjectPicker({
                     value={project.name}
                     onSelect={async () => {
                       await navigate({
-                        search: {
+                        to: '/projects/$projectId/features',
+                        params: {
                           projectId: project.id,
                         },
                       })

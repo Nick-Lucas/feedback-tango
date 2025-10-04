@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Ellipsis } from 'lucide-react'
 
-export const Route = createFileRoute('/features/')({
+export const Route = createFileRoute('/projects/$projectId/features/')({
   component: RouteComponent,
 })
 

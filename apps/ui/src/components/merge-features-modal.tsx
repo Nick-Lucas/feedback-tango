@@ -98,8 +98,8 @@ export function MergeFeaturesModal({
               <li key={f.id} className="flex flex-col text-sm">
                 <Link
                   className="font-medium text-blue-400 hover:text-blue-500"
-                  to="/features/$id"
-                  params={{ id: f.id }}
+                  to="/projects/$projectId/features/$featureId"
+                  params={{ projectId, featureId: f.id }}
                   target="_blank"
                 >
                   <SquareArrowOutUpRight className="inline w-4 mt-[-2px]" />{' '}

@@ -1,10 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getFeature } from '../server-functions'
 
-export const Route = createFileRoute('/features/$id')({
+export const Route = createFileRoute(
+  '/projects/$projectId/features/$featureId'
+)({
   component: RouteComponent,
   loader: async ({ params }) => {
-    const feature = await getFeature({ data: { featureId: params.id } })
+    const feature = await getFeature({ data: { featureId: params.featureId } })
     if (!feature) {
       throw new Error('Feature not found')
     }

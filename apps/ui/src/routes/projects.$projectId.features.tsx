@@ -27,27 +27,18 @@ import {
 } from '@/server-functions'
 import { ProjectPicker } from '@/components/project-picker'
 import { MergeFeaturesModal } from '@/components/merge-features-modal'
-import z from 'zod'
 import { useServerFn } from '@tanstack/react-start'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/features')({
+export const Route = createFileRoute('/projects/$projectId/features')({
   component: App,
-  validateSearch: z.object({
-    projectId: z.string().optional(),
-  }),
-  loaderDeps(opts) {
-    return {
-      projectId: opts.search.projectId,
-    }
-  },
   async loader(ctx) {
     const projects = await getProjects()
-    const projectId = ctx.deps.projectId ?? projects?.[0]?.id
+    const projectId = ctx.params.projectId
 
     return {
       projects: await getProjects(),
-      project: projects?.find((p) => p.id === projectId) ?? null,
+      project: projects.find((p) => p.id === projectId)!,
       features: projectId
         ? await getFeatures({
             data: {
@@ -62,12 +53,15 @@ export const Route = createFileRoute('/features')({
 function App() {
   const data = Route.useLoaderData()
   const router = useRouter()
+  const { projectId } = Route.useParams()
   const requestSuggestMergedFeatureDetails = useServerFn(
     suggestMergedFeatureDetails
   )
   const featureMatches = useChildMatches({
     select(matches) {
-      return matches.filter((m) => m.routeId === '/features/$id')
+      return matches.filter(
+        (m) => m.routeId === '/projects/$projectId/features/$featureId'
+      )
     },
   })
 
@@ -178,7 +172,7 @@ function App() {
                   {filteredFeatures.map((feature) => {
                     const isSelected = selectedFeatureIds.has(feature.id)
                     const isCurrent = featureMatches.some(
-                      (match) => match.params.id === feature.id
+                      (match) => match.params.featureId === feature.id
                     )
 
                     return (
@@ -190,8 +184,11 @@ function App() {
                             isActive={isCurrent}
                           >
                             <Link
-                              to="/features/$id"
-                              params={{ id: feature.id.toString() }}
+                              to="/projects/$projectId/features/$featureId"
+                              params={{
+                                projectId: projectId,
+                                featureId: feature.id.toString(),
+                              }}
                             >
                               {feature.name}
                             </Link>

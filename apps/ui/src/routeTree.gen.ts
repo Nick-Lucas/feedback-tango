@@ -9,109 +9,118 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as FeaturesIndexRouteImport } from './routes/features.index'
-import { Route as FeaturesIdRouteImport } from './routes/features.$id'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as CliSigninRouteImport } from './routes/cli.signin'
+import { Route as ProjectsProjectIdFeaturesRouteImport } from './routes/projects.$projectId.features'
 import { Route as CliSigninCompleteRouteImport } from './routes/cli.signin.complete'
+import { Route as ProjectsProjectIdFeaturesIndexRouteImport } from './routes/projects.$projectId.features.index'
+import { Route as ProjectsProjectIdFeaturesFeatureIdRouteImport } from './routes/projects.$projectId.features.$featureId'
 
-const FeaturesRoute = FeaturesRouteImport.update({
-  id: '/features',
-  path: '/features',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FeaturesIndexRoute = FeaturesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => FeaturesRoute,
-} as any)
-const FeaturesIdRoute = FeaturesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => FeaturesRoute,
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CliSigninRoute = CliSigninRouteImport.update({
   id: '/cli/signin',
   path: '/cli/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsProjectIdFeaturesRoute =
+  ProjectsProjectIdFeaturesRouteImport.update({
+    id: '/projects/$projectId/features',
+    path: '/projects/$projectId/features',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CliSigninCompleteRoute = CliSigninCompleteRouteImport.update({
   id: '/complete',
   path: '/complete',
   getParentRoute: () => CliSigninRoute,
 } as any)
+const ProjectsProjectIdFeaturesIndexRoute =
+  ProjectsProjectIdFeaturesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => ProjectsProjectIdFeaturesRoute,
+  } as any)
+const ProjectsProjectIdFeaturesFeatureIdRoute =
+  ProjectsProjectIdFeaturesFeatureIdRouteImport.update({
+    id: '/$featureId',
+    path: '/$featureId',
+    getParentRoute: () => ProjectsProjectIdFeaturesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/features': typeof FeaturesRouteWithChildren
   '/cli/signin': typeof CliSigninRouteWithChildren
-  '/features/$id': typeof FeaturesIdRoute
-  '/features/': typeof FeaturesIndexRoute
+  '/projects': typeof ProjectsIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
+  '/projects/$projectId/features': typeof ProjectsProjectIdFeaturesRouteWithChildren
+  '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
+  '/projects/$projectId/features/': typeof ProjectsProjectIdFeaturesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cli/signin': typeof CliSigninRouteWithChildren
-  '/features/$id': typeof FeaturesIdRoute
-  '/features': typeof FeaturesIndexRoute
+  '/projects': typeof ProjectsIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
+  '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
+  '/projects/$projectId/features': typeof ProjectsProjectIdFeaturesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/features': typeof FeaturesRouteWithChildren
   '/cli/signin': typeof CliSigninRouteWithChildren
-  '/features/$id': typeof FeaturesIdRoute
-  '/features/': typeof FeaturesIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
+  '/projects/$projectId/features': typeof ProjectsProjectIdFeaturesRouteWithChildren
+  '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
+  '/projects/$projectId/features/': typeof ProjectsProjectIdFeaturesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/features'
     | '/cli/signin'
-    | '/features/$id'
-    | '/features/'
+    | '/projects'
     | '/cli/signin/complete'
+    | '/projects/$projectId/features'
+    | '/projects/$projectId/features/$featureId'
+    | '/projects/$projectId/features/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/cli/signin'
-    | '/features/$id'
-    | '/features'
+    | '/projects'
     | '/cli/signin/complete'
+    | '/projects/$projectId/features/$featureId'
+    | '/projects/$projectId/features'
   id:
     | '__root__'
     | '/'
-    | '/features'
     | '/cli/signin'
-    | '/features/$id'
-    | '/features/'
+    | '/projects/'
     | '/cli/signin/complete'
+    | '/projects/$projectId/features'
+    | '/projects/$projectId/features/$featureId'
+    | '/projects/$projectId/features/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  FeaturesRoute: typeof FeaturesRouteWithChildren
   CliSigninRoute: typeof CliSigninRouteWithChildren
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
+  ProjectsProjectIdFeaturesRoute: typeof ProjectsProjectIdFeaturesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/features': {
-      id: '/features'
-      path: '/features'
-      fullPath: '/features'
-      preLoaderRoute: typeof FeaturesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -119,25 +128,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/features/': {
-      id: '/features/'
-      path: '/'
-      fullPath: '/features/'
-      preLoaderRoute: typeof FeaturesIndexRouteImport
-      parentRoute: typeof FeaturesRoute
-    }
-    '/features/$id': {
-      id: '/features/$id'
-      path: '/$id'
-      fullPath: '/features/$id'
-      preLoaderRoute: typeof FeaturesIdRouteImport
-      parentRoute: typeof FeaturesRoute
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/cli/signin': {
       id: '/cli/signin'
       path: '/cli/signin'
       fullPath: '/cli/signin'
       preLoaderRoute: typeof CliSigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$projectId/features': {
+      id: '/projects/$projectId/features'
+      path: '/projects/$projectId/features'
+      fullPath: '/projects/$projectId/features'
+      preLoaderRoute: typeof ProjectsProjectIdFeaturesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cli/signin/complete': {
@@ -147,22 +156,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CliSigninCompleteRouteImport
       parentRoute: typeof CliSigninRoute
     }
+    '/projects/$projectId/features/': {
+      id: '/projects/$projectId/features/'
+      path: '/'
+      fullPath: '/projects/$projectId/features/'
+      preLoaderRoute: typeof ProjectsProjectIdFeaturesIndexRouteImport
+      parentRoute: typeof ProjectsProjectIdFeaturesRoute
+    }
+    '/projects/$projectId/features/$featureId': {
+      id: '/projects/$projectId/features/$featureId'
+      path: '/$featureId'
+      fullPath: '/projects/$projectId/features/$featureId'
+      preLoaderRoute: typeof ProjectsProjectIdFeaturesFeatureIdRouteImport
+      parentRoute: typeof ProjectsProjectIdFeaturesRoute
+    }
   }
 }
-
-interface FeaturesRouteChildren {
-  FeaturesIdRoute: typeof FeaturesIdRoute
-  FeaturesIndexRoute: typeof FeaturesIndexRoute
-}
-
-const FeaturesRouteChildren: FeaturesRouteChildren = {
-  FeaturesIdRoute: FeaturesIdRoute,
-  FeaturesIndexRoute: FeaturesIndexRoute,
-}
-
-const FeaturesRouteWithChildren = FeaturesRoute._addFileChildren(
-  FeaturesRouteChildren,
-)
 
 interface CliSigninRouteChildren {
   CliSigninCompleteRoute: typeof CliSigninCompleteRoute
@@ -176,10 +185,28 @@ const CliSigninRouteWithChildren = CliSigninRoute._addFileChildren(
   CliSigninRouteChildren,
 )
 
+interface ProjectsProjectIdFeaturesRouteChildren {
+  ProjectsProjectIdFeaturesFeatureIdRoute: typeof ProjectsProjectIdFeaturesFeatureIdRoute
+  ProjectsProjectIdFeaturesIndexRoute: typeof ProjectsProjectIdFeaturesIndexRoute
+}
+
+const ProjectsProjectIdFeaturesRouteChildren: ProjectsProjectIdFeaturesRouteChildren =
+  {
+    ProjectsProjectIdFeaturesFeatureIdRoute:
+      ProjectsProjectIdFeaturesFeatureIdRoute,
+    ProjectsProjectIdFeaturesIndexRoute: ProjectsProjectIdFeaturesIndexRoute,
+  }
+
+const ProjectsProjectIdFeaturesRouteWithChildren =
+  ProjectsProjectIdFeaturesRoute._addFileChildren(
+    ProjectsProjectIdFeaturesRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  FeaturesRoute: FeaturesRouteWithChildren,
   CliSigninRoute: CliSigninRouteWithChildren,
+  ProjectsIndexRoute: ProjectsIndexRoute,
+  ProjectsProjectIdFeaturesRoute: ProjectsProjectIdFeaturesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
