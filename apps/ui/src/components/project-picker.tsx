@@ -36,12 +36,14 @@ interface ProjectPickerProps {
   projects: Project[]
   selectedProject: Project
   onCreateProject?: (name: string) => Promise<void> | void
+  className?: string
 }
 
 export function ProjectPicker({
   projects,
   selectedProject,
   onCreateProject,
+  className,
 }: ProjectPickerProps) {
   const navigate = useNavigate({ from: '/projects/$projectId/features/' })
   const [open, setOpen] = useState(false)
@@ -108,7 +110,7 @@ export function ProjectPicker({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full h-8 justify-between"
+            className={cn('w-full h-8 justify-between', className)}
           >
             {selectedProject?.name || 'Select project...'}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

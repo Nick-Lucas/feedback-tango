@@ -29,6 +29,13 @@ import { ProjectPicker } from '@/components/project-picker'
 import { MergeFeaturesModal } from '@/components/merge-features-modal'
 import { useServerFn } from '@tanstack/react-start'
 import { cn } from '@/lib/utils'
+import { X, ChevronDown, Merge } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 export const Route = createFileRoute('/projects/$projectId/features')({
   component: App,
@@ -132,36 +139,64 @@ function App() {
         <Sidebar>
           <SidebarContent className="gap-0">
             <div className="p-2 space-y-2">
-              <ProjectPicker
-                projects={data.projects}
-                selectedProject={data.project}
-                onCreateProject={handleCreateProject}
-              />
+              <div>
+                <ProjectPicker
+                  projects={data.projects}
+                  selectedProject={data.project}
+                  onCreateProject={handleCreateProject}
+                  className="rounded-b-none"
+                />
 
-              <Input
-                type="search"
-                placeholder="Search features..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="h-8"
-              />
+                <Input
+                  type="search"
+                  placeholder="Search features..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="h-8 rounded-t-none mt-[-1px]"
+                />
+              </div>
 
-              <div className="px-2 py-1.5 flex items-center justify-between">
-                <span className="flex-1 text-gray-500 text-sm">
-                  {selectedFeatureIds.size > 0
-                    ? `${selectedFeatureIds.size} selected`
-                    : ''}
-                </span>
+              <div className="flex items-center justify-between gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant={
+                        selectedFeatureIds.size > 0 ? 'default' : 'outline'
+                      }
+                      size="sm"
+                      className="h-7 flex-1 justify-between"
+                      disabled={selectedFeatureIds.size === 0}
+                    >
+                      <span className="text-sm">
+                        {selectedFeatureIds.size > 0
+                          ? `${selectedFeatureIds.size} selected`
+                          : 'No selection'}
+                      </span>
+                      <ChevronDown className="h-4 w-4 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="w-[calc(var(--radix-dropdown-menu-trigger-width))]"
+                  >
+                    <DropdownMenuItem
+                      onClick={handleMergeClick}
+                      disabled={selectedFeatureIds.size < 2}
+                    >
+                      <Merge className="h-4 w-4" />
+                      Merge {selectedFeatureIds.size} features
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
                 <Button
-                  size="sm"
-                  onClick={handleMergeClick}
-                  className="h-7"
-                  disabled={selectedFeatureIds.size < 2}
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => setSelectedFeatureIds(new Set())}
+                  className="h-7 w-7 hover:brightness-90"
+                  disabled={selectedFeatureIds.size === 0}
                 >
-                  {selectedFeatureIds.size > 1
-                    ? `Merge ${selectedFeatureIds.size}`
-                    : 'Merge'}
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>
