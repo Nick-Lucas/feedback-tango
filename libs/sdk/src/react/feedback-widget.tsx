@@ -12,9 +12,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
     <div>
       Feedback Widget
       <Button
-        style={{
-          backgroundColor: 'blue',
-        }}
+        className=""
         onClick={async () => {
           await props.client.sendFeedback('Great job!')
         }}
