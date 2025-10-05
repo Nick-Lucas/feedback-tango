@@ -61,7 +61,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
         <Toaster />
 
-        <div className="fixed bottom-4 right-4 bg-card p-4 shadow-lg">
+        <div className="fixed bottom-4 right-4">
           <FeedbackWidget client={feedbackClient} />
         </div>
 

@@ -7,8 +7,6 @@ import { Label } from './components/ui/label'
 import { Progress } from './components/ui/progress'
 import { XIcon } from 'lucide-react'
 
-import './styles/globals.css'
-
 export interface FeedbackWidgetProps {
   client: FeedbackClient
   title?: string
@@ -98,8 +96,9 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-lg border shadow-sm w-lg min-w-0 max-w-lg p-2"
+      className="bg-background rounded-lg border shadow-sm p-2"
     >
+      <span className="w-80 h-10 block" />
       <div className="flex items-center justify-between ml-2 mr-0">
         <h2 className="text-xl font-semibold">
           {props.title ?? 'Give feedback'}
@@ -117,8 +116,8 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
 
       <div className="space-y-4 p-2">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm text-muted-foreground">
-            If you would like to receive updates on this
+          <Label htmlFor="email" className="text-sm">
+            Email (optional)
           </Label>
           <Input
             id="email"
@@ -130,7 +129,11 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
         </div>
 
         <div className="space-y-2">
+          <Label htmlFor="feedback" className="text-sm">
+            Feedback
+          </Label>
           <Textarea
+            id="feedback"
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
             onKeyDown={handleKeyDown}
