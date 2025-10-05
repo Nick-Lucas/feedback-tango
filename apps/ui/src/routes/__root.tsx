@@ -60,7 +60,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {children}
 
         <Toaster />
-        <FeedbackWidget client={feedbackClient} />
+
+        <div className="fixed bottom-4 right-4 bg-card p-4 shadow-lg">
+          <FeedbackWidget client={feedbackClient} />
+        </div>
 
         <TanStackDevtools
           config={{
