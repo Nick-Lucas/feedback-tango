@@ -6,11 +6,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/google": "catalog:",
     "@feedback-thing/db": "workspace:*",
+    "@feedback-thing/core": "workspace:*",
     "@hono/node-server": "^1.19.3",
+    "ai": "catalog:",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
-    "hono": "^4.9.7"
+    "hono": "^4.9.7",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",

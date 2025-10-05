@@ -2,3 +2,4 @@ node_modules/
 database.sqlite
 **/*.tsbuildinfo
 .env
+dist/

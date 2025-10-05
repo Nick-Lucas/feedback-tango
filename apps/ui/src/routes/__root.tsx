@@ -2,8 +2,18 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Toaster } from '@/components/ui/sonner'
+import { FeedbackWidget } from '@feedback-thing/sdk/react'
+import '@feedback-thing/sdk/styles.css'
+import { createFeedbackClient } from '@feedback-thing/sdk/client'
 
 import appCss from '../styles.css?url'
+
+const feedbackClient = createFeedbackClient({
+  endpoint: 'http://localhost:3000/api/feedback',
+
+  // Foo project
+  projectPublicKey: '0199aae2-15a3-7c5e-bac8-d5060162c099',
+})
 
 export const Route = createRootRoute({
   head: () => ({
@@ -49,7 +59,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+
         <Toaster />
+
+        <div className="fixed bottom-4 right-4">
+          <FeedbackWidget client={feedbackClient} />
+        </div>
+
         <TanStackDevtools
           config={{
             position: 'bottom-left',
