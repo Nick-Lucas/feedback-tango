@@ -91,6 +91,7 @@ catalog:
   vaul: 1.1.2
   vite: ^7.1.9
   vite-plugin-dts: ^4.5.4
+  vitest: ^3.2.4
   zod: 4.1.8
 
 catalogMode: prefer
