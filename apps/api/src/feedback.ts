@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { google } from '@ai-sdk/google'
 import { generateObject, generateText, stepCountIs, tool } from 'ai'
 import { featureAccess } from '@feedback-thing/core'
+import { embedText } from '@feedback-thing/agents'
 
 const FeedbackSubmission = z.object({
   email: z.email().max(100).optional(),
@@ -151,17 +152,16 @@ function createProjectTools(
   const featureSearchTool = tool({
     name: 'featureSearch',
     description:
-      'Search existing features by postgres ilike pattern. Returns a list of features with their IDs and titles. Call this tool multiple times until you find a good match',
+      'Search existing features. Returns a list of features. Internally uses a vector search.',
     inputSchema: z.object({
-      query: z
-        .string()
-        .describe(
-          'The search query, uses postgres ilike, e.g. "%dark mode%" or "%theme%". PREFER single words or short phrases over long ones.'
-        ),
+      query: z.string().describe('The search term'),
     }),
     execute: async (ctx) => {
       console.log('Searching features for', ctx.query)
-      return await featureAccess.search(projectId, ctx.query)
+      const query = await embedText(ctx.query)
+      const results = await featureAccess.search(projectId, query)
+      console.log('Search results:', ctx.query, results)
+      return results
     },
   })
 
@@ -175,24 +175,23 @@ function createProjectTools(
     }),
     execute: async (ctx) => {
       console.log('Creating feature:', ctx.title)
-      const possibleDuplicates = await featureAccess.search(
+      const possibleDuplicate = await featureAccess.getByName(
         projectId,
         ctx.title
       )
-      if (possibleDuplicates.length > 0) {
-        const feature = possibleDuplicates.find(
-          (f) => f.name.toLowerCase() === ctx.title.toLowerCase()
-        )
-        if (feature) {
-          console.log('feature already existed so returning that instead')
-          return feature
-        }
+      if (possibleDuplicate) {
+        console.log('feature already existed so returning that instead')
+        return possibleDuplicate
       }
+
+      // TODO: maybe use a queue to process these later?
+      const nameEmbedding = await embedText(ctx.title)
 
       return await featureAccess.create({
         projectId,
         name: ctx.title,
         description: ctx.description,
+        nameEmbedding: nameEmbedding,
 
         // TODO: create a dummy user for ai agent actions
         createdBy: 'ai-agent',

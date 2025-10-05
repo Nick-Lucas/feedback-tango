@@ -1,5 +1,5 @@
 import { createDb, Projects, Features, Feedbacks } from '@feedback-thing/db'
-import { and, eq, ilike } from 'drizzle-orm'
+import { and, cosineDistance, eq, ilike } from 'drizzle-orm'
 
 export type Project = typeof Projects.$inferSelect
 export type NewProject = typeof Projects.$inferInsert
@@ -99,7 +99,10 @@ export const projectAccess = {
 export const featureAccess = {
   // Create a new feature
   create: async (data: Omit<NewFeature, 'id' | 'createdAt'>) => {
-    const [feature] = await db.insert(Features).values(data).returning()
+    const [feature] = await db
+      .insert(Features)
+      .values({ ...data })
+      .returning()
     if (!feature) {
       throw new Error('Failed to create feature')
     }
@@ -174,25 +177,33 @@ export const featureAccess = {
       .where(eq(Features.createdBy, createdBy))
   },
 
-  // Search features by name
-  search: async (projectId: string, searchTerm: string) => {
-    const results = await db
-      .select()
-      .from(Features)
-      .where(
-        and(
-          ilike(Features.name, `%${searchTerm}%`),
-          eq(Features.projectId, projectId)
-        )
-      )
+  // Get features by creator
+  getByName: async (
+    projectId: string,
+    name: string
+  ): Promise<Feature | undefined> => {
+    return (
+      await db
+        .select()
+        .from(Features)
+        .where(and(eq(Features.projectId, projectId), eq(Features.name, name)))
+        .limit(1)
+    )[0]
+  },
 
-    return results.map((feature) => {
-      return {
-        id: feature.id,
-        name: feature.name,
-        description: feature.description,
-      }
-    })
+  // Search features by name
+  search: async (projectId: string, searchTerm: number[]) => {
+    return await db
+      .select({
+        id: Features.id,
+        name: Features.name,
+        description: Features.description,
+        searchDistance: cosineDistance(Features.nameEmbedding, searchTerm),
+      })
+      .from(Features)
+      .where(eq(Features.projectId, projectId))
+      .orderBy(cosineDistance(Features.nameEmbedding, searchTerm))
+      .limit(5)
   },
 }
 

@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import {
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  halfvec,
+} from 'drizzle-orm/pg-core'
 import { relations, sql } from 'drizzle-orm'
 export * from './auth-schema.ts'
 import { user } from './auth-schema.ts'
@@ -17,18 +24,28 @@ export const ProjectRelations = relations(Projects, ({ many }) => ({
   feedbacks: many(Feedbacks),
 }))
 
-export const Features = pgTable('features', {
-  id: uuid()
-    .primaryKey()
-    .default(sql`uuidv7()`),
-  projectId: uuid()
-    .notNull()
-    .references(() => Projects.id),
-  name: text().notNull().unique(),
-  description: text().notNull(),
-  createdBy: text().notNull(),
-  createdAt: timestamp().defaultNow().notNull(),
-})
+export const Features = pgTable(
+  'features',
+  {
+    id: uuid()
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    projectId: uuid()
+      .notNull()
+      .references(() => Projects.id),
+    name: text().notNull().unique(),
+    nameEmbedding: halfvec({ dimensions: 3072 }),
+    description: text().notNull(),
+    createdBy: text().notNull(),
+    createdAt: timestamp().defaultNow().notNull(),
+  },
+  (table) => [
+    index('features_name_embedding_idx_cosine').using(
+      'hnsw',
+      table.nameEmbedding.op('vector_cosine_ops')
+    ),
+  ]
+)
 
 export const FeatureRelations = relations(Features, ({ one, many }) => ({
   project: one(Projects, {

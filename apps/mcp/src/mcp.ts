@@ -5,6 +5,7 @@ import {
   featureAccess,
   feedbackAccess,
 } from '@feedback-thing/core'
+import { embedText } from '@feedback-thing/agents'
 
 // We have to use zod3 for now because of https://github.com/modelcontextprotocol/typescript-sdk/issues/925
 import { z } from 'zod'
@@ -82,7 +83,7 @@ mcp.registerTool(
   {
     title: 'Search Features',
     description:
-      'Search features by name using ilike matching, you can run this multiple times to try out different variations',
+      'Search existing features. Returns a list of features. Internally uses a vector search. You can run this multiple times to try out different variations',
     inputSchema: {
       projectId: z.string().min(1).describe('Project ID to search within'),
       searchTerm: z.string().describe('Search term for feature name'),
@@ -95,7 +96,8 @@ mcp.registerTool(
       throw new Error('No user ID found in token.')
     }
 
-    const result = await featureAccess.search(input.projectId, input.searchTerm)
+    const searchTerm = await embedText(input.searchTerm)
+    const result = await featureAccess.search(input.projectId, searchTerm)
 
     return {
       content: [

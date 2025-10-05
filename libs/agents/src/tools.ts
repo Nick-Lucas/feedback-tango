@@ -8,9 +8,9 @@ import {
   projectCreateSchema,
   projectSearchSchema,
   featureCreateSchema,
-  featureSearchSchema,
   feedbackCreateSchema,
 } from './schemas.ts'
+import { embedText } from './embedding.ts'
 
 export const searchProjectsTool = tool({
   description:
@@ -30,22 +30,17 @@ export const createProjectTool = tool({
   },
 })
 
-export const searchFeaturesTool = tool({
-  description:
-    'Search features by name using ilike matching, you can run this multiple times to try out different variations',
-  inputSchema: featureSearchSchema,
-  execute: async ({ projectId, searchTerm }) => {
-    return await featureAccess.search(projectId, searchTerm)
-  },
-})
-
 export const createFeatureTool = tool({
   description:
     'Create a new feature if an appropriate one does not exist, always use the search tool first to confirm no match, never ask for permission, do not ask the user to intervene unless it is unclear what feature they could be referring to. Synthesize a name and short description of the feature based on what you know.',
   inputSchema: featureCreateSchema,
   execute: async ({ name, description, projectId, createdBy }) => {
+    // TODO: maybe use a queue to process these later?
+    const nameEmbedding = await embedText(name)
+
     return await featureAccess.create({
       name,
+      nameEmbedding,
       description,
       projectId,
       createdBy,
@@ -70,7 +65,6 @@ export const createFeedbackTool = tool({
 export const databaseTools = {
   searchProjects: searchProjectsTool,
   createProject: createProjectTool,
-  searchFeatures: searchFeaturesTool,
   createFeature: createFeatureTool,
   createFeedback: createFeedbackTool,
 }

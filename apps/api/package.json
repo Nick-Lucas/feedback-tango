@@ -9,6 +9,7 @@
     "@ai-sdk/google": "catalog:",
     "@feedback-thing/db": "workspace:*",
     "@feedback-thing/core": "workspace:*",
+    "@feedback-thing/agents": "workspace:*",
     "@hono/node-server": "^1.19.3",
     "ai": "catalog:",
     "dotenv": "catalog:",
