@@ -11,6 +11,7 @@ import './styles/globals.css'
 
 export interface FeedbackWidgetProps {
   client: FeedbackClient
+  title?: string
 }
 
 export function FeedbackWidget(props: FeedbackWidgetProps) {
@@ -100,7 +101,9 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
       className="bg-white rounded-lg border shadow-sm w-lg min-w-0 max-w-lg p-2"
     >
       <div className="flex items-center justify-between ml-2 mr-0">
-        <h2 className="text-xl font-semibold">Give feedback on Tango</h2>
+        <h2 className="text-xl font-semibold">
+          {props.title ?? 'Give feedback'}
+        </h2>
 
         <Button
           variant="ghost"

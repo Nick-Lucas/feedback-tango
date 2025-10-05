@@ -1,17 +1,19 @@
 import { defineConfig } from 'tsdown'
 
-export default defineConfig([
-  {
-    entry: ['./src/client/index.ts'],
-    outDir: './dist/client',
-    platform: 'neutral',
-    dts: true,
+export default defineConfig({
+  entry: {
+    'client/index': './src/client/index.ts',
+    'react/index': './src/react/index.tsx',
   },
-  {
-    entry: ['./src/react/index.tsx'],
-    outDir: './dist/react',
-    platform: 'neutral',
-    dts: true,
-    external: ['tailwindcss', 'tw-animate-css'],
-  },
-])
+  outDir: './dist',
+  platform: 'neutral',
+  dts: true,
+  external: ['tailwindcss', 'tw-animate-css'],
+  ignoreWatch: [
+    'dist',
+    'node_modules',
+    'test',
+    '**/*.test.ts',
+    '**/*.test.tsx',
+  ],
+})
