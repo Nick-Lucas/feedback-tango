@@ -7,7 +7,7 @@ export function createFeedbackClient(opts: FeedbackClientOpts) {
   const uri = new URL(opts.endpoint)
 
   return {
-    sendFeedback: async (feedback: string) => {
+    sendFeedback: async (email: string | undefined, feedback: string) => {
       console.log('Sending feedback:', feedback)
 
       const result = await fetch(uri, {
@@ -16,7 +16,7 @@ export function createFeedbackClient(opts: FeedbackClientOpts) {
           'Content-Type': 'application/json',
           'X-Project-Key': opts.projectPublicKey,
         },
-        body: JSON.stringify({ feedback }),
+        body: JSON.stringify({ email: email || undefined, feedback }),
       })
 
       if (!result.ok) {

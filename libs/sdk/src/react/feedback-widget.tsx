@@ -54,7 +54,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
     setIsSubmitting(true)
 
     try {
-      await props.client.sendFeedback(feedback)
+      await props.client.sendFeedback(email, feedback)
       setSubmitted(true)
     } catch (error) {
       console.error('Failed to send feedback:', error)
