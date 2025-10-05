@@ -96,9 +96,8 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-background rounded-lg border shadow-sm p-2"
+      className="bg-background rounded-lg border shadow-sm p-2 w-80 max-w-80"
     >
-      <span className="w-80 h-10 block" />
       <div className="flex items-center justify-between ml-2 mr-0">
         <h2 className="text-xl font-semibold">
           {props.title ?? 'Give feedback'}
