@@ -1,4 +1,7 @@
 import { type FeedbackClient } from '../client/index.ts'
+import { Button } from './components/ui/button.tsx'
+
+import './styles/globals.css'
 
 export interface FeedbackWidgetProps {
   client: FeedbackClient
@@ -8,7 +11,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
   return (
     <div>
       Feedback Widget
-      <button
+      <Button
         style={{
           backgroundColor: 'blue',
         }}
@@ -17,7 +20,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
         }}
       >
         Send
-      </button>
+      </Button>
     </div>
   )
 }
