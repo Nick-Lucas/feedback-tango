@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsdown'
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
@@ -7,8 +7,8 @@ export default defineConfig({
   },
   outDir: './dist',
   platform: 'neutral',
+  format: ['esm'],
   dts: true,
-  external: ['tailwindcss', 'tw-animate-css'],
   ignoreWatch: [
     'dist',
     'node_modules',

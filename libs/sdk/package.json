@@ -27,14 +27,15 @@
       "source": "./src/react/index.tsx",
       "import": "./dist/react/index.js",
       "types": "./dist/react/index.d.ts"
-    }
+    },
+    "./styles.css": "./dist/react/index.css"
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "playground": "vite --config playground/vite.config.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
@@ -42,6 +43,8 @@
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
+    "@tailwindcss/vite": "catalog:",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^22.15.17",
@@ -50,12 +53,12 @@
     "@vitejs/plugin-react": "^5.0.4",
     "bumpp": "^10.1.0",
     "happy-dom": "^17.4.6",
+    "postcss": "catalog:",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tsdown": "^0.11.1",
-    "typescript": "^5.8.3",
     "tailwindcss": "catalog:",
-    "@tailwindcss/vite": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "^5.8.3",
     "vite": "npm:rolldown-vite@latest",
     "vitest": "catalog:"
   },
