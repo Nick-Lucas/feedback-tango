@@ -11,8 +11,8 @@ import appCss from '../styles.css?url'
 const feedbackClient = createFeedbackClient({
   endpoint: 'http://localhost:3000/api/feedback',
 
-  // Foo project
-  projectPublicKey: '0199aae2-15a3-7c5e-bac8-d5060162c099',
+  // Slack project
+  projectPublicKey: '0199afaf-518c-70f4-924f-1f9abc2aaf4f',
 })
 
 export const Route = createRootRoute({

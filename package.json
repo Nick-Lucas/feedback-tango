@@ -27,6 +27,8 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
     "typescript": "catalog:"
   },
   "devDependencies": {
