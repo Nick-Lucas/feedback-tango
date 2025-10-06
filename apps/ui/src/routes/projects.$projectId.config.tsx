@@ -1,6 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { getProject, getProjectMembers } from '@/server-functions'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -68,6 +74,9 @@ function RouteComponent() {
       <Card>
         <CardHeader>
           <CardTitle>Public Key</CardTitle>
+          <CardDescription>
+            Use this to submit feedback via the SDK
+          </CardDescription>
         </CardHeader>
 
         <CardContent className="flex gap-2">
@@ -96,6 +105,9 @@ function RouteComponent() {
       <Card>
         <CardHeader>
           <CardTitle>Members</CardTitle>
+          <CardDescription>
+            Users in this list can access and manage this project
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -131,6 +143,9 @@ function RouteComponent() {
       <Card>
         <CardHeader>
           <CardTitle>Sync Settings</CardTitle>
+          <CardDescription>
+            Connect your feedback to tickets in your Issue Tracker
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
