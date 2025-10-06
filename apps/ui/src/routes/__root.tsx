@@ -45,8 +45,34 @@ export const Route = createRootRoute({
 
   shellComponent: RootDocument,
 
+  // TODO: this is pretty icky but does work
+  // Need a better way to manage the first load which is under SSR without auto-redirecting everyone via signin and resetting their page
   async beforeLoad(ctx) {
-    const session = await authClient.getSession()
+    // Detect server vs client
+    const isServer = typeof document === 'undefined'
+    let session:
+      | Awaited<ReturnType<typeof authClient.getSession>>
+      | { data: null } = { data: null }
+
+    if (isServer) {
+      const getCookie = (await import('@tanstack/react-start/server')).getCookie
+      const sessionToken = getCookie('better-auth.session_token')
+      if (sessionToken) {
+        session = await authClient.getSession({
+          fetchOptions: {
+            headers: {
+              // Forward cookie manually during SSR
+              Cookie: `better-auth.session_token=${sessionToken}`,
+            },
+          },
+        })
+      }
+    } else {
+      // Client: allow browser to send cookies
+      session = await authClient.getSession({
+        fetchOptions: { credentials: 'include' },
+      })
+    }
 
     // TODO: use a proper protected parent route or layout
     if (!ctx.location.pathname.includes('/signin') && !session.data) {
