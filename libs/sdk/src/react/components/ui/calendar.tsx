@@ -29,7 +29,7 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        'bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent',
+        'tangosdk:bg-background tangosdk:group/calendar tangosdk:p-3 tangosdk:[--cell-size:--spacing(8)] tangosdk:[[data-slot=card-content]_&]:bg-transparent tangosdk:[[data-slot=popover-content]_&]:bg-transparent',
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className
@@ -41,87 +41,99 @@ function Calendar({
         ...formatters,
       }}
       classNames={{
-        root: cn('w-fit', defaultClassNames.root),
+        root: cn('tangosdk:w-fit', defaultClassNames.root),
         months: cn(
-          'flex gap-4 flex-col md:flex-row relative',
+          'tangosdk:flex tangosdk:gap-4 tangosdk:flex-col tangosdk:md:flex-row tangosdk:relative',
           defaultClassNames.months
         ),
-        month: cn('flex flex-col w-full gap-4', defaultClassNames.month),
+        month: cn(
+          'tangosdk:flex tangosdk:flex-col tangosdk:w-full tangosdk:gap-4',
+          defaultClassNames.month
+        ),
         nav: cn(
-          'flex items-center gap-1 w-full absolute top-0 inset-x-0 justify-between',
+          'tangosdk:flex tangosdk:items-center tangosdk:gap-1 tangosdk:w-full tangosdk:absolute tangosdk:top-0 tangosdk:inset-x-0 tangosdk:justify-between',
           defaultClassNames.nav
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none',
+          'tangosdk:size-(--cell-size) tangosdk:aria-disabled:opacity-50 tangosdk:p-0 tangosdk:select-none',
           defaultClassNames.button_previous
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none',
+          'tangosdk:size-(--cell-size) tangosdk:aria-disabled:opacity-50 tangosdk:p-0 tangosdk:select-none',
           defaultClassNames.button_next
         ),
         month_caption: cn(
-          'flex items-center justify-center h-(--cell-size) w-full px-(--cell-size)',
+          'tangosdk:flex tangosdk:items-center tangosdk:justify-center tangosdk:h-(--cell-size) tangosdk:w-full tangosdk:px-(--cell-size)',
           defaultClassNames.month_caption
         ),
         dropdowns: cn(
-          'w-full flex items-center text-sm font-medium justify-center h-(--cell-size) gap-1.5',
+          'tangosdk:w-full tangosdk:flex tangosdk:items-center tangosdk:text-sm tangosdk:font-medium tangosdk:justify-center tangosdk:h-(--cell-size) tangosdk:gap-1.5',
           defaultClassNames.dropdowns
         ),
         dropdown_root: cn(
-          'relative has-focus:border-ring border border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] rounded-md',
+          'tangosdk:relative tangosdk:has-focus:border-ring tangosdk:border tangosdk:border-input tangosdk:shadow-xs tangosdk:has-focus:ring-ring/50 tangosdk:has-focus:ring-[3px] tangosdk:rounded-md',
           defaultClassNames.dropdown_root
         ),
         dropdown: cn(
-          'absolute bg-popover inset-0 opacity-0',
+          'tangosdk:absolute tangosdk:bg-popover tangosdk:inset-0 tangosdk:opacity-0',
           defaultClassNames.dropdown
         ),
         caption_label: cn(
-          'select-none font-medium',
+          'tangosdk:select-none tangosdk:font-medium',
           captionLayout === 'label'
-            ? 'text-sm'
-            : 'rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5',
+            ? 'tangosdk:text-sm'
+            : 'tangosdk:rounded-md tangosdk:pl-2 tangosdk:pr-1 tangosdk:flex tangosdk:items-center tangosdk:gap-1 tangosdk:text-sm tangosdk:h-8 tangosdk:[&>svg]:text-muted-foreground tangosdk:[&>svg]:size-3.5',
           defaultClassNames.caption_label
         ),
-        table: 'w-full border-collapse',
-        weekdays: cn('flex', defaultClassNames.weekdays),
+        table: 'tangosdk:w-full tangosdk:border-collapse',
+        weekdays: cn('tangosdk:flex', defaultClassNames.weekdays),
         weekday: cn(
-          'text-muted-foreground rounded-md flex-1 font-normal text-[0.8rem] select-none',
+          'tangosdk:text-muted-foreground tangosdk:rounded-md tangosdk:flex-1 tangosdk:font-normal tangosdk:text-[0.8rem] tangosdk:select-none',
           defaultClassNames.weekday
         ),
-        week: cn('flex w-full mt-2', defaultClassNames.week),
+        week: cn(
+          'tangosdk:flex tangosdk:w-full tangosdk:mt-2',
+          defaultClassNames.week
+        ),
         week_number_header: cn(
-          'select-none w-(--cell-size)',
+          'tangosdk:select-none tangosdk:w-(--cell-size)',
           defaultClassNames.week_number_header
         ),
         week_number: cn(
-          'text-[0.8rem] select-none text-muted-foreground',
+          'tangosdk:text-[0.8rem] tangosdk:select-none tangosdk:text-muted-foreground',
           defaultClassNames.week_number
         ),
         day: cn(
-          'relative w-full h-full p-0 text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none',
+          'tangosdk:relative tangosdk:w-full tangosdk:h-full tangosdk:p-0 tangosdk:text-center tangosdk:[&:first-child[data-selected=true]_button]:rounded-l-md tangosdk:[&:last-child[data-selected=true]_button]:rounded-r-md tangosdk:group/day tangosdk:aspect-square tangosdk:select-none',
           defaultClassNames.day
         ),
         range_start: cn(
-          'rounded-l-md bg-accent',
+          'tangosdk:rounded-l-md tangosdk:bg-accent',
           defaultClassNames.range_start
         ),
-        range_middle: cn('rounded-none', defaultClassNames.range_middle),
-        range_end: cn('rounded-r-md bg-accent', defaultClassNames.range_end),
+        range_middle: cn(
+          'tangosdk:rounded-none',
+          defaultClassNames.range_middle
+        ),
+        range_end: cn(
+          'tangosdk:rounded-r-md tangosdk:bg-accent',
+          defaultClassNames.range_end
+        ),
         today: cn(
-          'bg-accent text-accent-foreground rounded-md data-[selected=true]:rounded-none',
+          'tangosdk:bg-accent tangosdk:text-accent-foreground tangosdk:rounded-md tangosdk:data-[selected=true]:rounded-none',
           defaultClassNames.today
         ),
         outside: cn(
-          'text-muted-foreground aria-selected:text-muted-foreground',
+          'tangosdk:text-muted-foreground tangosdk:aria-selected:text-muted-foreground',
           defaultClassNames.outside
         ),
         disabled: cn(
-          'text-muted-foreground opacity-50',
+          'tangosdk:text-muted-foreground tangosdk:opacity-50',
           defaultClassNames.disabled
         ),
-        hidden: cn('invisible', defaultClassNames.hidden),
+        hidden: cn('tangosdk:invisible', defaultClassNames.hidden),
         ...classNames,
       }}
       components={{
@@ -138,28 +150,34 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === 'left') {
             return (
-              <ChevronLeftIcon className={cn('size-4', className)} {...props} />
+              <ChevronLeftIcon
+                className={cn('tangosdk:size-4', className)}
+                {...props}
+              />
             )
           }
 
           if (orientation === 'right') {
             return (
               <ChevronRightIcon
-                className={cn('size-4', className)}
+                className={cn('tangosdk:size-4', className)}
                 {...props}
               />
             )
           }
 
           return (
-            <ChevronDownIcon className={cn('size-4', className)} {...props} />
+            <ChevronDownIcon
+              className={cn('tangosdk:size-4', className)}
+              {...props}
+            />
           )
         },
         DayButton: CalendarDayButton,
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>
-              <div className="flex size-(--cell-size) items-center justify-center text-center">
+              <div className="tangosdk:flex tangosdk:size-(--cell-size) tangosdk:items-center tangosdk:justify-center tangosdk:text-center">
                 {children}
               </div>
             </td>
@@ -201,7 +219,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        'data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 dark:hover:text-accent-foreground flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md [&>span]:text-xs [&>span]:opacity-70',
+        'tangosdk:data-[selected-single=true]:bg-primary tangosdk:data-[selected-single=true]:text-primary-foreground tangosdk:data-[range-middle=true]:bg-accent tangosdk:data-[range-middle=true]:text-accent-foreground tangosdk:data-[range-start=true]:bg-primary tangosdk:data-[range-start=true]:text-primary-foreground tangosdk:data-[range-end=true]:bg-primary tangosdk:data-[range-end=true]:text-primary-foreground tangosdk:group-data-[focused=true]/day:border-ring tangosdk:group-data-[focused=true]/day:ring-ring/50 tangosdk:dark:hover:text-accent-foreground tangosdk:flex tangosdk:aspect-square tangosdk:size-auto tangosdk:w-full tangosdk:min-w-(--cell-size) tangosdk:flex-col tangosdk:gap-1 tangosdk:leading-none tangosdk:font-normal tangosdk:group-data-[focused=true]/day:relative tangosdk:group-data-[focused=true]/day:z-10 tangosdk:group-data-[focused=true]/day:ring-[3px] tangosdk:data-[range-end=true]:rounded-md tangosdk:data-[range-end=true]:rounded-r-md tangosdk:data-[range-middle=true]:rounded-none tangosdk:data-[range-start=true]:rounded-md tangosdk:data-[range-start=true]:rounded-l-md tangosdk:[&>span]:text-xs tangosdk:[&>span]:opacity-70',
         defaultClassNames.day,
         className
       )}

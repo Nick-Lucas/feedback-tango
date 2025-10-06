@@ -1,18 +1,42 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Scripts,
+  createRootRoute,
+  redirect,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Toaster } from '@/components/ui/sonner'
 import { FeedbackWidget } from '@feedback-thing/sdk/react'
-import '@feedback-thing/sdk/styles.css'
 import { createFeedbackClient } from '@feedback-thing/sdk/client'
+import { authClient } from '@/lib/auth'
 
 import appCss from '../styles.css?url'
+import '@feedback-thing/sdk/styles.css'
+import { createServerFn } from '@tanstack/react-start'
+import { getCookie } from '@tanstack/react-start/server'
 
 const feedbackClient = createFeedbackClient({
   endpoint: 'http://localhost:3000/api/feedback',
 
   // TODO: make configurable
-  projectPublicKey: '0199afaf-518c-70f4-924f-1f9abc2aaf4f',
+  projectPublicKey: '0199b9c2-dfb0-754d-b6c6-4301e74d8e6e',
+})
+
+const getSession = createServerFn().handler(async () => {
+  const sessionToken = getCookie('better-auth.session_token')
+  if (sessionToken) {
+    return await authClient.getSession({
+      fetchOptions: {
+        headers: {
+          // Forward cookie manually during SSR
+          Cookie: `better-auth.session_token=${sessionToken}`,
+        },
+      },
+    })
+  } else {
+    return null
+  }
 })
 
 export const Route = createRootRoute({
@@ -38,6 +62,23 @@ export const Route = createRootRoute({
   }),
 
   shellComponent: RootDocument,
+
+  async beforeLoad(ctx) {
+    const session = await getSession()
+
+    // TODO: use a proper protected parent route or layout
+    if (!ctx.location.pathname.includes('/signin') && !session?.data) {
+      throw redirect({
+        to: '/signin',
+        replace: true,
+        search: {
+          redirect: ctx.location.url,
+        },
+      })
+    }
+
+    return session?.data
+  },
 
   errorComponent: ({ error }) => {
     return (

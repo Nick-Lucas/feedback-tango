@@ -30,7 +30,6 @@ function RouteComponent() {
       const project = await requestCreateProject({
         data: {
           name: projectName.trim(),
-          createdBy: '', // TODO: get from auth
         },
       })
 

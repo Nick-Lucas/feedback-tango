@@ -7,7 +7,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme as ToasterProps['theme']}
-      className="toaster group"
+      className="tangosdk:toaster tangosdk:group"
       style={
         {
           '--normal-bg': 'var(--popover)',

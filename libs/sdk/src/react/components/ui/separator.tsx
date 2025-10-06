@@ -17,7 +17,7 @@ function Separator({
       decorative={decorative}
       orientation={orientation}
       className={cn(
-        'bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px',
+        'tangosdk:bg-border tangosdk:shrink-0 tangosdk:data-[orientation=horizontal]:h-px tangosdk:data-[orientation=horizontal]:w-full tangosdk:data-[orientation=vertical]:h-full tangosdk:data-[orientation=vertical]:w-px',
         className
       )}
       {...props}

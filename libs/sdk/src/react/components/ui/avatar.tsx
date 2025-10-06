@@ -11,7 +11,7 @@ function Avatar({
     <AvatarPrimitive.Root
       data-slot="avatar"
       className={cn(
-        'relative flex size-8 shrink-0 overflow-hidden rounded-full',
+        'tangosdk:relative tangosdk:flex tangosdk:size-8 tangosdk:shrink-0 tangosdk:overflow-hidden tangosdk:rounded-full',
         className
       )}
       {...props}
@@ -26,7 +26,7 @@ function AvatarImage({
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
-      className={cn('aspect-square size-full', className)}
+      className={cn('tangosdk:aspect-square tangosdk:size-full', className)}
       {...props}
     />
   )
@@ -40,7 +40,7 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        'bg-muted flex size-full items-center justify-center rounded-full',
+        'tangosdk:bg-muted tangosdk:flex tangosdk:size-full tangosdk:items-center tangosdk:justify-center tangosdk:rounded-full',
         className
       )}
       {...props}

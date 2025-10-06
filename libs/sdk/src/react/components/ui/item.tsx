@@ -10,7 +10,10 @@ function ItemGroup({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       role="list"
       data-slot="item-group"
-      className={cn('group/item-group flex flex-col', className)}
+      className={cn(
+        'tangosdk:group/item-group tangosdk:flex tangosdk:flex-col',
+        className
+      )}
       {...props}
     />
   )
@@ -24,24 +27,24 @@ function ItemSeparator({
     <Separator
       data-slot="item-separator"
       orientation="horizontal"
-      className={cn('my-0', className)}
+      className={cn('tangosdk:my-0', className)}
       {...props}
     />
   )
 }
 
 const itemVariants = cva(
-  'group/item flex items-center border border-transparent text-sm rounded-md transition-colors [a]:hover:bg-accent/50 [a]:transition-colors duration-100 flex-wrap outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+  'tangosdk:group/item tangosdk:flex tangosdk:items-center tangosdk:border tangosdk:border-transparent tangosdk:text-sm tangosdk:rounded-md tangosdk:transition-colors tangosdk:[a]:hover:bg-accent/50 tangosdk:[a]:transition-colors tangosdk:duration-100 tangosdk:flex-wrap tangosdk:outline-none tangosdk:focus-visible:border-ring tangosdk:focus-visible:ring-ring/50 tangosdk:focus-visible:ring-[3px]',
   {
     variants: {
       variant: {
-        default: 'bg-transparent',
-        outline: 'border-border',
-        muted: 'bg-muted/50',
+        default: 'tangosdk:bg-transparent',
+        outline: 'tangosdk:border-border',
+        muted: 'tangosdk:bg-muted/50',
       },
       size: {
-        default: 'p-4 gap-4 ',
-        sm: 'py-3 px-4 gap-2.5',
+        default: 'tangosdk:p-4 tangosdk:gap-4 tangosdk:',
+        sm: 'tangosdk:py-3 tangosdk:px-4 tangosdk:gap-2.5',
       },
     },
     defaultVariants: {
@@ -72,14 +75,14 @@ function Item({
 }
 
 const itemMediaVariants = cva(
-  'flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none group-has-[[data-slot=item-description]]/item:translate-y-0.5',
+  'tangosdk:flex tangosdk:shrink-0 tangosdk:items-center tangosdk:justify-center tangosdk:gap-2 tangosdk:group-has-[[data-slot=item-description]]/item:self-start tangosdk:[&_svg]:pointer-events-none tangosdk:group-has-[[data-slot=item-description]]/item:translate-y-0.5',
   {
     variants: {
       variant: {
-        default: 'bg-transparent',
-        icon: "size-8 border rounded-sm bg-muted [&_svg:not([class*='size-'])]:size-4",
+        default: 'tangosdk:bg-transparent',
+        icon: 'tangosdk:size-8 tangosdk:border tangosdk:rounded-sm tangosdk:bg-muted tangosdk:[&_svg:not([class*=size-])]:size-4',
         image:
-          'size-10 rounded-sm overflow-hidden [&_img]:size-full [&_img]:object-cover',
+          'tangosdk:size-10 tangosdk:rounded-sm tangosdk:overflow-hidden tangosdk:[&_img]:size-full tangosdk:[&_img]:object-cover',
       },
     },
     defaultVariants: {
@@ -108,7 +111,7 @@ function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="item-content"
       className={cn(
-        'flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none',
+        'tangosdk:flex tangosdk:flex-1 tangosdk:flex-col tangosdk:gap-1 tangosdk:[&+[data-slot=item-content]]:flex-none',
         className
       )}
       {...props}
@@ -121,7 +124,7 @@ function ItemTitle({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="item-title"
       className={cn(
-        'flex w-fit items-center gap-2 text-sm leading-snug font-medium',
+        'tangosdk:flex tangosdk:w-fit tangosdk:items-center tangosdk:gap-2 tangosdk:text-sm tangosdk:leading-snug tangosdk:font-medium',
         className
       )}
       {...props}
@@ -134,8 +137,8 @@ function ItemDescription({ className, ...props }: React.ComponentProps<'p'>) {
     <p
       data-slot="item-description"
       className={cn(
-        'text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance',
-        '[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4',
+        'tangosdk:text-muted-foreground tangosdk:line-clamp-2 tangosdk:text-sm tangosdk:leading-normal tangosdk:font-normal tangosdk:text-balance',
+        'tangosdk:[&>a:hover]:text-primary tangosdk:[&>a]:underline tangosdk:[&>a]:underline-offset-4',
         className
       )}
       {...props}
@@ -147,7 +150,10 @@ function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="item-actions"
-      className={cn('flex items-center gap-2', className)}
+      className={cn(
+        'tangosdk:flex tangosdk:items-center tangosdk:gap-2',
+        className
+      )}
       {...props}
     />
   )
@@ -158,7 +164,7 @@ function ItemHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="item-header"
       className={cn(
-        'flex basis-full items-center justify-between gap-2',
+        'tangosdk:flex tangosdk:basis-full tangosdk:items-center tangosdk:justify-between tangosdk:gap-2',
         className
       )}
       {...props}
@@ -171,7 +177,7 @@ function ItemFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="item-footer"
       className={cn(
-        'flex basis-full items-center justify-between gap-2',
+        'tangosdk:flex tangosdk:basis-full tangosdk:items-center tangosdk:justify-between tangosdk:gap-2',
         className
       )}
       {...props}

@@ -8,7 +8,7 @@
     "css": "src/react/styles/globals.css",
     "baseColor": "neutral",
     "cssVariables": true,
-    "prefix": ""
+    "prefix": "tangosdk"
   },
   "aliases": {
     "components": "@/src/react/components",

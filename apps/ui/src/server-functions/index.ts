@@ -1,15 +1,46 @@
-import { createServerFn } from '@tanstack/react-start'
+import { createMiddleware, createServerFn } from '@tanstack/react-start'
+import { getCookie } from '@tanstack/react-start/server'
 import { createDb, Projects, Feedbacks, Features } from '@feedback-thing/db'
 import { eq, inArray } from 'drizzle-orm'
 import z from 'zod'
 import { generateObject } from 'ai'
 import { google } from '@ai-sdk/google'
+import { authClient } from '@/lib/auth'
 
 const db = createDb()
 
 const model = google('gemini-2.5-flash-lite')
 
-export const getProject = createServerFn()
+const authMiddleware = createMiddleware({ type: 'function' }).server(
+  async (ctx) => {
+    const sessionToken = getCookie('better-auth.session_token')
+    if (!sessionToken) {
+      console.log('No session cookie found on request')
+      throw new Response('Unauthorized', { status: 401 })
+    }
+
+    const session = await authClient.getSession({
+      fetchOptions: {
+        headers: { Cookie: 'better-auth.session_token=' + sessionToken },
+      },
+    })
+    if (!session.data) {
+      console.log('No session found for cookie')
+      throw new Response('Unauthorized', { status: 401 })
+    }
+
+    return ctx.next({
+      context: {
+        user: session.data.user,
+        session: session.data.session,
+      },
+    })
+  }
+)
+
+const authedServerFn = createServerFn().middleware([authMiddleware])
+
+export const getProject = authedServerFn()
   .inputValidator(
     z.object({
       projectId: z.string(),
@@ -29,11 +60,11 @@ export const getProject = createServerFn()
     return project
   })
 
-export const getProjects = createServerFn().handler(() => {
+export const getProjects = authedServerFn().handler(() => {
   return db.query.Projects.findMany()
 })
 
-export const getProjectMembers = createServerFn()
+export const getProjectMembers = authedServerFn()
   .inputValidator(
     z.object({
       projectId: z.string(),
@@ -44,11 +75,10 @@ export const getProjectMembers = createServerFn()
     return db.query.user.findMany()
   })
 
-export const createProject = createServerFn()
+export const createProject = authedServerFn()
   .inputValidator(
     z.object({
       name: z.string().min(1),
-      createdBy: z.string(),
     })
   )
   .handler(async (ctx) => {
@@ -56,14 +86,14 @@ export const createProject = createServerFn()
       .insert(Projects)
       .values({
         name: ctx.data.name,
-        createdBy: ctx.data.createdBy,
+        createdBy: ctx.context.user.id,
       })
       .returning()
 
     return project
   })
 
-export const getFeatures = createServerFn()
+export const getFeatures = authedServerFn()
   .inputValidator(
     z.object({
       projectId: z.string(),
@@ -80,7 +110,7 @@ export const getFeatures = createServerFn()
     })
   })
 
-export const getFeature = createServerFn()
+export const getFeature = authedServerFn()
   .inputValidator(
     z.object({
       featureId: z.string(),
@@ -101,7 +131,7 @@ export const getFeature = createServerFn()
     })
   })
 
-export const mergeFeatures = createServerFn()
+export const mergeFeatures = authedServerFn()
   .inputValidator(
     z.object({
       featureIds: z.array(z.string()).min(2),
@@ -123,7 +153,7 @@ export const mergeFeatures = createServerFn()
           projectId,
           name: newFeatureName,
           description: newFeatureDescription,
-          createdBy: '', //TODO: current user from auth
+          createdBy: ctx.context.user.id,
         })
         .returning()
 
@@ -141,7 +171,7 @@ export const mergeFeatures = createServerFn()
     })
   })
 
-export const suggestMergedFeatureDetails = createServerFn({ method: 'POST' })
+export const suggestMergedFeatureDetails = authedServerFn({ method: 'POST' })
   .inputValidator(
     z.object({
       featureIds: z.array(z.string()).min(2),
@@ -196,7 +226,7 @@ export const suggestMergedFeatureDetails = createServerFn({ method: 'POST' })
     }
   })
 
-export const moveFeedbackToFeature = createServerFn()
+export const moveFeedbackToFeature = authedServerFn()
   .inputValidator(
     z.object({
       feedbackId: z.string().min(1),

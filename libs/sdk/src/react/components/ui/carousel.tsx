@@ -118,7 +118,7 @@ function Carousel({
     >
       <div
         onKeyDownCapture={handleKeyDown}
-        className={cn('relative', className)}
+        className={cn('tangosdk:relative', className)}
         role="region"
         aria-roledescription="carousel"
         data-slot="carousel"
@@ -136,13 +136,15 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       ref={carouselRef}
-      className="overflow-hidden"
+      className="tangosdk:overflow-hidden"
       data-slot="carousel-content"
     >
       <div
         className={cn(
-          'flex',
-          orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col',
+          'tangosdk:flex',
+          orientation === 'horizontal'
+            ? 'tangosdk:-ml-4'
+            : 'tangosdk:-mt-4 tangosdk:flex-col',
           className
         )}
         {...props}
@@ -160,8 +162,8 @@ function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
       aria-roledescription="slide"
       data-slot="carousel-item"
       className={cn(
-        'min-w-0 shrink-0 grow-0 basis-full',
-        orientation === 'horizontal' ? 'pl-4' : 'pt-4',
+        'tangosdk:min-w-0 tangosdk:shrink-0 tangosdk:grow-0 tangosdk:basis-full',
+        orientation === 'horizontal' ? 'tangosdk:pl-4' : 'tangosdk:pt-4',
         className
       )}
       {...props}
@@ -183,10 +185,10 @@ function CarouselPrevious({
       variant={variant}
       size={size}
       className={cn(
-        'absolute size-8 rounded-full',
+        'tangosdk:absolute tangosdk:size-8 tangosdk:rounded-full',
         orientation === 'horizontal'
-          ? 'top-1/2 -left-12 -translate-y-1/2'
-          : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
+          ? 'tangosdk:top-1/2 tangosdk:-left-12 tangosdk:-translate-y-1/2'
+          : 'tangosdk:-top-12 tangosdk:left-1/2 tangosdk:-translate-x-1/2 tangosdk:rotate-90',
         className
       )}
       disabled={!canScrollPrev}
@@ -194,7 +196,7 @@ function CarouselPrevious({
       {...props}
     >
       <ArrowLeft />
-      <span className="sr-only">Previous slide</span>
+      <span className="tangosdk:sr-only">Previous slide</span>
     </Button>
   )
 }
@@ -213,10 +215,10 @@ function CarouselNext({
       variant={variant}
       size={size}
       className={cn(
-        'absolute size-8 rounded-full',
+        'tangosdk:absolute tangosdk:size-8 tangosdk:rounded-full',
         orientation === 'horizontal'
-          ? 'top-1/2 -right-12 -translate-y-1/2'
-          : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
+          ? 'tangosdk:top-1/2 tangosdk:-right-12 tangosdk:-translate-y-1/2'
+          : 'tangosdk:-bottom-12 tangosdk:left-1/2 tangosdk:-translate-x-1/2 tangosdk:rotate-90',
         className
       )}
       disabled={!canScrollNext}
@@ -224,7 +226,7 @@ function CarouselNext({
       {...props}
     >
       <ArrowRight />
-      <span className="sr-only">Next slide</span>
+      <span className="tangosdk:sr-only">Next slide</span>
     </Button>
   )
 }

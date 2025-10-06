@@ -51,6 +51,7 @@ export default [
       //
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/only-throw-error': 'off',
       // Enforced by typescript better
       'no-undef': 'off',
     },

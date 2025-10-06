@@ -1,11 +1,11 @@
-@import 'tailwindcss';
+@import 'tailwindcss' prefix(tangosdk);
 
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 body {
-  @apply m-0;
+  @apply tangosdk:m-0;
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
@@ -208,10 +208,10 @@ code {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply tangosdk:border-border tangosdk:outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply tangosdk:bg-background tangosdk:text-foreground;
     letter-spacing: var(--tracking-normal);
   }
 }
