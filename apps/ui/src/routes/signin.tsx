@@ -14,7 +14,6 @@ function RouteComponent() {
   const { redirect: callbackURL } = Route.useSearch()
 
   const session = authClient.useSession()
-  console.log('Session on client:', document?.location?.href, session.data)
   if (session.data) {
     return <Navigate to="/" replace />
   }

@@ -4,6 +4,7 @@ import { createDb } from './db/db.ts'
 import { z } from 'zod'
 import * as schemas from './db/index.ts'
 import { mcp, admin } from 'better-auth/plugins'
+import { reactStartCookies } from 'better-auth/react-start'
 
 const parsed = z
   .object({
@@ -29,10 +30,14 @@ export const auth = betterAuth({
     mcp({
       loginPage: 'http://localhost:3002/cli/signin',
     }),
+    reactStartCookies(),
   ],
   trustedOrigins:
     process.env.NODE_ENV === 'production'
-      ? [process.env.CORS_ORIGIN].filter((s): s is string => !!s)
+      ? [
+          process.env.CORS_ORIGIN,
+          `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`,
+        ].filter((s): s is string => !!s)
       : [
           'http://localhost:3000',
           'http://localhost:3001',
