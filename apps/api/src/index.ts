@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server'
 import { app } from './app.ts'
-import './auth.ts'
-import './feedback.ts'
+import { addAuth } from './auth.ts'
+import { addFeedback } from './feedback.ts'
 import { cors } from 'hono/cors'
 
 app.use(
@@ -9,7 +9,6 @@ app.use(
   cors({
     origin: process.env.CORS_ORIGIN ?? 'http://localhost:3002',
     allowMethods: ['*'],
-    // allowHeaders: ['*'],
     credentials: true,
   })
 )
@@ -19,10 +18,6 @@ app.use('*', async (c, next) => {
     `${c.req.method.padEnd(5)} ${c.req.url}`,
     JSON.stringify(c.req.header(), null, 2)
   )
-  // if (c.req.path.endsWith('/token')) {
-  //   const body = await c.req.raw.clone().text()
-  //   console.log('Body:', body)
-  // }
 
   await next()
 
@@ -33,6 +28,9 @@ app.use('*', async (c, next) => {
 
   return
 })
+
+addAuth(app)
+addFeedback(app)
 
 serve(
   {

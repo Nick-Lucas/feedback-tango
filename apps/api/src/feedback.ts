@@ -1,5 +1,5 @@
 import { Feedbacks } from '@feedback-thing/db'
-import { app, db } from './app.ts'
+import { db, type App } from './app.ts'
 import { z } from 'zod'
 import { google } from '@ai-sdk/google'
 import { generateObject, generateText, stepCountIs, tool } from 'ai'
@@ -8,61 +8,35 @@ import { embedText } from '@feedback-thing/agents'
 import { auth } from '@feedback-thing/db/auth'
 import { randomUUID } from 'node:crypto'
 
-async function findAgentUser() {
-  const agentUserEmail = 'agent@nicklucas.dev'
-  const user = await db.query.user.findFirst({
-    columns: { id: true },
-    where: (users, { eq }) => eq(users.email, agentUserEmail),
-  })
+export function addFeedback(app: App) {
+  // TODO: probably put this into a queue for later processing
+  app.post('/api/feedback', async (c) => {
+    const projectId = c.req.header('X-Project-Key')
+    if (!projectId) {
+      return c.json({ error: 'Missing X-Project-ID header' }, 400)
+    }
 
-  if (user) {
-    return user.id
-  }
+    const project = await db.query.Projects.findFirst({
+      where: (projects, { eq }) => eq(projects.id, projectId),
+    })
+    if (!project) {
+      return c.json({ error: 'Invalid Project ID' }, 400)
+    }
 
-  const createResult = await auth.api.createUser({
-    body: {
-      email: 'agent@nicklucas.dev',
-      name: 'AI Agent',
-      password: randomUUID(),
-    },
-  })
+    const agentUserId = await findAgentUser()
 
-  return createResult.user.id
-}
+    const body = await c.req.json()
+    const parsed = FeedbackSubmission.safeParse(body)
+    if (!parsed.success) {
+      return c.json(
+        { error: 'Invalid request', details: z.treeifyError(parsed.error) },
+        400
+      )
+    }
 
-const FeedbackSubmission = z.object({
-  email: z.email().max(100).optional(),
-  feedback: z.string().min(1).max(5000),
-})
-
-// TODO: probably put this into a queue for later processing
-app.post('/api/feedback', async (c) => {
-  const projectId = c.req.header('X-Project-Key')
-  if (!projectId) {
-    return c.json({ error: 'Missing X-Project-ID header' }, 400)
-  }
-
-  const project = await db.query.Projects.findFirst({
-    where: (projects, { eq }) => eq(projects.id, projectId),
-  })
-  if (!project) {
-    return c.json({ error: 'Invalid Project ID' }, 400)
-  }
-
-  const agentUserId = await findAgentUser()
-
-  const body = await c.req.json()
-  const parsed = FeedbackSubmission.safeParse(body)
-  if (!parsed.success) {
-    return c.json(
-      { error: 'Invalid request', details: z.treeifyError(parsed.error) },
-      400
-    )
-  }
-
-  const safetyGrade = await generateObject({
-    model,
-    system: `
+    const safetyGrade = await generateObject({
+      model,
+      system: `
     You are a content moderator. Your task is to analyze user-submitted feedback and determine whether it is safe or unsafe according to the following guidelines:
 
     - It should pertain to a product, service, or experience.
@@ -71,42 +45,42 @@ app.post('/api/feedback', async (c) => {
 
     If all the above are met, classify the feedback as "safe". If any of the above are violated, classify it as "unsafe".
     `,
-    prompt: parsed.data.feedback,
-    schema: z.object({
-      outcome: z
-        .enum(['safe', 'unsafe'])
-        .describe('The outcome of the feedback'),
-      reason: z.string().max(1000).describe('The reason for the outcome'),
-    }),
-  })
-
-  if (safetyGrade.object.outcome === 'unsafe') {
-    // TODO: log the feedback in a raw form somewhere for later review
-    console.log('Rejected feedback:', {
-      feedback: parsed.data.feedback,
-      reason: safetyGrade.object.reason,
-    })
-    return c.json({ error: 'Invalid Submission' }, 400)
-  }
-
-  type FeatureResult =
-    | { type: 'ok'; featureId: string }
-    | { type: 'error'; error: Error }
-
-  const feature = await new Promise<FeatureResult>((resolve) => {
-    let finishedWithSuccess = false
-    const projectFeatureTools = createProjectTools({
-      projectId,
-      agentUserId,
-      onFeatureDetermined: (featureId) => {
-        finishedWithSuccess = true
-        resolve({ type: 'ok', featureId })
-      },
+      prompt: parsed.data.feedback,
+      schema: z.object({
+        outcome: z
+          .enum(['safe', 'unsafe'])
+          .describe('The outcome of the feedback'),
+        reason: z.string().max(1000).describe('The reason for the outcome'),
+      }),
     })
 
-    void generateText({
-      model,
-      system: `
+    if (safetyGrade.object.outcome === 'unsafe') {
+      // TODO: log the feedback in a raw form somewhere for later review
+      console.log('Rejected feedback:', {
+        feedback: parsed.data.feedback,
+        reason: safetyGrade.object.reason,
+      })
+      return c.json({ error: 'Invalid Submission' }, 400)
+    }
+
+    type FeatureResult =
+      | { type: 'ok'; featureId: string }
+      | { type: 'error'; error: Error }
+
+    const feature = await new Promise<FeatureResult>((resolve) => {
+      let finishedWithSuccess = false
+      const projectFeatureTools = createProjectTools({
+        projectId,
+        agentUserId,
+        onFeatureDetermined: (featureId) => {
+          finishedWithSuccess = true
+          resolve({ type: 'ok', featureId })
+        },
+      })
+
+      void generateText({
+        model,
+        system: `
         You are a product management AI assistant grooming incoming feedback and organising it into features.
 
         Your goal is to determine the most appropriate feature to associate it with. Use your tools to do this. use the following workflow:
@@ -125,54 +99,55 @@ app.post('/api/feedback', async (c) => {
         - Always prefer associating feedback with an existing feature if one can be found that is a logical parent.
         - When creating a new feature, ensure the title and description you synthesise is a parent category and captures the essence of the specific feedback, rather than being a verbatim copy of it.
     `,
-      prompt: parsed.data.feedback,
-      stopWhen: stepCountIs(20),
-      tools: projectFeatureTools,
-      providerOptions: {
-        google: {
-          thinkingConfig: {
-            thinkingBudget: 8192,
-            includeThoughts: true,
+        prompt: parsed.data.feedback,
+        stopWhen: stepCountIs(20),
+        tools: projectFeatureTools,
+        providerOptions: {
+          google: {
+            thinkingConfig: {
+              thinkingBudget: 8192,
+              includeThoughts: true,
+            },
           },
         },
-      },
-    }).then((result) => {
-      if (!finishedWithSuccess) {
-        // We already resolved
-        return
-      }
+      }).then((result) => {
+        if (!finishedWithSuccess) {
+          // We already resolved
+          return
+        }
 
-      if (result.finishReason === 'error') {
-        resolve({
-          type: 'error',
-          error: new Error(JSON.stringify(result.content)),
-        })
-      } else {
-        resolve({
-          type: 'error',
-          error: new Error('featureDetermined was never called'),
-        })
-      }
+        if (result.finishReason === 'error') {
+          resolve({
+            type: 'error',
+            error: new Error(JSON.stringify(result.content)),
+          })
+        } else {
+          resolve({
+            type: 'error',
+            error: new Error('featureDetermined was never called'),
+          })
+        }
+      })
     })
+
+    if (feature.type === 'error') {
+      console.error('Failed to determine feature for feedback:', feature.error)
+      return c.json({ error: 'Failed to process feedback' }, 500)
+    }
+
+    await db.insert(Feedbacks).values({
+      projectId,
+      featureId: feature.featureId,
+      feedback: parsed.data.feedback,
+
+      // TODO: generate a user ID from the email address if possible or use a dummy user
+      createdBy: parsed.data.email ?? 'anonymous',
+    })
+
+    console.log('Feedback received:', body)
+    return c.json({ status: 'ok' })
   })
-
-  if (feature.type === 'error') {
-    console.error('Failed to determine feature for feedback:', feature.error)
-    return c.json({ error: 'Failed to process feedback' }, 500)
-  }
-
-  await db.insert(Feedbacks).values({
-    projectId,
-    featureId: feature.featureId,
-    feedback: parsed.data.feedback,
-
-    // TODO: generate a user ID from the email address if possible or use a dummy user
-    createdBy: parsed.data.email ?? 'anonymous',
-  })
-
-  console.log('Feedback received:', body)
-  return c.json({ status: 'ok' })
-})
+}
 
 const model = google('gemini-2.5-flash-lite')
 function createProjectTools(opts: {
@@ -250,3 +225,30 @@ function createProjectTools(opts: {
 
   return { featureSearchTool, featureCreateTool, featureDeterminedTool }
 }
+
+async function findAgentUser() {
+  const agentUserEmail = 'agent@nicklucas.dev'
+  const user = await db.query.user.findFirst({
+    columns: { id: true },
+    where: (users, { eq }) => eq(users.email, agentUserEmail),
+  })
+
+  if (user) {
+    return user.id
+  }
+
+  const createResult = await auth.api.createUser({
+    body: {
+      email: 'agent@nicklucas.dev',
+      name: 'AI Agent',
+      password: randomUUID(),
+    },
+  })
+
+  return createResult.user.id
+}
+
+const FeedbackSubmission = z.object({
+  email: z.email().max(100).optional(),
+  feedback: z.string().min(1).max(5000),
+})

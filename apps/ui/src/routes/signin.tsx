@@ -17,7 +17,7 @@ function RouteComponent() {
   if (session.data) {
     return <Navigate to="/" replace />
   }
-  console.log({ session })
+
   return (
     <div>
       <Button
