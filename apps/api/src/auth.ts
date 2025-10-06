@@ -1,38 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { oauthAccessToken, user } from '@feedback-thing/db'
 import { auth } from '@feedback-thing/db/auth'
-import { cors } from 'hono/cors'
 import { app, db } from './app.ts'
-
-app.use(
-  '*',
-  cors({
-    origin: 'http://localhost:3002',
-    allowMethods: ['*'],
-    // allowHeaders: ['*'],
-    credentials: true,
-  })
-)
-
-app.use('*', async (c, next) => {
-  console.log(
-    `${c.req.method.padEnd(5)} ${c.req.url}`,
-    JSON.stringify(c.req.header(), null, 2)
-  )
-  // if (c.req.path.endsWith('/token')) {
-  //   const body = await c.req.raw.clone().text()
-  //   console.log('Body:', body)
-  // }
-
-  await next()
-
-  console.log(
-    `${c.req.method.padEnd(5)} ${c.req.url} - ${c.res.status}`,
-    JSON.stringify(Object.fromEntries(c.res.headers.entries()), null, 2)
-  )
-
-  return
-})
 
 /**
  * Better Auth with the MCP plugin currently does not implement the /authinfo endpoint,

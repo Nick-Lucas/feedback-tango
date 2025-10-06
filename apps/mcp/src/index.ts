@@ -26,8 +26,8 @@ app.use((req, res, next) => {
 // For production use you may want to lock cors down more
 app.use(
   cors({
+    origin: process.env.CORS_ORIGIN ?? '*',
     exposedHeaders: '*',
-    origin: '*',
     methods: '*',
   })
 )
