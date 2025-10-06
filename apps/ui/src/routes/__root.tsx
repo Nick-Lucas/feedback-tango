@@ -11,7 +11,7 @@ import appCss from '../styles.css?url'
 const feedbackClient = createFeedbackClient({
   endpoint: 'http://localhost:3000/api/feedback',
 
-  // Slack project
+  // TODO: make configurable
   projectPublicKey: '0199afaf-518c-70f4-924f-1f9abc2aaf4f',
 })
 
