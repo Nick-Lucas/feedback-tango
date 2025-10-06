@@ -3,7 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { createDb } from './db/db.ts'
 import { z } from 'zod'
 import * as schemas from './db/index.ts'
-import { mcp } from 'better-auth/plugins'
+import { mcp, admin } from 'better-auth/plugins'
 
 const parsed = z
   .object({
@@ -25,6 +25,7 @@ export const auth = betterAuth({
     schema: schemas,
   }),
   plugins: [
+    admin(),
     mcp({
       loginPage: 'http://localhost:3002/cli/signin',
     }),

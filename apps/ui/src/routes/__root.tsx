@@ -1,10 +1,16 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Scripts,
+  createRootRoute,
+  redirect,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Toaster } from '@/components/ui/sonner'
 import { FeedbackWidget } from '@feedback-thing/sdk/react'
 import '@feedback-thing/sdk/styles.css'
 import { createFeedbackClient } from '@feedback-thing/sdk/client'
+import { authClient } from '@/lib/auth'
 
 import appCss from '../styles.css?url'
 
@@ -38,6 +44,23 @@ export const Route = createRootRoute({
   }),
 
   shellComponent: RootDocument,
+
+  async beforeLoad(ctx) {
+    const session = await authClient.getSession()
+
+    // TODO: use a proper protected parent route or layout
+    if (!ctx.location.pathname.includes('/signin') && !session.data) {
+      throw redirect({
+        to: '/signin',
+        replace: true,
+        search: {
+          redirect: ctx.location.url,
+        },
+      })
+    }
+
+    return session.data
+  },
 
   errorComponent: ({ error }) => {
     return (

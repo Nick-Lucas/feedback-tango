@@ -5,6 +5,30 @@ import { google } from '@ai-sdk/google'
 import { generateObject, generateText, stepCountIs, tool } from 'ai'
 import { featureAccess } from '@feedback-thing/core'
 import { embedText } from '@feedback-thing/agents'
+import { auth } from '@feedback-thing/db/auth'
+import { randomUUID } from 'node:crypto'
+
+async function findAgentUser() {
+  const agentUserEmail = 'agent@nicklucas.dev'
+  const user = await db.query.user.findFirst({
+    columns: { id: true },
+    where: (users, { eq }) => eq(users.email, agentUserEmail),
+  })
+
+  if (user) {
+    return user.id
+  }
+
+  const createResult = await auth.api.createUser({
+    body: {
+      email: 'agent@nicklucas.dev',
+      name: 'AI Agent',
+      password: randomUUID(),
+    },
+  })
+
+  return createResult.user.id
+}
 
 const FeedbackSubmission = z.object({
   email: z.email().max(100).optional(),
@@ -24,6 +48,8 @@ app.post('/api/feedback', async (c) => {
   if (!project) {
     return c.json({ error: 'Invalid Project ID' }, 400)
   }
+
+  const agentUserId = await findAgentUser()
 
   const body = await c.req.json()
   const parsed = FeedbackSubmission.safeParse(body)
@@ -69,9 +95,13 @@ app.post('/api/feedback', async (c) => {
 
   const feature = await new Promise<FeatureResult>((resolve) => {
     let finishedWithSuccess = false
-    const projectFeatureTools = createProjectTools(projectId, (featureId) => {
-      finishedWithSuccess = true
-      resolve({ type: 'ok', featureId })
+    const projectFeatureTools = createProjectTools({
+      projectId,
+      agentUserId,
+      onFeatureDetermined: (featureId) => {
+        finishedWithSuccess = true
+        resolve({ type: 'ok', featureId })
+      },
     })
 
     void generateText({
@@ -145,10 +175,11 @@ app.post('/api/feedback', async (c) => {
 })
 
 const model = google('gemini-2.5-flash-lite')
-function createProjectTools(
-  projectId: string,
+function createProjectTools(opts: {
+  projectId: string
+  agentUserId: string
   onFeatureDetermined: (featureId: string) => void
-) {
+}) {
   const featureSearchTool = tool({
     name: 'featureSearch',
     description:
@@ -159,7 +190,7 @@ function createProjectTools(
     execute: async (ctx) => {
       console.log('Searching features for', ctx.query)
       const query = await embedText(ctx.query)
-      const results = await featureAccess.search(projectId, query)
+      const results = await featureAccess.search(opts.projectId, query)
       console.log('Search results:', ctx.query, results)
       return results
     },
@@ -176,7 +207,7 @@ function createProjectTools(
     execute: async (ctx) => {
       console.log('Creating feature:', ctx.title)
       const possibleDuplicate = await featureAccess.getByName(
-        projectId,
+        opts.projectId,
         ctx.title
       )
       if (possibleDuplicate) {
@@ -188,13 +219,11 @@ function createProjectTools(
       const nameEmbedding = await embedText(ctx.title)
 
       return await featureAccess.create({
-        projectId,
+        projectId: opts.projectId,
         name: ctx.title,
         description: ctx.description,
         nameEmbedding: nameEmbedding,
-
-        // TODO: create a dummy user for ai agent actions
-        createdBy: 'ai-agent',
+        createdBy: opts.agentUserId,
       })
     },
   })
@@ -213,7 +242,7 @@ function createProjectTools(
     execute: async ({ featureId }) => {
       console.log('Feature determined:', featureId)
 
-      onFeatureDetermined(featureId)
+      opts.onFeatureDetermined(featureId)
 
       return { status: 'ok - agent, your task is now finished' }
     },

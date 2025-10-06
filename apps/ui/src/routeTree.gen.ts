@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as CliSigninRouteImport } from './routes/cli.signin'
@@ -19,6 +20,11 @@ import { Route as CliSigninCompleteRouteImport } from './routes/cli.signin.compl
 import { Route as ProjectsProjectIdFeaturesIndexRouteImport } from './routes/projects.$projectId.features.index'
 import { Route as ProjectsProjectIdFeaturesFeatureIdRouteImport } from './routes/projects.$projectId.features.$featureId'
 
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -70,6 +76,7 @@ const ProjectsProjectIdFeaturesFeatureIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/signin': typeof SigninRoute
   '/cli/signin': typeof CliSigninRouteWithChildren
   '/projects': typeof ProjectsIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/signin': typeof SigninRoute
   '/cli/signin': typeof CliSigninRouteWithChildren
   '/projects': typeof ProjectsIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
@@ -92,6 +100,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/signin': typeof SigninRoute
   '/cli/signin': typeof CliSigninRouteWithChildren
   '/projects/': typeof ProjectsIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/signin'
     | '/cli/signin'
     | '/projects'
     | '/cli/signin/complete'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/signin'
     | '/cli/signin'
     | '/projects'
     | '/cli/signin/complete'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/signin'
     | '/cli/signin'
     | '/projects/'
     | '/cli/signin/complete'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SigninRoute: typeof SigninRoute
   CliSigninRoute: typeof CliSigninRouteWithChildren
   ProjectsIndexRoute: typeof ProjectsIndexRoute
   ProjectsProjectIdConfigRoute: typeof ProjectsProjectIdConfigRoute
@@ -147,6 +160,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -244,6 +264,7 @@ const ProjectsProjectIdFeaturesRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SigninRoute: SigninRoute,
   CliSigninRoute: CliSigninRouteWithChildren,
   ProjectsIndexRoute: ProjectsIndexRoute,
   ProjectsProjectIdConfigRoute: ProjectsProjectIdConfigRoute,
