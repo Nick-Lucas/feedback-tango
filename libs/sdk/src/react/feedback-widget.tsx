@@ -86,8 +86,10 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
 
   if (submitted) {
     return (
-      <div className="bg-white rounded-lg border shadow-sm p-6 w-full max-w-md">
-        <p className="text-center text-lg mb-4">Thank you for your feedback</p>
+      <div className="tangosdk:bg-white tangosdk:rounded-lg tangosdk:border tangosdk:shadow-sm tangosdk:p-6 tangosdk:w-full tangosdk:max-w-md">
+        <p className="tangosdk:text-center tangosdk:text-lg tangosdk:mb-4">
+          Thank you for your feedback
+        </p>
         <Progress value={progress} />
       </div>
     )
@@ -96,10 +98,10 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-background rounded-lg border shadow-sm p-2 w-80 max-w-80"
+      className="tangosdk:bg-background tangosdk:rounded-lg tangosdk:border tangosdk:shadow-sm tangosdk:p-2 tangosdk:w-80 tangosdk:max-w-80"
     >
-      <div className="flex items-center justify-between ml-2 mr-0">
-        <h2 className="text-xl font-semibold">
+      <div className="tangosdk:flex tangosdk:items-center tangosdk:justify-between tangosdk:ml-2 tangosdk:mr-0">
+        <h2 className="tangosdk:text-xl tangosdk:font-semibold">
           {props.title ?? 'Give feedback'}
         </h2>
 
@@ -107,15 +109,15 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
           variant="ghost"
           size="icon"
           onClick={handleClose}
-          className=" rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2"
+          className="tangosdk:rounded-sm tangosdk:opacity-70 tangosdk:transition-opacity hover:tangosdk:opacity-100 focus:tangosdk:outline-none focus:tangosdk:ring-2 focus:tangosdk:ring-offset-2"
         >
-          <XIcon className="h-4 w-4" />
+          <XIcon className="tangosdk:h-4 tangosdk:w-4" />
         </Button>
       </div>
 
-      <div className="space-y-4 p-2">
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm">
+      <div className="tangosdk:space-y-4 tangosdk:p-2">
+        <div className="tangosdk:space-y-2">
+          <Label htmlFor="email" className="tangosdk:text-sm">
             Email (optional)
           </Label>
           <Input
@@ -127,8 +129,8 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="feedback" className="text-sm">
+        <div className="tangosdk:space-y-2">
+          <Label htmlFor="feedback" className="tangosdk:text-sm">
             Feedback
           </Label>
           <Textarea
@@ -139,12 +141,16 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
             required
             rows={4}
             placeholder="Your feedback..."
-            className="resize-none w-full"
+            className="tangosdk:resize-none tangosdk:w-full"
             style={{ fieldSizing: 'fixed' } as React.CSSProperties}
           />
         </div>
 
-        <Button type="submit" disabled={isSubmitting} className="w-full">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="tangosdk:w-full"
+        >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </Button>
       </div>

@@ -12,7 +12,10 @@ function Tabs({
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(
+        'tangosdk:flex tangosdk:flex-col tangosdk:gap-2',
+        className
+      )}
       {...props}
     />
   )
@@ -26,7 +29,7 @@ function TabsList({
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        'bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]',
+        'tangosdk:bg-muted tangosdk:text-muted-foreground tangosdk:inline-flex tangosdk:h-9 tangosdk:w-fit tangosdk:items-center tangosdk:justify-center tangosdk:rounded-lg tangosdk:p-[3px]',
         className
       )}
       {...props}
@@ -42,7 +45,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "data-[state=active]:bg-background dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        'tangosdk:data-[state=active]:bg-background tangosdk:dark:data-[state=active]:text-foreground tangosdk:focus-visible:border-ring tangosdk:focus-visible:ring-ring/50 tangosdk:focus-visible:outline-ring tangosdk:dark:data-[state=active]:border-input tangosdk:dark:data-[state=active]:bg-input/30 tangosdk:text-foreground tangosdk:dark:text-muted-foreground tangosdk:inline-flex tangosdk:h-[calc(100%-1px)] tangosdk:flex-1 tangosdk:items-center tangosdk:justify-center tangosdk:gap-1.5 tangosdk:rounded-md tangosdk:border tangosdk:border-transparent tangosdk:px-2 tangosdk:py-1 tangosdk:text-sm tangosdk:font-medium tangosdk:whitespace-nowrap tangosdk:transition-[color,box-shadow] tangosdk:focus-visible:ring-[3px] tangosdk:focus-visible:outline-1 tangosdk:disabled:pointer-events-none tangosdk:disabled:opacity-50 tangosdk:data-[state=active]:shadow-sm tangosdk:[&_svg]:pointer-events-none tangosdk:[&_svg]:shrink-0 tangosdk:[&_svg:not([class*=size-])]:size-4',
         className
       )}
       {...props}
@@ -57,7 +60,7 @@ function TabsContent({
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"
-      className={cn('flex-1 outline-none', className)}
+      className={cn('tangosdk:flex-1 tangosdk:outline-none', className)}
       {...props}
     />
   )

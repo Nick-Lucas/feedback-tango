@@ -12,7 +12,7 @@ function ResizablePanelGroup({
     <ResizablePrimitive.PanelGroup
       data-slot="resizable-panel-group"
       className={cn(
-        'flex h-full w-full data-[panel-group-direction=vertical]:flex-col',
+        'tangosdk:flex tangosdk:h-full tangosdk:w-full tangosdk:data-[panel-group-direction=vertical]:flex-col',
         className
       )}
       {...props}
@@ -37,14 +37,14 @@ function ResizableHandle({
     <ResizablePrimitive.PanelResizeHandle
       data-slot="resizable-handle"
       className={cn(
-        'bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:translate-x-0 data-[panel-group-direction=vertical]:after:-translate-y-1/2 [&[data-panel-group-direction=vertical]>div]:rotate-90',
+        'tangosdk:bg-border tangosdk:focus-visible:ring-ring tangosdk:relative tangosdk:flex tangosdk:w-px tangosdk:items-center tangosdk:justify-center tangosdk:after:absolute tangosdk:after:inset-y-0 tangosdk:after:left-1/2 tangosdk:after:w-1 tangosdk:after:-translate-x-1/2 tangosdk:focus-visible:ring-1 tangosdk:focus-visible:ring-offset-1 tangosdk:focus-visible:outline-hidden tangosdk:data-[panel-group-direction=vertical]:h-px tangosdk:data-[panel-group-direction=vertical]:w-full tangosdk:data-[panel-group-direction=vertical]:after:left-0 tangosdk:data-[panel-group-direction=vertical]:after:h-1 tangosdk:data-[panel-group-direction=vertical]:after:w-full tangosdk:data-[panel-group-direction=vertical]:after:translate-x-0 tangosdk:data-[panel-group-direction=vertical]:after:-translate-y-1/2 tangosdk:[&[data-panel-group-direction=vertical]>div]:rotate-90',
         className
       )}
       {...props}
     >
       {withHandle && (
-        <div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
-          <GripVerticalIcon className="size-2.5" />
+        <div className="tangosdk:bg-border tangosdk:z-10 tangosdk:flex tangosdk:h-4 tangosdk:w-3 tangosdk:items-center tangosdk:justify-center tangosdk:rounded-xs tangosdk:border">
+          <GripVerticalIcon className="tangosdk:size-2.5" />
         </div>
       )}
     </ResizablePrimitive.PanelResizeHandle>

@@ -18,7 +18,7 @@ function NavigationMenu({
       data-slot="navigation-menu"
       data-viewport={viewport}
       className={cn(
-        'group/navigation-menu relative flex max-w-max flex-1 items-center justify-center',
+        'tangosdk:group/navigation-menu tangosdk:relative tangosdk:flex tangosdk:max-w-max tangosdk:flex-1 tangosdk:items-center tangosdk:justify-center',
         className
       )}
       {...props}
@@ -37,7 +37,7 @@ function NavigationMenuList({
     <NavigationMenuPrimitive.List
       data-slot="navigation-menu-list"
       className={cn(
-        'group flex flex-1 list-none items-center justify-center gap-1',
+        'tangosdk:group tangosdk:flex tangosdk:flex-1 tangosdk:list-none tangosdk:items-center tangosdk:justify-center tangosdk:gap-1',
         className
       )}
       {...props}
@@ -52,14 +52,14 @@ function NavigationMenuItem({
   return (
     <NavigationMenuPrimitive.Item
       data-slot="navigation-menu-item"
-      className={cn('relative', className)}
+      className={cn('tangosdk:relative', className)}
       {...props}
     />
   )
 }
 
 const navigationMenuTriggerStyle = cva(
-  'group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1'
+  'tangosdk:group tangosdk:inline-flex tangosdk:h-9 tangosdk:w-max tangosdk:items-center tangosdk:justify-center tangosdk:rounded-md tangosdk:bg-background tangosdk:px-4 tangosdk:py-2 tangosdk:text-sm tangosdk:font-medium tangosdk:hover:bg-accent tangosdk:hover:text-accent-foreground tangosdk:focus:bg-accent tangosdk:focus:text-accent-foreground tangosdk:disabled:pointer-events-none tangosdk:disabled:opacity-50 tangosdk:data-[state=open]:hover:bg-accent tangosdk:data-[state=open]:text-accent-foreground tangosdk:data-[state=open]:focus:bg-accent tangosdk:data-[state=open]:bg-accent/50 tangosdk:focus-visible:ring-ring/50 tangosdk:outline-none tangosdk:transition-[color,box-shadow] tangosdk:focus-visible:ring-[3px] tangosdk:focus-visible:outline-1'
 )
 
 function NavigationMenuTrigger({
@@ -70,12 +70,12 @@ function NavigationMenuTrigger({
   return (
     <NavigationMenuPrimitive.Trigger
       data-slot="navigation-menu-trigger"
-      className={cn(navigationMenuTriggerStyle(), 'group', className)}
+      className={cn(navigationMenuTriggerStyle(), 'tangosdk:group', className)}
       {...props}
     >
       {children}{' '}
       <ChevronDownIcon
-        className="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
+        className="tangosdk:relative tangosdk:top-[1px] tangosdk:ml-1 tangosdk:size-3 tangosdk:transition tangosdk:duration-300 tangosdk:group-data-[state=open]:rotate-180"
         aria-hidden="true"
       />
     </NavigationMenuPrimitive.Trigger>
@@ -90,8 +90,8 @@ function NavigationMenuContent({
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
       className={cn(
-        'data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 top-0 left-0 w-full p-2 pr-2.5 md:absolute md:w-auto',
-        'group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:data-[state=open]:animate-in group-data-[viewport=false]/navigation-menu:data-[state=closed]:animate-out group-data-[viewport=false]/navigation-menu:data-[state=closed]:zoom-out-95 group-data-[viewport=false]/navigation-menu:data-[state=open]:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-[state=open]:fade-in-0 group-data-[viewport=false]/navigation-menu:data-[state=closed]:fade-out-0 group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-md group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-200 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none',
+        'tangosdk:data-[motion^=from-]:animate-in tangosdk:data-[motion^=to-]:animate-out tangosdk:data-[motion^=from-]:fade-in tangosdk:data-[motion^=to-]:fade-out tangosdk:data-[motion=from-end]:slide-in-from-right-52 tangosdk:data-[motion=from-start]:slide-in-from-left-52 tangosdk:data-[motion=to-end]:slide-out-to-right-52 tangosdk:data-[motion=to-start]:slide-out-to-left-52 tangosdk:top-0 tangosdk:left-0 tangosdk:w-full tangosdk:p-2 tangosdk:pr-2.5 tangosdk:md:absolute tangosdk:md:w-auto',
+        'tangosdk:group-data-[viewport=false]/navigation-menu:bg-popover tangosdk:group-data-[viewport=false]/navigation-menu:text-popover-foreground tangosdk:group-data-[viewport=false]/navigation-menu:data-[state=open]:animate-in tangosdk:group-data-[viewport=false]/navigation-menu:data-[state=closed]:animate-out tangosdk:group-data-[viewport=false]/navigation-menu:data-[state=closed]:zoom-out-95 tangosdk:group-data-[viewport=false]/navigation-menu:data-[state=open]:zoom-in-95 tangosdk:group-data-[viewport=false]/navigation-menu:data-[state=open]:fade-in-0 tangosdk:group-data-[viewport=false]/navigation-menu:data-[state=closed]:fade-out-0 tangosdk:group-data-[viewport=false]/navigation-menu:top-full tangosdk:group-data-[viewport=false]/navigation-menu:mt-1.5 tangosdk:group-data-[viewport=false]/navigation-menu:overflow-hidden tangosdk:group-data-[viewport=false]/navigation-menu:rounded-md tangosdk:group-data-[viewport=false]/navigation-menu:border tangosdk:group-data-[viewport=false]/navigation-menu:shadow tangosdk:group-data-[viewport=false]/navigation-menu:duration-200 tangosdk:**:data-[slot=navigation-menu-link]:focus:ring-0 tangosdk:**:data-[slot=navigation-menu-link]:focus:outline-none',
         className
       )}
       {...props}
@@ -106,13 +106,13 @@ function NavigationMenuViewport({
   return (
     <div
       className={cn(
-        'absolute top-full left-0 isolate z-50 flex justify-center'
+        'tangosdk:absolute tangosdk:top-full tangosdk:left-0 tangosdk:isolate tangosdk:z-50 tangosdk:flex tangosdk:justify-center'
       )}
     >
       <NavigationMenuPrimitive.Viewport
         data-slot="navigation-menu-viewport"
         className={cn(
-          'origin-top-center bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border shadow md:w-[var(--radix-navigation-menu-viewport-width)]',
+          'tangosdk:origin-top-center tangosdk:bg-popover tangosdk:text-popover-foreground tangosdk:data-[state=open]:animate-in tangosdk:data-[state=closed]:animate-out tangosdk:data-[state=closed]:zoom-out-95 tangosdk:data-[state=open]:zoom-in-90 tangosdk:relative tangosdk:mt-1.5 tangosdk:h-[var(--radix-navigation-menu-viewport-height)] tangosdk:w-full tangosdk:overflow-hidden tangosdk:rounded-md tangosdk:border tangosdk:shadow tangosdk:md:w-[var(--radix-navigation-menu-viewport-width)]',
           className
         )}
         {...props}
@@ -129,7 +129,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "data-[active=true]:focus:bg-accent data-[active=true]:hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
+        'tangosdk:data-[active=true]:focus:bg-accent tangosdk:data-[active=true]:hover:bg-accent tangosdk:data-[active=true]:bg-accent/50 tangosdk:data-[active=true]:text-accent-foreground tangosdk:hover:bg-accent tangosdk:hover:text-accent-foreground tangosdk:focus:bg-accent tangosdk:focus:text-accent-foreground tangosdk:focus-visible:ring-ring/50 tangosdk:[&_svg:not([class*=text-])]:text-muted-foreground tangosdk:flex tangosdk:flex-col tangosdk:gap-1 tangosdk:rounded-sm tangosdk:p-2 tangosdk:text-sm tangosdk:transition-all tangosdk:outline-none tangosdk:focus-visible:ring-[3px] tangosdk:focus-visible:outline-1 tangosdk:[&_svg:not([class*=size-])]:size-4',
         className
       )}
       {...props}
@@ -145,12 +145,12 @@ function NavigationMenuIndicator({
     <NavigationMenuPrimitive.Indicator
       data-slot="navigation-menu-indicator"
       className={cn(
-        'data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden',
+        'tangosdk:data-[state=visible]:animate-in tangosdk:data-[state=hidden]:animate-out tangosdk:data-[state=hidden]:fade-out tangosdk:data-[state=visible]:fade-in tangosdk:top-full tangosdk:z-[1] tangosdk:flex tangosdk:h-1.5 tangosdk:items-end tangosdk:justify-center tangosdk:overflow-hidden',
         className
       )}
       {...props}
     >
-      <div className="bg-border relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm shadow-md" />
+      <div className="tangosdk:bg-border tangosdk:relative tangosdk:top-[60%] tangosdk:h-2 tangosdk:w-2 tangosdk:rotate-45 tangosdk:rounded-tl-sm tangosdk:shadow-md" />
     </NavigationMenuPrimitive.Indicator>
   )
 }

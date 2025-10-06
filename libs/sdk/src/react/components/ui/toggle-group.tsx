@@ -26,7 +26,7 @@ function ToggleGroup({
       data-variant={variant}
       data-size={size}
       className={cn(
-        'group/toggle-group flex w-fit items-center rounded-md data-[variant=outline]:shadow-xs',
+        'tangosdk:group/toggle-group tangosdk:flex tangosdk:w-fit tangosdk:items-center tangosdk:rounded-md tangosdk:data-[variant=outline]:shadow-xs',
         className
       )}
       {...props}
@@ -58,7 +58,7 @@ function ToggleGroupItem({
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        'min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l',
+        'tangosdk:min-w-0 tangosdk:flex-1 tangosdk:shrink-0 tangosdk:rounded-none tangosdk:shadow-none tangosdk:first:rounded-l-md tangosdk:last:rounded-r-md tangosdk:focus:z-10 tangosdk:focus-visible:z-10 tangosdk:data-[variant=outline]:border-l-0 tangosdk:data-[variant=outline]:first:border-l',
         className
       )}
       {...props}

@@ -35,14 +35,14 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        'tangosdk:border-input tangosdk:data-[placeholder]:text-muted-foreground tangosdk:[&_svg:not([class*=text-])]:text-muted-foreground tangosdk:focus-visible:border-ring tangosdk:focus-visible:ring-ring/50 tangosdk:aria-invalid:ring-destructive/20 tangosdk:dark:aria-invalid:ring-destructive/40 tangosdk:aria-invalid:border-destructive tangosdk:dark:bg-input/30 tangosdk:dark:hover:bg-input/50 tangosdk:flex tangosdk:w-fit tangosdk:items-center tangosdk:justify-between tangosdk:gap-2 tangosdk:rounded-md tangosdk:border tangosdk:bg-transparent tangosdk:px-3 tangosdk:py-2 tangosdk:text-sm tangosdk:whitespace-nowrap tangosdk:shadow-xs tangosdk:transition-[color,box-shadow] tangosdk:outline-none tangosdk:focus-visible:ring-[3px] tangosdk:disabled:cursor-not-allowed tangosdk:disabled:opacity-50 tangosdk:data-[size=default]:h-9 tangosdk:data-[size=sm]:h-8 tangosdk:*:data-[slot=select-value]:line-clamp-1 tangosdk:*:data-[slot=select-value]:flex tangosdk:*:data-[slot=select-value]:items-center tangosdk:*:data-[slot=select-value]:gap-2 tangosdk:[&_svg]:pointer-events-none tangosdk:[&_svg]:shrink-0 tangosdk:[&_svg:not([class*=size-])]:size-4',
         className
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 opacity-50" />
+        <ChevronDownIcon className="tangosdk:size-4 tangosdk:opacity-50" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -60,9 +60,9 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md',
+          'tangosdk:bg-popover tangosdk:text-popover-foreground tangosdk:data-[state=open]:animate-in tangosdk:data-[state=closed]:animate-out tangosdk:data-[state=closed]:fade-out-0 tangosdk:data-[state=open]:fade-in-0 tangosdk:data-[state=closed]:zoom-out-95 tangosdk:data-[state=open]:zoom-in-95 tangosdk:data-[side=bottom]:slide-in-from-top-2 tangosdk:data-[side=left]:slide-in-from-right-2 tangosdk:data-[side=right]:slide-in-from-left-2 tangosdk:data-[side=top]:slide-in-from-bottom-2 tangosdk:relative tangosdk:z-50 tangosdk:max-h-(--radix-select-content-available-height) tangosdk:min-w-[8rem] tangosdk:origin-(--radix-select-content-transform-origin) tangosdk:overflow-x-hidden tangosdk:overflow-y-auto tangosdk:rounded-md tangosdk:border tangosdk:shadow-md',
           position === 'popper' &&
-            'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
+            'tangosdk:data-[side=bottom]:translate-y-1 tangosdk:data-[side=left]:-translate-x-1 tangosdk:data-[side=right]:translate-x-1 tangosdk:data-[side=top]:-translate-y-1',
           className
         )}
         position={position}
@@ -72,9 +72,9 @@ function SelectContent({
         <SelectScrollUpButton />
         <SelectPrimitive.Viewport
           className={cn(
-            'p-1',
+            'tangosdk:p-1',
             position === 'popper' &&
-              'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1'
+              'tangosdk:h-[var(--radix-select-trigger-height)] tangosdk:w-full tangosdk:min-w-[var(--radix-select-trigger-width)] tangosdk:scroll-my-1'
           )}
         >
           {children}
@@ -92,7 +92,10 @@ function SelectLabel({
   return (
     <SelectPrimitive.Label
       data-slot="select-label"
-      className={cn('text-muted-foreground px-2 py-1.5 text-xs', className)}
+      className={cn(
+        'tangosdk:text-muted-foreground tangosdk:px-2 tangosdk:py-1.5 tangosdk:text-xs',
+        className
+      )}
       {...props}
     />
   )
@@ -107,14 +110,14 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        'tangosdk:focus:bg-accent tangosdk:focus:text-accent-foreground tangosdk:[&_svg:not([class*=text-])]:text-muted-foreground tangosdk:relative tangosdk:flex tangosdk:w-full tangosdk:cursor-default tangosdk:items-center tangosdk:gap-2 tangosdk:rounded-sm tangosdk:py-1.5 tangosdk:pr-8 tangosdk:pl-2 tangosdk:text-sm tangosdk:outline-hidden tangosdk:select-none tangosdk:data-[disabled]:pointer-events-none tangosdk:data-[disabled]:opacity-50 tangosdk:[&_svg]:pointer-events-none tangosdk:[&_svg]:shrink-0 tangosdk:[&_svg:not([class*=size-])]:size-4 tangosdk:*:[span]:last:flex tangosdk:*:[span]:last:items-center tangosdk:*:[span]:last:gap-2',
         className
       )}
       {...props}
     >
-      <span className="absolute right-2 flex size-3.5 items-center justify-center">
+      <span className="tangosdk:absolute tangosdk:right-2 tangosdk:flex tangosdk:size-3.5 tangosdk:items-center tangosdk:justify-center">
         <SelectPrimitive.ItemIndicator>
-          <CheckIcon className="size-4" />
+          <CheckIcon className="tangosdk:size-4" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -129,7 +132,10 @@ function SelectSeparator({
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
-      className={cn('bg-border pointer-events-none -mx-1 my-1 h-px', className)}
+      className={cn(
+        'tangosdk:bg-border tangosdk:pointer-events-none tangosdk:-mx-1 tangosdk:my-1 tangosdk:h-px',
+        className
+      )}
       {...props}
     />
   )
@@ -143,12 +149,12 @@ function SelectScrollUpButton({
     <SelectPrimitive.ScrollUpButton
       data-slot="select-scroll-up-button"
       className={cn(
-        'flex cursor-default items-center justify-center py-1',
+        'tangosdk:flex tangosdk:cursor-default tangosdk:items-center tangosdk:justify-center tangosdk:py-1',
         className
       )}
       {...props}
     >
-      <ChevronUpIcon className="size-4" />
+      <ChevronUpIcon className="tangosdk:size-4" />
     </SelectPrimitive.ScrollUpButton>
   )
 }
@@ -161,12 +167,12 @@ function SelectScrollDownButton({
     <SelectPrimitive.ScrollDownButton
       data-slot="select-scroll-down-button"
       className={cn(
-        'flex cursor-default items-center justify-center py-1',
+        'tangosdk:flex tangosdk:cursor-default tangosdk:items-center tangosdk:justify-center tangosdk:py-1',
         className
       )}
       {...props}
     >
-      <ChevronDownIcon className="size-4" />
+      <ChevronDownIcon className="tangosdk:size-4" />
     </SelectPrimitive.ScrollDownButton>
   )
 }

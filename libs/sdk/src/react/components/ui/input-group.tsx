@@ -14,20 +14,20 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="input-group"
       role="group"
       className={cn(
-        'group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none',
-        'h-9 has-[>textarea]:h-auto',
+        'tangosdk:group/input-group tangosdk:border-input tangosdk:dark:bg-input/30 tangosdk:relative tangosdk:flex tangosdk:w-full tangosdk:items-center tangosdk:rounded-md tangosdk:border tangosdk:shadow-xs tangosdk:transition-[color,box-shadow] tangosdk:outline-none',
+        'tangosdk:h-9 tangosdk:min-w-0 tangosdk:has-[>textarea]:h-auto',
 
         // Variants based on alignment.
-        'has-[>[data-align=inline-start]]:[&>input]:pl-2',
-        'has-[>[data-align=inline-end]]:[&>input]:pr-2',
-        'has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-3',
-        'has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3',
+        'tangosdk:has-[>[data-align=inline-start]]:[&>input]:pl-2',
+        'tangosdk:has-[>[data-align=inline-end]]:[&>input]:pr-2',
+        'tangosdk:has-[>[data-align=block-start]]:h-auto tangosdk:has-[>[data-align=block-start]]:flex-col tangosdk:has-[>[data-align=block-start]]:[&>input]:pb-3',
+        'tangosdk:has-[>[data-align=block-end]]:h-auto tangosdk:has-[>[data-align=block-end]]:flex-col tangosdk:has-[>[data-align=block-end]]:[&>input]:pt-3',
 
         // Focus state.
-        'has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]',
+        'tangosdk:has-[[data-slot=input-group-control]:focus-visible]:border-ring tangosdk:has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 tangosdk:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]',
 
         // Error state.
-        'has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40',
+        'tangosdk:has-[[data-slot][aria-invalid=true]]:ring-destructive/20 tangosdk:has-[[data-slot][aria-invalid=true]]:border-destructive tangosdk:dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40',
 
         className
       )}
@@ -37,18 +37,18 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 const inputGroupAddonVariants = cva(
-  "text-muted-foreground flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
+  'tangosdk:text-muted-foreground tangosdk:flex tangosdk:h-auto tangosdk:cursor-text tangosdk:items-center tangosdk:justify-center tangosdk:gap-2 tangosdk:py-1.5 tangosdk:text-sm tangosdk:font-medium tangosdk:select-none tangosdk:[&>svg:not([class*=size-])]:size-4 tangosdk:[&>kbd]:rounded-[calc(var(--radius)-5px)] tangosdk:group-data-[disabled=true]/input-group:opacity-50',
   {
     variants: {
       align: {
         'inline-start':
-          'order-first pl-3 has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]',
+          'tangosdk:order-first tangosdk:pl-3 tangosdk:has-[>button]:ml-[-0.45rem] tangosdk:has-[>kbd]:ml-[-0.35rem]',
         'inline-end':
-          'order-last pr-3 has-[>button]:mr-[-0.45rem] has-[>kbd]:mr-[-0.35rem]',
+          'tangosdk:order-last tangosdk:pr-3 tangosdk:has-[>button]:mr-[-0.45rem] tangosdk:has-[>kbd]:mr-[-0.35rem]',
         'block-start':
-          'order-first w-full justify-start px-3 pt-3 [.border-b]:pb-3 group-has-[>input]/input-group:pt-2.5',
+          'tangosdk:order-first tangosdk:w-full tangosdk:justify-start tangosdk:px-3 tangosdk:pt-3 tangosdk:[.border-b]:pb-3 tangosdk:group-has-[>input]/input-group:pt-2.5',
         'block-end':
-          'order-last w-full justify-start px-3 pb-3 [.border-t]:pt-3 group-has-[>input]/input-group:pb-2.5',
+          'tangosdk:order-last tangosdk:w-full tangosdk:justify-start tangosdk:px-3 tangosdk:pb-3 tangosdk:[.border-t]:pt-3 tangosdk:group-has-[>input]/input-group:pb-2.5',
       },
     },
     defaultVariants: {
@@ -80,15 +80,15 @@ function InputGroupAddon({
 }
 
 const inputGroupButtonVariants = cva(
-  'text-sm shadow-none flex gap-2 items-center',
+  'tangosdk:text-sm tangosdk:shadow-none tangosdk:flex tangosdk:gap-2 tangosdk:items-center',
   {
     variants: {
       size: {
-        xs: "h-6 gap-1 px-2 rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-3.5 has-[>svg]:px-2",
-        sm: 'h-8 px-2.5 gap-1.5 rounded-md has-[>svg]:px-2.5',
+        xs: 'tangosdk:h-6 tangosdk:gap-1 tangosdk:px-2 tangosdk:rounded-[calc(var(--radius)-5px)] tangosdk:[&>svg:not([class*=size-])]:size-3.5 tangosdk:has-[>svg]:px-2',
+        sm: 'tangosdk:h-8 tangosdk:px-2.5 tangosdk:gap-1.5 tangosdk:rounded-md tangosdk:has-[>svg]:px-2.5',
         'icon-xs':
-          'size-6 rounded-[calc(var(--radius)-5px)] p-0 has-[>svg]:p-0',
-        'icon-sm': 'size-8 p-0 has-[>svg]:p-0',
+          'tangosdk:size-6 tangosdk:rounded-[calc(var(--radius)-5px)] tangosdk:p-0 tangosdk:has-[>svg]:p-0',
+        'icon-sm': 'tangosdk:size-8 tangosdk:p-0 tangosdk:has-[>svg]:p-0',
       },
     },
     defaultVariants: {
@@ -120,7 +120,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <span
       className={cn(
-        "text-muted-foreground flex items-center gap-2 text-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+        'tangosdk:text-muted-foreground tangosdk:flex tangosdk:items-center tangosdk:gap-2 tangosdk:text-sm tangosdk:[&_svg]:pointer-events-none tangosdk:[&_svg:not([class*=size-])]:size-4',
         className
       )}
       {...props}
@@ -136,7 +136,7 @@ function InputGroupInput({
     <Input
       data-slot="input-group-control"
       className={cn(
-        'flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent',
+        'tangosdk:flex-1 tangosdk:rounded-none tangosdk:border-0 tangosdk:bg-transparent tangosdk:shadow-none tangosdk:focus-visible:ring-0 tangosdk:dark:bg-transparent',
         className
       )}
       {...props}
@@ -152,7 +152,7 @@ function InputGroupTextarea({
     <Textarea
       data-slot="input-group-control"
       className={cn(
-        'flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent',
+        'tangosdk:flex-1 tangosdk:resize-none tangosdk:rounded-none tangosdk:border-0 tangosdk:bg-transparent tangosdk:py-3 tangosdk:shadow-none tangosdk:focus-visible:ring-0 tangosdk:dark:bg-transparent',
         className
       )}
       {...props}
