@@ -13,12 +13,30 @@ import { authClient } from '@/lib/auth'
 
 import appCss from '../styles.css?url'
 import '@feedback-thing/sdk/styles.css'
+import { createServerFn } from '@tanstack/react-start'
+import { getCookie } from '@tanstack/react-start/server'
 
 const feedbackClient = createFeedbackClient({
   endpoint: 'http://localhost:3000/api/feedback',
 
   // TODO: make configurable
   projectPublicKey: '0199afaf-518c-70f4-924f-1f9abc2aaf4f',
+})
+
+const getSession = createServerFn().handler(async () => {
+  const sessionToken = getCookie('better-auth.session_token')
+  if (sessionToken) {
+    return await authClient.getSession({
+      fetchOptions: {
+        headers: {
+          // Forward cookie manually during SSR
+          Cookie: `better-auth.session_token=${sessionToken}`,
+        },
+      },
+    })
+  } else {
+    return null
+  }
 })
 
 export const Route = createRootRoute({
@@ -45,37 +63,11 @@ export const Route = createRootRoute({
 
   shellComponent: RootDocument,
 
-  // TODO: this is pretty icky but does work
-  // Need a better way to manage the first load which is under SSR without auto-redirecting everyone via signin and resetting their page
   async beforeLoad(ctx) {
-    // Detect server vs client
-    const isServer = typeof document === 'undefined'
-    let session:
-      | Awaited<ReturnType<typeof authClient.getSession>>
-      | { data: null } = { data: null }
-
-    if (isServer) {
-      const getCookie = (await import('@tanstack/react-start/server')).getCookie
-      const sessionToken = getCookie('better-auth.session_token')
-      if (sessionToken) {
-        session = await authClient.getSession({
-          fetchOptions: {
-            headers: {
-              // Forward cookie manually during SSR
-              Cookie: `better-auth.session_token=${sessionToken}`,
-            },
-          },
-        })
-      }
-    } else {
-      // Client: allow browser to send cookies
-      session = await authClient.getSession({
-        fetchOptions: { credentials: 'include' },
-      })
-    }
+    const session = await getSession()
 
     // TODO: use a proper protected parent route or layout
-    if (!ctx.location.pathname.includes('/signin') && !session.data) {
+    if (!ctx.location.pathname.includes('/signin') && !session?.data) {
       throw redirect({
         to: '/signin',
         replace: true,
@@ -85,7 +77,7 @@ export const Route = createRootRoute({
       })
     }
 
-    return session.data
+    return session?.data
   },
 
   errorComponent: ({ error }) => {
