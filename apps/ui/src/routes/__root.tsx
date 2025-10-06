@@ -20,7 +20,7 @@ const feedbackClient = createFeedbackClient({
   endpoint: 'http://localhost:3000/api/feedback',
 
   // TODO: make configurable
-  projectPublicKey: '0199afaf-518c-70f4-924f-1f9abc2aaf4f',
+  projectPublicKey: '0199b9c2-dfb0-754d-b6c6-4301e74d8e6e',
 })
 
 const getSession = createServerFn().handler(async () => {
