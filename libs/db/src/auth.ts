@@ -30,11 +30,14 @@ export const auth = betterAuth({
       loginPage: 'http://localhost:3002/cli/signin',
     }),
   ],
-  trustedOrigins: [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:3002',
-  ],
+  trustedOrigins:
+    process.env.NODE_ENV === 'production'
+      ? [process.env.CORS_ORIGIN].filter((s): s is string => !!s)
+      : [
+          'http://localhost:3000',
+          'http://localhost:3001',
+          'http://localhost:3002',
+        ],
   socialProviders: {
     github: {
       enabled: true,
