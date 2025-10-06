@@ -3,3 +3,4 @@ database.sqlite
 **/*.tsbuildinfo
 .env
 dist/
+scratch.md
