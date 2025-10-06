@@ -17,10 +17,12 @@ import { createServerFn } from '@tanstack/react-start'
 import { getCookie } from '@tanstack/react-start/server'
 
 const feedbackClient = createFeedbackClient({
-  endpoint: 'http://localhost:3000/api/feedback',
-
-  // TODO: make configurable
-  projectPublicKey: '0199b9c2-dfb0-754d-b6c6-4301e74d8e6e',
+  endpoint:
+    import.meta.env.VITE_SELF_FEEDBACK_ENDPOINT ??
+    'http://localhost:3000/api/feedback',
+  projectPublicKey:
+    import.meta.env.VITE_SELF_FEEDBACK_PUBLIC_KEY ??
+    '0199b9c2-dfb0-754d-b6c6-4301e74d8e6e',
 })
 
 const getSession = createServerFn().handler(async () => {
