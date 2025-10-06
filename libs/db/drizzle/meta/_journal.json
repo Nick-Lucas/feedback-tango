@@ -15,6 +15,13 @@
       "when": 1759701499488,
       "tag": "0001_funny_trauma",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759750192510,
+      "tag": "0002_luxuriant_gideon",
+      "breakpoints": true
     }
   ]
 }

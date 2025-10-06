@@ -20,7 +20,7 @@ if (!parsed.success) {
 const env = parsed.data
 
 export const auth = betterAuth({
-  database: drizzleAdapter(createDb(), {
+  database: drizzleAdapter(createDb({ ignoreMissingConnectionString: true }), {
     provider: 'pg',
     schema: schemas,
   }),
