@@ -14,7 +14,7 @@ import { authClient } from '@/lib/auth'
 import appCss from '../styles.css?url'
 import '@feedback-thing/sdk/styles.css'
 import { createServerFn } from '@tanstack/react-start'
-import { getCookie } from '@tanstack/react-start/server'
+import { getCookie, getRequestHeader } from '@tanstack/react-start/server'
 
 const feedbackClient = createFeedbackClient({
   endpoint:
@@ -26,13 +26,14 @@ const feedbackClient = createFeedbackClient({
 })
 
 const getSession = createServerFn().handler(async () => {
-  const sessionToken = getCookie('better-auth.session_token')
-  if (sessionToken) {
+  const cookie = getRequestHeader('Cookie')
+
+  if (cookie) {
     return await authClient.getSession({
       fetchOptions: {
         headers: {
           // Forward cookie manually during SSR
-          Cookie: `better-auth.session_token=${sessionToken}`,
+          Cookie: cookie,
         },
       },
     })

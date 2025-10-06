@@ -1,5 +1,5 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
-import { getCookie } from '@tanstack/react-start/server'
+import { getCookie, getRequestHeader } from '@tanstack/react-start/server'
 import { createDb, Projects, Feedbacks, Features } from '@feedback-thing/db'
 import { eq, inArray } from 'drizzle-orm'
 import z from 'zod'
@@ -13,15 +13,16 @@ const model = google('gemini-2.5-flash-lite')
 
 const authMiddleware = createMiddleware({ type: 'function' }).server(
   async (ctx) => {
-    const sessionToken = getCookie('better-auth.session_token')
-    if (!sessionToken) {
+    const cookie = getRequestHeader('Cookie')
+
+    if (!cookie) {
       console.log('No session cookie found on request')
       throw new Response('Unauthorized', { status: 401 })
     }
 
     const session = await authClient.getSession({
       fetchOptions: {
-        headers: { Cookie: 'better-auth.session_token=' + sessionToken },
+        headers: { Cookie: cookie },
       },
     })
     if (!session.data) {
