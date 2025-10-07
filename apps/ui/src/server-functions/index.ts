@@ -6,7 +6,6 @@ import {
   Feedbacks,
   Features,
   ProjectMembers,
-  user,
 } from '@feedback-thing/db'
 import { and, eq, inArray, getTableColumns } from 'drizzle-orm'
 import z from 'zod'
@@ -504,7 +503,6 @@ async function checkFeedbackAccessAndThrow(
     .select({
       feedbackId: Feedbacks.id,
       projectId: Feedbacks.projectId,
-      userId: user.id,
     })
     .from(Feedbacks)
     .innerJoin(
