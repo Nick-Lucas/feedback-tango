@@ -13,6 +13,8 @@ export function addFeedback(app: App) {
   app.post('/api/feedback', async (c) => {
     console.log('[/api/feedback] received request')
 
+    // TODO: this is just the project ID currently, should use the better-auth api public key
+    // plugin instead which would support rate limiting. prefixes, and permissions out the box
     const projectId = c.req.header('X-Project-Key')
     if (!projectId) {
       return c.json({ error: 'Missing X-Project-ID header' }, 400)
