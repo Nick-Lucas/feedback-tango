@@ -10,6 +10,7 @@ import { XIcon } from 'lucide-react'
 export interface FeedbackWidgetProps {
   client: FeedbackClient
   title?: string
+  button?: string
   onFeedbackSubmitted?: () => void
 }
 
@@ -83,7 +84,11 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
   }
 
   if (!isOpen) {
-    return <Button onClick={() => setIsOpen(true)}>Feedback</Button>
+    return (
+      <Button onClick={() => setIsOpen(true)}>
+        {props.button ?? 'Feedback'}
+      </Button>
+    )
   }
 
   if (submitted) {

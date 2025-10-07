@@ -8,6 +8,8 @@ import '@feedback-thing/sdk/styles.css'
 export function FeedbackButton() {
   const { invalidate } = useRouter()
   const maybeProjectId = useParams({ strict: false }).projectId
+  const appliesToThisProject = !!maybeProjectId
+
   const feedbackProjectId =
     maybeProjectId ?? import.meta.env.VITE_SELF_FEEDBACK_PUBLIC_KEY
 
@@ -28,9 +30,25 @@ export function FeedbackButton() {
     return null
   }
 
+  if (!appliesToThisProject) {
+    // Disable for now when no projectId
+    // In the future we'd want to enable this to get feedback about Feedback Thing itself
+    return null
+  }
+
   return (
     <div className="fixed bottom-4 right-4">
       <FeedbackWidget
+        title={
+          appliesToThisProject
+            ? 'Test Feedback'
+            : 'Feedback about Feedback Thing'
+        }
+        button={
+          appliesToThisProject
+            ? 'Test Feedback'
+            : 'Feedback about Feedback Thing'
+        }
         client={feedbackClient}
         onFeedbackSubmitted={invalidate}
       />
