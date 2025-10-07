@@ -7,6 +7,8 @@ import { Label } from './components/ui/label'
 import { Progress } from './components/ui/progress'
 import { XIcon } from 'lucide-react'
 
+type ViewState = 'button' | 'form' | 'success'
+
 export interface FeedbackWidgetProps {
   client: FeedbackClient
   title?: string
@@ -15,15 +17,14 @@ export interface FeedbackWidgetProps {
 }
 
 export function FeedbackWidget(props: FeedbackWidgetProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [view, setView] = useState<ViewState>('button')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [email, setEmail] = useState('')
   const [feedback, setFeedback] = useState('')
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    if (submitted) {
+    if (view === 'success') {
       // Animate progress bar
       const interval = setInterval(() => {
         setProgress((prev) => {
@@ -37,8 +38,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
 
       // Close modal after 5 seconds
       const timer = setTimeout(() => {
-        setIsOpen(false)
-        setSubmitted(false)
+        setView('button')
         setProgress(0)
         setEmail('')
         setFeedback('')
@@ -49,7 +49,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
         clearTimeout(timer)
       }
     }
-  }, [submitted])
+  }, [view])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,7 +57,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
 
     try {
       await props.client.sendFeedback(email, feedback)
-      setSubmitted(true)
+      setView('success')
       props.onFeedbackSubmitted?.()
     } catch (error) {
       console.error('Failed to send feedback:', error)
@@ -76,91 +76,97 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
   }
 
   const handleClose = () => {
-    setIsOpen(false)
-    setSubmitted(false)
+    setView('button')
     setProgress(0)
     setEmail('')
     setFeedback('')
   }
 
-  if (!isOpen) {
-    return (
-      <Button onClick={() => setIsOpen(true)}>
-        {props.button ?? 'Feedback'}
-      </Button>
-    )
-  }
-
-  if (submitted) {
-    return (
-      <div className="tangosdk:rounded-lg tangosdk:border tangosdk:shadow-sm tangosdk:p-6 tangosdk:w-full tangosdk:max-w-md">
-        <p className="tangosdk:text-center tangosdk:text-lg tangosdk:mb-4">
-          Thank you for your feedback
-        </p>
-        <Progress value={progress} />
-      </div>
-    )
-  }
-
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="tangosdk:bg-background tangosdk:rounded-lg tangosdk:border tangosdk:shadow-sm tangosdk:p-2 tangosdk:w-80 tangosdk:max-w-80"
-    >
-      <div className="tangosdk:flex tangosdk:items-center tangosdk:justify-between tangosdk:ml-2 tangosdk:mr-0">
-        <h2 className="tangosdk:text-xl tangosdk:font-semibold">
-          {props.title ?? 'Give feedback'}
-        </h2>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleClose}
-          className="tangosdk:rounded-sm tangosdk:opacity-70 tangosdk:transition-opacity hover:tangosdk:opacity-100 focus:tangosdk:outline-none focus:tangosdk:ring-2 focus:tangosdk:ring-offset-2"
-        >
-          <XIcon className="tangosdk:h-4 tangosdk:w-4" />
-        </Button>
-      </div>
-
-      <div className="tangosdk:space-y-4 tangosdk:p-2">
-        <div className="tangosdk:space-y-2">
-          <Label htmlFor="email" className="tangosdk:text-sm">
-            Email (optional)
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-          />
+    <div className="tangosdk:relative">
+      {view === 'button' && (
+        <div className="tangosdk:transition-all tangosdk:duration-300 tangosdk:ease-in-out tangosdk:animate-in tangosdk:fade-in tangosdk:zoom-in-95">
+          <Button onClick={() => setView('form')}>
+            {props.button ?? 'Feedback'}
+          </Button>
         </div>
+      )}
 
-        <div className="tangosdk:space-y-2">
-          <Label htmlFor="feedback" className="tangosdk:text-sm">
-            Feedback
-          </Label>
-          <Textarea
-            id="feedback"
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            onKeyDown={handleKeyDown}
-            required
-            rows={4}
-            placeholder="Your feedback..."
-            className="tangosdk:resize-none tangosdk:w-full"
-            style={{ fieldSizing: 'fixed' } as React.CSSProperties}
-          />
+      {view === 'form' && (
+        <div className="tangosdk:transition-all tangosdk:duration-300 tangosdk:ease-in-out tangosdk:animate-in tangosdk:fade-in tangosdk:zoom-in-95">
+          <form
+            onSubmit={handleSubmit}
+            className="tangosdk:bg-background tangosdk:rounded-lg tangosdk:border tangosdk:shadow-sm tangosdk:p-2 tangosdk:w-80 tangosdk:max-w-80"
+          >
+            <div className="tangosdk:flex tangosdk:items-center tangosdk:justify-between tangosdk:ml-2 tangosdk:mr-0">
+              <h2 className="tangosdk:text-xl tangosdk:font-semibold">
+                {props.title ?? 'Give feedback'}
+              </h2>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={handleClose}
+                className="tangosdk:rounded-sm tangosdk:opacity-70 tangosdk:transition-opacity hover:tangosdk:opacity-100 focus:tangosdk:outline-none focus:tangosdk:ring-2 focus:tangosdk:ring-offset-2"
+              >
+                <XIcon className="tangosdk:h-4 tangosdk:w-4" />
+              </Button>
+            </div>
+
+            <div className="tangosdk:space-y-4 tangosdk:p-2">
+              <div className="tangosdk:space-y-2">
+                <Label htmlFor="email" className="tangosdk:text-sm">
+                  Email (optional)
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                />
+              </div>
+
+              <div className="tangosdk:space-y-2">
+                <Label htmlFor="feedback" className="tangosdk:text-sm">
+                  Feedback
+                </Label>
+                <Textarea
+                  id="feedback"
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  required
+                  rows={4}
+                  placeholder="Your feedback..."
+                  className="tangosdk:resize-none tangosdk:w-full"
+                  style={{ fieldSizing: 'fixed' } as React.CSSProperties}
+                />
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="tangosdk:w-full"
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </Button>
+            </div>
+          </form>
         </div>
+      )}
 
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="tangosdk:w-full"
-        >
-          {isSubmitting ? 'Submitting...' : 'Submit'}
-        </Button>
-      </div>
-    </form>
+      {view === 'success' && (
+        <div className="tangosdk:transition-all tangosdk:duration-300 tangosdk:ease-in-out tangosdk:animate-in tangosdk:fade-in tangosdk:zoom-in-95">
+          <div className="tangosdk:rounded-lg tangosdk:border tangosdk:shadow-sm tangosdk:p-6 tangosdk:w-full tangosdk:max-w-md tangosdk:bg-background">
+            <p className="tangosdk:text-center tangosdk:text-lg tangosdk:mb-4">
+              Thank you for your feedback
+            </p>
+            <Progress value={progress} />
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
