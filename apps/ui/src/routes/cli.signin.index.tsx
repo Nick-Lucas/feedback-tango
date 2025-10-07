@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { authClient } from '@/lib/auth'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/cli/signin')({
+export const Route = createFileRoute('/cli/signin/')({
   component: RouteComponent,
 })
 
