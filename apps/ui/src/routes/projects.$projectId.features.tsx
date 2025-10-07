@@ -70,12 +70,17 @@ function App() {
   )
 
   const handleCreateProject = async (name: string) => {
-    await createProject({
+    const project = await createProject({
       data: {
         name,
       },
     })
     await router.invalidate()
+
+    await router.navigate({
+      to: '/projects/$projectId/features',
+      params: { projectId: project.id },
+    })
   }
 
   const toggleFeatureSelection = (featureId: string) => {
