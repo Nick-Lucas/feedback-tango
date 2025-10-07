@@ -64,7 +64,6 @@ export function MergeFeaturesModal({
           featureIds: selectedFeatures.map((f) => f.id),
           newFeatureName,
           newFeatureDescription,
-          projectId: projectId,
         },
       })
       await navigate({

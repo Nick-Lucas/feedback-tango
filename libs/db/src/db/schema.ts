@@ -26,6 +26,38 @@ export const Projects = pgTable('projects', {
 export const ProjectRelations = relations(Projects, ({ many }) => ({
   features: many(Features),
   feedbacks: many(Feedbacks),
+  members: many(ProjectMembers),
+}))
+export const UserRelations = relations(user, ({ many }) => ({
+  projectMemberships: many(ProjectMembers),
+}))
+
+export const ProjectMemberRole = pgEnum('project_member_role', [
+  'editor',
+  'owner',
+])
+export const ProjectMembers = pgTable('project_members', {
+  id: uuid()
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  projectId: uuid()
+    .notNull()
+    .references(() => Projects.id),
+  userId: text()
+    .notNull()
+    .references(() => user.id),
+  role: ProjectMemberRole().notNull().default('editor'),
+  createdAt: timestamp().defaultNow().notNull(),
+})
+export const ProjectMemberRelations = relations(ProjectMembers, ({ one }) => ({
+  project: one(Projects, {
+    fields: [ProjectMembers.projectId],
+    references: [Projects.id],
+  }),
+  user: one(user, {
+    fields: [ProjectMembers.userId],
+    references: [user.id],
+  }),
 }))
 
 export const Features = pgTable(
@@ -58,24 +90,6 @@ export const FeatureRelations = relations(Features, ({ one, many }) => ({
   }),
   feedbacks: many(Feedbacks),
 }))
-
-export const ProjectMemberRole = pgEnum('project_member_role', [
-  'editor',
-  'owner',
-])
-export const ProjectMembers = pgTable('project_members', {
-  id: uuid()
-    .primaryKey()
-    .default(sql`uuidv7()`),
-  projectId: uuid()
-    .notNull()
-    .references(() => Projects.id),
-  userId: text()
-    .notNull()
-    .references(() => user.id),
-  role: ProjectMemberRole().notNull().default('editor'),
-  createdAt: timestamp().defaultNow().notNull(),
-})
 
 export const Feedbacks = pgTable('feedback', {
   id: uuid()

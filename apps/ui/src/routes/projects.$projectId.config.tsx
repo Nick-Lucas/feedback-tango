@@ -21,13 +21,13 @@ export const Route = createFileRoute('/projects/$projectId/config')({
       data: { projectId: ctx.params.projectId },
     })
 
-    const users = await getProjectMembers({
+    const members = await getProjectMembers({
       data: { projectId: ctx.params.projectId },
     })
 
     return {
       project,
-      users,
+      members,
     }
   },
 })
@@ -112,27 +112,29 @@ function RouteComponent() {
 
         <CardContent>
           <div className="space-y-3">
-            {data.users.map((user) => (
+            {data.members.map((member) => (
               <div
-                key={user.id}
+                key={member.user.id}
                 className="flex items-center gap-3 p-2 rounded-lg border"
               >
-                {user.image ? (
+                {member.user.image ? (
                   <img
-                    src={user.image}
-                    alt={user.name}
+                    src={member.user.image}
+                    alt={member.user.name}
                     className="w-8 h-8 rounded-full"
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                     <span className="text-sm font-medium">
-                      {user.name.charAt(0).toUpperCase()}
+                      {member.user.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                 )}
                 <div className="flex-1">
-                  <p className="font-medium">{user.name}</p>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                  <p className="font-medium">{member.user.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {member.user.email}
+                  </p>
                 </div>
               </div>
             ))}
