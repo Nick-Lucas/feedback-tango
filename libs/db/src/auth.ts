@@ -28,7 +28,10 @@ export const auth = betterAuth({
   plugins: [
     admin(),
     mcp({
-      loginPage: 'http://localhost:3002/cli/signin',
+      loginPage: new URL(
+        '/cli/signin',
+        process.env.UI_URL ?? 'http://localhost:3002'
+      ).toString(),
     }),
     reactStartCookies(),
   ],
