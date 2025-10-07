@@ -27,7 +27,7 @@ const feedbackClient = createFeedbackClient({
 
 const getSession = createServerFn().handler(async () => {
   const cookie = getRequestHeader('Cookie')
-  console.log('Cookie on Server:', cookie)
+
   if (cookie) {
     return await authClient.getSession({
       fetchOptions: {
@@ -68,8 +68,6 @@ export const Route = createRootRoute({
 
   async beforeLoad(ctx) {
     const session = await getSession()
-
-    console.log('Session on server:', ctx.location.href, session)
 
     // TODO: use a proper protected parent route or layout
     if (!ctx.location.pathname.includes('/signin') && !session?.data) {
