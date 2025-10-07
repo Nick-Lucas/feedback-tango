@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Copy, Check, Home, Notebook } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { ProjectMembershipSection } from '@/components/project-membership-section'
 
 export const Route = createFileRoute('/projects/$projectId/config')({
   component: RouteComponent,
@@ -35,6 +36,11 @@ export const Route = createFileRoute('/projects/$projectId/config')({
 function RouteComponent() {
   const data = Route.useLoaderData()
   const [copied, setCopied] = useState(false)
+
+  const currentUserMembership = data.members.find(
+    (m) => m.user.id === data.project.createdBy
+  )
+  const isOwner = currentUserMembership?.role === 'owner'
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(data.project.id)
@@ -102,45 +108,12 @@ function RouteComponent() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Members</CardTitle>
-          <CardDescription>
-            Users in this list can access and manage this project
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <div className="space-y-3">
-            {data.members.map((member) => (
-              <div
-                key={member.user.id}
-                className="flex items-center gap-3 p-2 rounded-lg border"
-              >
-                {member.user.image ? (
-                  <img
-                    src={member.user.image}
-                    alt={member.user.name}
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                    <span className="text-sm font-medium">
-                      {member.user.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <div className="flex-1">
-                  <p className="font-medium">{member.user.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {member.user.email}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <ProjectMembershipSection
+        projectId={data.project.id}
+        members={data.members}
+        projectCreatorId={data.project.createdBy}
+        isOwner={isOwner}
+      />
 
       <Card>
         <CardHeader>

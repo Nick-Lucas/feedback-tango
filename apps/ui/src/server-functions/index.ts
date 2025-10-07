@@ -356,6 +356,105 @@ export const moveFeedbackToFeature = authedServerFn()
     return { success: true }
   })
 
+export const searchUsers = authedServerFn()
+  .inputValidator(
+    z.object({
+      query: z.string().min(1),
+      projectId: z.string(),
+    })
+  )
+  .handler(async (ctx) => {
+    await checkProjectAccessAndThrow(ctx.context.user.id, ctx.data.projectId)
+
+    const results = await db.query.user.findMany({
+      columns: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+      },
+      where(fields, operators) {
+        return operators.like(fields.email, `%${ctx.data.query}%`)
+      },
+      limit: 10,
+    })
+
+    return results
+  })
+
+export const addProjectMember = authedServerFn()
+  .inputValidator(
+    z.object({
+      projectId: z.string(),
+      userId: z.string(),
+      role: z.enum(['owner', 'editor']).default('editor'),
+    })
+  )
+  .handler(async (ctx) => {
+    const membership = await checkProjectAccessAndThrow(
+      ctx.context.user.id,
+      ctx.data.projectId
+    )
+
+    if (membership.role !== 'owner') {
+      throw new Error('Only project owners can add members')
+    }
+
+    const existingMember = await db.query.ProjectMembers.findFirst({
+      where(fields, operators) {
+        return operators.and(
+          operators.eq(fields.projectId, ctx.data.projectId),
+          operators.eq(fields.userId, ctx.data.userId)
+        )
+      },
+    })
+
+    if (existingMember) {
+      throw new Error('User is already a member of this project')
+    }
+
+    await db.insert(ProjectMembers).values({
+      projectId: ctx.data.projectId,
+      userId: ctx.data.userId,
+      role: ctx.data.role,
+    })
+
+    return { success: true }
+  })
+
+export const removeProjectMember = authedServerFn()
+  .inputValidator(
+    z.object({
+      projectId: z.string(),
+      userId: z.string(),
+    })
+  )
+  .handler(async (ctx) => {
+    const membership = await checkProjectAccessAndThrow(
+      ctx.context.user.id,
+      ctx.data.projectId
+    )
+
+    if (membership.role !== 'owner') {
+      throw new Error('Only project owners can remove members')
+    }
+
+    if (ctx.context.user.id === ctx.data.userId) {
+      throw new Error('Cannot remove yourself from the project')
+    }
+
+    await db
+      .delete(ProjectMembers)
+      .where(
+        and(
+          eq(ProjectMembers.projectId, ctx.data.projectId),
+          eq(ProjectMembers.userId, ctx.data.userId)
+        )
+      )
+
+    return { success: true }
+  })
+
 //
 // Project Membership Access Checks
 //
