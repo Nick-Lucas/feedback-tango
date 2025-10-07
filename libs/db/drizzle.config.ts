@@ -10,6 +10,6 @@ export default defineConfig({
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.POSTGRES_URI,
+    url: process.env.POSTGRES_URI!,
   },
 })

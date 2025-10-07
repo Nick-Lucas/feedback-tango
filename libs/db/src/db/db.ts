@@ -9,7 +9,7 @@ export function createDb(opts?: { ignoreMissingConnectionString?: boolean }) {
     throw new Error('POSTGRES_URI is not set')
   }
 
-  const client = postgres(connectionString, { username: 'postgres' })
+  const client = postgres(connectionString!, { username: 'postgres' })
 
   return drizzle(client, { schema })
 }
