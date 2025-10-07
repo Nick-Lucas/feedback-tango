@@ -8,7 +8,7 @@ import {
   ProjectMembers,
   user,
 } from '@feedback-thing/db'
-import { and, eq, inArray } from 'drizzle-orm'
+import { and, eq, inArray, getTableColumns } from 'drizzle-orm'
 import z from 'zod'
 import { generateObject } from 'ai'
 import { google } from '@ai-sdk/google'
@@ -478,10 +478,7 @@ async function checkProjectAccessAndThrow(userId: string, projectId: string) {
 
 async function checkFeatureAccessAndThrow(userId: string, featureId: string[]) {
   const results = await db
-    .select({
-      ...Features._.columns,
-      userId: user.id,
-    })
+    .select(getTableColumns(Features))
     .from(Features)
     .innerJoin(
       ProjectMembers,
