@@ -3,12 +3,6 @@
 import chalk from 'chalk'
 import { createInterface, Interface } from 'readline'
 import { FeedbackAgent } from '@feedback-thing/agents'
-// import { createAuthClient } from 'better-auth/client'
-
-// const authClient = createAuthClient({
-//   baseURL: 'http://localhost:3000/',
-//   // baseURL: 'http://localhost:3000/api/auth',
-// })
 
 class ChatCLI {
   private rl: Interface
@@ -28,9 +22,6 @@ class ChatCLI {
     console.clear()
     console.log(chalk.bold.magenta('🤖 Feedback AI Assistant'))
     console.log(chalk.gray('='.repeat(60)))
-
-    // const authCookie = await this.checkAuthentication()
-    // console.log('Session cookie:', authCookie)
 
     console.log(
       chalk.yellow('Welcome to the interactive feedback management AI!')

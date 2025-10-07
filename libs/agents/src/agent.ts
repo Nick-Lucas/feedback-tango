@@ -8,7 +8,6 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { google } from '@ai-sdk/google'
 import { MemoryOAuthProvider } from './MemoryOAuthProvider.ts'
 import type { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.js'
-// import { databaseTools } from './tools.ts'
 
 globalThis.AI_SDK_LOG_WARNINGS = false
 
@@ -28,13 +27,17 @@ export class FeedbackAgent {
     }
 
     if (!this.mcpClientInstance) {
+      const uri = new URL(
+        '/mcp',
+        process.env.MCP_URL ?? 'http://localhost:3001'
+      )
       this.mcpClientInstance = await experimental_createMCPClient({
-        transport: new StreamableHTTPClientTransport(
-          new URL('http://localhost:3001/mcp'),
-          {
-            authProvider: this.authProvider,
-          }
-        ),
+        transport: new StreamableHTTPClientTransport(uri, {
+          authProvider: this.authProvider,
+        }),
+        onUncaughtError(error) {
+          console.error('Uncaught MCP Client Error:', error)
+        },
       })
     }
     return this.mcpClientInstance

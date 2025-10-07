@@ -5,15 +5,15 @@
   "main": "src/index.ts",
   "type": "module",
   "bin": {
-    "feedback": "./src/index.ts"
+    "tango": "./src/index.ts"
   },
   "scripts": {
-    "cli": "DOTENV_CONFIG_PATH=../../.env node -r dotenv/config src/index.ts",
+    "cli:dev": "DOTENV_CONFIG_PATH=../../.env node -r dotenv/config src/index.ts",
+    "cli:prod": "BETTER_AUTH_URL=https://feedback-thingapi-production.up.railway.app MCP_URL=https://feedback-thingmcp-production.up.railway.app DOTENV_CONFIG_PATH=../../.env node -r dotenv/config src/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@feedback-thing/agents": "workspace:*",
-    "@feedback-thing/db": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
     "better-auth": "catalog:",
     "chalk": "^5.3.0",

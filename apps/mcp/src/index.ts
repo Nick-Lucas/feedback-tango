@@ -57,7 +57,7 @@ app.post('/mcp', async (req, res) => {
         transports[sessionId] = transport
       },
       enableDnsRebindingProtection: true,
-      allowedHosts: ['localhost:3001'],
+      allowedHosts: [process.env.MCP_URL ?? 'localhost:3001'],
     })
 
     transport.onclose = () => {

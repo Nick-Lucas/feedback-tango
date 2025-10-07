@@ -14,7 +14,6 @@
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "@ai-sdk/google": "catalog:",
-    "@feedback-thing/core": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
     "@types/cookie": "catalog:",
     "ai": "catalog:",

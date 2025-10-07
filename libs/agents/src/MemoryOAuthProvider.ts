@@ -10,6 +10,8 @@ import type {
   AuthorizationServerMetadata,
 } from '@modelcontextprotocol/sdk/shared/auth.js'
 
+const mcpAuthUrl = new URL(process.env.MCP_URL ?? 'http://localhost:3001')
+
 /**
  * In-memory OAuthClientProvider implementation for CLI applications.
  *
@@ -185,7 +187,7 @@ export class MemoryOAuthProvider implements OAuthClientProvider {
         }
 
         if (req.url?.startsWith('/callback')) {
-          const url = new URL(req.url, `http://localhost:3001`)
+          const url = new URL(req.url, mcpAuthUrl.origin)
           const code = url.searchParams.get('code')
           const state = url.searchParams.get('state')
 
@@ -209,15 +211,12 @@ export class MemoryOAuthProvider implements OAuthClientProvider {
           }
 
           try {
-            const tokens = await exchangeAuthorization(
-              'http://localhost:3001',
-              {
-                authorizationCode: code,
-                redirectUri: that.redirectUrl,
-                clientInformation: clientInformation,
-                codeVerifier: that.codeVerifier(),
-              }
-            )
+            const tokens = await exchangeAuthorization(mcpAuthUrl.origin, {
+              authorizationCode: code,
+              redirectUri: that.redirectUrl,
+              clientInformation: clientInformation,
+              codeVerifier: that.codeVerifier(),
+            })
 
             replyOk()
 
