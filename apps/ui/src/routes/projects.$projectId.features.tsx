@@ -73,7 +73,6 @@ function App() {
     await createProject({
       data: {
         name,
-        createdBy: 'user',
       },
     })
     await router.invalidate()

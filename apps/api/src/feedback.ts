@@ -11,10 +11,13 @@ import { randomUUID } from 'node:crypto'
 export function addFeedback(app: App) {
   // TODO: probably put this into a queue for later processing
   app.post('/api/feedback', async (c) => {
+    console.log('[/api/feedback] received request')
+
     const projectId = c.req.header('X-Project-Key')
     if (!projectId) {
       return c.json({ error: 'Missing X-Project-ID header' }, 400)
     }
+    console.log('[/api/feedback] projectId', projectId)
 
     const project = await db.query.Projects.findFirst({
       where: (projects, { eq }) => eq(projects.id, projectId),
@@ -22,8 +25,10 @@ export function addFeedback(app: App) {
     if (!project) {
       return c.json({ error: 'Invalid Project ID' }, 400)
     }
+    console.log('[/api/feedback] project found:', project.name)
 
     const agentUserId = await findAgentUser()
+    console.log('[/api/feedback] agent user ID:', agentUserId)
 
     const body = await c.req.json()
     const parsed = FeedbackSubmission.safeParse(body)
@@ -33,6 +38,7 @@ export function addFeedback(app: App) {
         400
       )
     }
+    console.log('[/api/feedback] parsed submission:', parsed.data)
 
     const safetyGrade = await generateObject({
       model,
@@ -53,6 +59,7 @@ export function addFeedback(app: App) {
         reason: z.string().max(1000).describe('The reason for the outcome'),
       }),
     })
+    console.log('[/api/feedback] safety grade:', safetyGrade)
 
     if (safetyGrade.object.outcome === 'unsafe') {
       // TODO: log the feedback in a raw form somewhere for later review
@@ -129,6 +136,7 @@ export function addFeedback(app: App) {
         }
       })
     })
+    console.log('[/api/feedback] feature result:', feature)
 
     if (feature.type === 'error') {
       console.error('Failed to determine feature for feedback:', feature.error)
@@ -144,7 +152,8 @@ export function addFeedback(app: App) {
       createdBy: parsed.data.email ?? 'anonymous',
     })
 
-    console.log('Feedback received:', body)
+    console.log('Feedback stored successfully')
+
     return c.json({ status: 'ok' })
   })
 }

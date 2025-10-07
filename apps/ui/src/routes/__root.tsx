@@ -7,23 +7,12 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Toaster } from '@/components/ui/sonner'
-import { FeedbackWidget } from '@feedback-thing/sdk/react'
-import { createFeedbackClient } from '@feedback-thing/sdk/client'
 import { authClient } from '@/lib/auth'
 
 import appCss from '../styles.css?url'
-import '@feedback-thing/sdk/styles.css'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequestHeader } from '@tanstack/react-start/server'
-
-const feedbackClient = createFeedbackClient({
-  endpoint:
-    import.meta.env.VITE_SELF_FEEDBACK_ENDPOINT ??
-    'http://localhost:3000/api/feedback',
-  projectPublicKey:
-    import.meta.env.VITE_SELF_FEEDBACK_PUBLIC_KEY ??
-    '0199b9c2-dfb0-754d-b6c6-4301e74d8e6e',
-})
+import { FeedbackButton } from '@/components/feedback-button'
 
 const getSession = createServerFn().handler(async () => {
   const cookie = getRequestHeader('Cookie')
@@ -105,10 +94,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {children}
 
         <Toaster />
-
-        <div className="fixed bottom-4 right-4">
-          <FeedbackWidget client={feedbackClient} />
-        </div>
+        <FeedbackButton />
 
         <TanStackDevtools
           config={{

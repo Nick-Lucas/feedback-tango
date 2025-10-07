@@ -10,6 +10,7 @@ import { XIcon } from 'lucide-react'
 export interface FeedbackWidgetProps {
   client: FeedbackClient
   title?: string
+  onFeedbackSubmitted?: () => void
 }
 
 export function FeedbackWidget(props: FeedbackWidgetProps) {
@@ -56,6 +57,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
     try {
       await props.client.sendFeedback(email, feedback)
       setSubmitted(true)
+      props.onFeedbackSubmitted?.()
     } catch (error) {
       console.error('Failed to send feedback:', error)
     } finally {
@@ -86,7 +88,7 @@ export function FeedbackWidget(props: FeedbackWidgetProps) {
 
   if (submitted) {
     return (
-      <div className="tangosdk:bg-white tangosdk:rounded-lg tangosdk:border tangosdk:shadow-sm tangosdk:p-6 tangosdk:w-full tangosdk:max-w-md">
+      <div className="tangosdk:rounded-lg tangosdk:border tangosdk:shadow-sm tangosdk:p-6 tangosdk:w-full tangosdk:max-w-md">
         <p className="tangosdk:text-center tangosdk:text-lg tangosdk:mb-4">
           Thank you for your feedback
         </p>
