@@ -15,6 +15,7 @@
     "format:write": "prettier --write . --list-different",
     "typecheck": "pnpm -r typecheck",
     "db:generate": "pnpm -C libs/db db:generate",
+    "db:generate:amend": "pnpm -C libs/db db:generate:amend",
     "db:migrate": "pnpm -C libs/db db:migrate",
     "db:studio": "pnpm -C libs/db db:studio",
     "db:wipe": "pnpm -C libs/db db:wipe",

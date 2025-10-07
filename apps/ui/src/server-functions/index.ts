@@ -1,5 +1,5 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
-import { getCookie, getRequestHeader } from '@tanstack/react-start/server'
+import { getRequestHeader } from '@tanstack/react-start/server'
 import { createDb, Projects, Feedbacks, Features } from '@feedback-thing/db'
 import { eq, inArray } from 'drizzle-orm'
 import z from 'zod'
@@ -49,6 +49,7 @@ export const getProject = authedServerFn()
   )
   .handler(async (ctx) => {
     const project = await db.query.Projects.findFirst({
+      with: {},
       where(fields, operators) {
         return operators.eq(fields.id, ctx.data.projectId)
       },

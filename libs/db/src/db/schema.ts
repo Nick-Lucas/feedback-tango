@@ -5,10 +5,14 @@ import {
   timestamp,
   uuid,
   halfvec,
+  pgEnum,
 } from 'drizzle-orm/pg-core'
 import { relations, sql } from 'drizzle-orm'
 export * from './auth-schema.ts'
 import { user } from './auth-schema.ts'
+
+// TODO: indexes!
+// TODO: updatedAt/By fields!
 
 export const Projects = pgTable('projects', {
   id: uuid()
@@ -54,6 +58,24 @@ export const FeatureRelations = relations(Features, ({ one, many }) => ({
   }),
   feedbacks: many(Feedbacks),
 }))
+
+export const ProjectMemberRole = pgEnum('project_member_role', [
+  'editor',
+  'owner',
+])
+export const ProjectMembers = pgTable('project_members', {
+  id: uuid()
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  projectId: uuid()
+    .notNull()
+    .references(() => Projects.id),
+  userId: text()
+    .notNull()
+    .references(() => user.id),
+  role: ProjectMemberRole().notNull().default('editor'),
+  createdAt: timestamp().defaultNow().notNull(),
+})
 
 export const Feedbacks = pgTable('feedback', {
   id: uuid()
