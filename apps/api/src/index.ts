@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server'
 import { app } from './app.ts'
 import { addAuth } from './auth.ts'
-import { addFeedback } from './feedback.ts'
+import { addFeedback } from './feedback/index.ts'
 import { cors } from 'hono/cors'
 
 app.use(

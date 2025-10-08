@@ -23,7 +23,8 @@
     "cli:prod": "pnpm -C apps/cli cli:prod",
     "cli-install": "pnpm install -g ./apps/cli",
     "cli-uninstall": "pnpm uninstall -g @feedback-thing/cli",
-    "merge-down": "pnpm lint && pnpm format && pnpm typecheck && git checkout main && git pull origin main && git merge - --no-ff"
+    "check": "pnpm lint && pnpm format && pnpm typecheck",
+    "merge-down": "pnpm check && git checkout main && git pull origin main && git merge - --no-ff"
   },
   "keywords": [],
   "author": "",

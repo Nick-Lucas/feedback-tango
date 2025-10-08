@@ -7,9 +7,10 @@
   },
   "dependencies": {
     "@ai-sdk/google": "catalog:",
-    "@feedback-thing/db": "workspace:*",
-    "@feedback-thing/core": "workspace:*",
+    "@ai-sdk/provider": "catalog:",
     "@feedback-thing/agents": "workspace:*",
+    "@feedback-thing/core": "workspace:*",
+    "@feedback-thing/db": "workspace:*",
     "@hono/node-server": "^1.19.3",
     "ai": "catalog:",
     "dotenv": "catalog:",
