@@ -4,6 +4,7 @@ packages:
 
 catalog:
   '@ai-sdk/google': 2.0.14
+  '@ai-sdk/provider': ^2.0.0
   '@daveyplate/better-auth-ui': ^3.1.10
   '@eslint/js': ^9.36.0
   '@hookform/resolvers': 5.2.2

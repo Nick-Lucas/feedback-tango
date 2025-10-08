@@ -9,6 +9,9 @@ catalogs:
     '@ai-sdk/google':
       specifier: 2.0.14
       version: 2.0.14
+    '@ai-sdk/provider':
+      specifier: ^2.0.0
+      version: 2.0.0
     '@eslint/js':
       specifier: ^9.36.0
       version: 9.36.0
@@ -279,6 +282,9 @@ importers:
       '@ai-sdk/google':
         specifier: 'catalog:'
         version: 2.0.14(zod@4.1.8)
+      '@ai-sdk/provider':
+        specifier: 'catalog:'
+        version: 2.0.0
       '@feedback-thing/agents':
         specifier: workspace:*
         version: link:../../libs/agents
