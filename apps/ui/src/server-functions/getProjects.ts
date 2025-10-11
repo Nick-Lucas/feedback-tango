@@ -1,7 +1,7 @@
-import { getDb } from './core'
 import { Projects, ProjectMembers } from '@feedback-thing/db'
 import { and, eq } from 'drizzle-orm'
 import { authedServerFn } from './core'
+import { getDb } from './core.server'
 
 export const getProjects = authedServerFn().handler(async (ctx) => {
   const results = await getDb()

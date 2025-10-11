@@ -2,17 +2,6 @@ import { createMiddleware, createServerFn } from '@tanstack/react-start'
 import { getRequestHeader } from '@tanstack/react-start/server'
 import { google } from '@ai-sdk/google'
 import { authClient } from '@/lib/auth'
-import { createDb, type Db } from '@feedback-thing/db'
-import { AuthorizationChecks } from '@feedback-thing/core'
-
-let db: Db | undefined = undefined
-export function getDb() {
-  if (!db) {
-    db = createDb()
-  }
-  return db
-}
-export const authz = new AuthorizationChecks(getDb)
 
 export const model = google('gemini-2.5-flash-lite')
 

@@ -1,8 +1,8 @@
-import { getDb } from './core'
 import { Features, Feedbacks } from '@feedback-thing/db'
 import { inArray } from 'drizzle-orm'
-import { authedServerFn, authz } from './core'
 import z from 'zod'
+import { authedServerFn } from './core'
+import { authz, getDb } from './core.server'
 
 export const mergeFeatures = authedServerFn()
   .inputValidator(

@@ -1,6 +1,7 @@
 import z from 'zod'
 import { generateObject } from 'ai'
-import { authedServerFn, authz, model } from './core'
+import { authedServerFn, model } from './core'
+import { authz } from './core.server'
 
 export const suggestMergedFeatureDetails = authedServerFn({ method: 'POST' })
   .inputValidator(

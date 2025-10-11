@@ -1,8 +1,8 @@
-import { getDb } from './core'
 import { ProjectMembers } from '@feedback-thing/db'
 import { and, eq } from 'drizzle-orm'
 import z from 'zod'
-import { authedServerFn, authz } from './core'
+import { authedServerFn } from './core'
+import { authz, getDb } from './core.server'
 
 export const removeProjectMember = authedServerFn()
   .inputValidator(

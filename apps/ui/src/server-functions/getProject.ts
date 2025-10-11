@@ -1,6 +1,6 @@
-import { getDb } from './core'
 import z from 'zod'
-import { authedServerFn, authz } from './core'
+import { authedServerFn } from './core'
+import { authz, getDb } from './core.server'
 
 export const getProject = authedServerFn()
   .inputValidator(

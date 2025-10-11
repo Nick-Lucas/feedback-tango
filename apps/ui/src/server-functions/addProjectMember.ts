@@ -1,6 +1,7 @@
 import { ProjectMembers } from '@feedback-thing/db'
 import z from 'zod'
-import { authedServerFn, authz, getDb } from './core'
+import { authedServerFn } from './core'
+import { authz, getDb } from './core.server'
 
 export const addProjectMember = authedServerFn()
   .inputValidator(
