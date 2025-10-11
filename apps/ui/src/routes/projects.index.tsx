@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
-import { getProjects, createProject } from '@/server-functions'
+import { createProject } from '@/server-functions/createProject'
+import { getProjects } from '@/server-functions/getProjects'
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { useState } from 'react'

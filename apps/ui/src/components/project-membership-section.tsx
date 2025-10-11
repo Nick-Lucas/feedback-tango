@@ -1,9 +1,7 @@
 import { useRouter } from '@tanstack/react-router'
-import {
-  searchUsers,
-  addProjectMember,
-  removeProjectMember,
-} from '@/server-functions'
+import { removeProjectMember } from '@/server-functions/removeProjectMember'
+import { addProjectMember } from '@/server-functions/addProjectMember'
+import { searchUsers } from '@/server-functions/searchUsers'
 import {
   Card,
   CardContent,

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getFeature } from '../server-functions'
+import { getFeature } from '@/server-functions/getFeature'
 import { FeedbackCard } from '@/components/feedback-card'
 
 export const Route = createFileRoute(

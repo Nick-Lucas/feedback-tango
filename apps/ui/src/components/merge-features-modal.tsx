@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { mergeFeatures } from '../server-functions'
+import { mergeFeatures } from '@/server-functions/mergeFeatures'
 import { SquareArrowOutUpRight } from 'lucide-react'
 
 interface Feature {

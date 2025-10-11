@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { getProject, getProjectMembers } from '@/server-functions'
+import { getProjectMembers } from '@/server-functions/getProjectMembers'
+import { getProject } from '@/server-functions/getProject'
 import {
   Card,
   CardContent,
