@@ -7,13 +7,15 @@ import {
   Features,
   ProjectMembers,
 } from '@feedback-thing/db'
-import { and, eq, inArray, getTableColumns } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import z from 'zod'
 import { generateObject } from 'ai'
 import { google } from '@ai-sdk/google'
 import { authClient } from '@/lib/auth'
+import { AuthorizationChecks } from '@feedback-thing/core'
 
 const db = createDb()
+const authz = new AuthorizationChecks(db)
 
 const model = google('gemini-2.5-flash-lite')
 
@@ -54,7 +56,10 @@ export const getProject = authedServerFn()
     })
   )
   .handler(async (ctx) => {
-    await checkProjectAccessAndThrow(ctx.context.user.id, ctx.data.projectId)
+    await authz.checkProjectAccessAndThrow(
+      ctx.context.user.id,
+      ctx.data.projectId
+    )
 
     const project = await db.query.Projects.findFirst({
       with: {
@@ -107,7 +112,10 @@ export const getProjectMembers = authedServerFn()
     })
   )
   .handler(async (ctx) => {
-    await checkProjectAccessAndThrow(ctx.context.user.id, ctx.data.projectId)
+    await authz.checkProjectAccessAndThrow(
+      ctx.context.user.id,
+      ctx.data.projectId
+    )
 
     const result = await db.query.user.findMany({
       with: {
@@ -163,7 +171,10 @@ export const getFeatures = authedServerFn()
     })
   )
   .handler(async (ctx) => {
-    await checkProjectAccessAndThrow(ctx.context.user.id, ctx.data.projectId)
+    await authz.checkProjectAccessAndThrow(
+      ctx.context.user.id,
+      ctx.data.projectId
+    )
 
     return db.query.Features.findMany({
       where(fields, operators) {
@@ -182,7 +193,9 @@ export const getFeature = authedServerFn()
     })
   )
   .handler(async (ctx) => {
-    await checkFeatureAccessAndThrow(ctx.context.user.id, [ctx.data.featureId])
+    await authz.checkFeatureAccessAndThrow(ctx.context.user.id, [
+      ctx.data.featureId,
+    ])
 
     return db.query.Features.findFirst({
       where(fields, operators) {
@@ -214,7 +227,7 @@ export const mergeFeatures = authedServerFn()
       throw new Error('At least two features must be merged')
     }
 
-    const features = await checkFeatureAccessAndThrow(
+    const features = await authz.checkFeatureAccessAndThrow(
       ctx.context.user.id,
       ctx.data.featureIds
     )
@@ -225,7 +238,7 @@ export const mergeFeatures = authedServerFn()
     }
     const projectId = projectIds[0]
 
-    await checkProjectAccessAndThrow(ctx.context.user.id, projectId)
+    await authz.checkProjectAccessAndThrow(ctx.context.user.id, projectId)
 
     return await db.transaction(async (tx) => {
       const [newFeature] = await tx
@@ -261,7 +274,7 @@ export const suggestMergedFeatureDetails = authedServerFn({ method: 'POST' })
       throw new Error('At least two features must be merged')
     }
 
-    const features = await checkFeatureAccessAndThrow(
+    const features = await authz.checkFeatureAccessAndThrow(
       ctx.context.user.id,
       ctx.data.featureIds
     )
@@ -272,7 +285,7 @@ export const suggestMergedFeatureDetails = authedServerFn({ method: 'POST' })
     }
     const projectId = projectIds[0]
 
-    await checkProjectAccessAndThrow(ctx.context.user.id, projectId)
+    await authz.checkProjectAccessAndThrow(ctx.context.user.id, projectId)
 
     try {
       const result = await generateObject({
@@ -322,7 +335,7 @@ export const moveFeedbackToFeature = authedServerFn()
     })
   )
   .handler(async (ctx) => {
-    await checkFeedbackAccessAndThrow(ctx.context.user.id, [
+    await authz.checkFeedbackAccessAndThrow(ctx.context.user.id, [
       ctx.data.feedbackId,
     ])
 
@@ -363,7 +376,10 @@ export const searchUsers = authedServerFn()
     })
   )
   .handler(async (ctx) => {
-    await checkProjectAccessAndThrow(ctx.context.user.id, ctx.data.projectId)
+    await authz.checkProjectAccessAndThrow(
+      ctx.context.user.id,
+      ctx.data.projectId
+    )
 
     const results = await db.query.user.findMany({
       columns: {
@@ -390,7 +406,7 @@ export const addProjectMember = authedServerFn()
     })
   )
   .handler(async (ctx) => {
-    const membership = await checkProjectAccessAndThrow(
+    const membership = await authz.checkProjectAccessAndThrow(
       ctx.context.user.id,
       ctx.data.projectId
     )
@@ -429,7 +445,7 @@ export const removeProjectMember = authedServerFn()
     })
   )
   .handler(async (ctx) => {
-    const membership = await checkProjectAccessAndThrow(
+    const membership = await authz.checkProjectAccessAndThrow(
       ctx.context.user.id,
       ctx.data.projectId
     )
@@ -453,70 +469,3 @@ export const removeProjectMember = authedServerFn()
 
     return { success: true }
   })
-
-//
-// Project Membership Access Checks
-//
-
-async function checkProjectAccessAndThrow(userId: string, projectId: string) {
-  const projectMembership = await db.query.ProjectMembers.findFirst({
-    where(fields, operators) {
-      return operators.and(
-        operators.eq(fields.projectId, projectId),
-        operators.eq(fields.userId, userId)
-      )
-    },
-  })
-
-  if (!projectMembership) {
-    throw new Error('Project Not Found')
-  }
-
-  return projectMembership
-}
-
-async function checkFeatureAccessAndThrow(userId: string, featureId: string[]) {
-  const results = await db
-    .select(getTableColumns(Features))
-    .from(Features)
-    .innerJoin(
-      ProjectMembers,
-      and(
-        eq(Features.projectId, ProjectMembers.projectId),
-        eq(ProjectMembers.userId, userId)
-      )
-    )
-    .where(inArray(Features.id, featureId))
-
-  if (results.length === 0) {
-    throw new Error('Feature Not Found')
-  }
-
-  return results
-}
-
-async function checkFeedbackAccessAndThrow(
-  userId: string,
-  feedbackId: string[]
-) {
-  const results = await db
-    .select({
-      feedbackId: Feedbacks.id,
-      projectId: Feedbacks.projectId,
-    })
-    .from(Feedbacks)
-    .innerJoin(
-      ProjectMembers,
-      and(
-        eq(Feedbacks.projectId, ProjectMembers.projectId),
-        eq(ProjectMembers.userId, userId)
-      )
-    )
-    .where(inArray(Feedbacks.id, feedbackId))
-
-  if (results.length === 0) {
-    throw new Error('Feedback Not Found')
-  }
-
-  return results
-}
