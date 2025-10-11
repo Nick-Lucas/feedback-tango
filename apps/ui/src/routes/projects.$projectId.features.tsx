@@ -18,11 +18,14 @@ import {
 } from '@/components/ui/sidebar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { createProject, getFeatures, getProjects } from '@/server-functions'
+import { getFeatures } from '@/server-functions/getFeatures'
+import { createProject } from '@/server-functions/createProject'
+import { getProjects } from '@/server-functions/getProjects'
 import { ProjectPicker } from '@/components/project-picker'
 import { FeaturesSelectionMenu } from '@/components/features-selection-menu'
 import { cn } from '@/lib/utils'
 import { X, Plus } from 'lucide-react'
+import { useServerFn } from '@tanstack/react-start'
 
 export const Route = createFileRoute('/projects/$projectId/features')({
   component: App,
@@ -61,6 +64,8 @@ function App() {
     new Set()
   )
 
+  const requestCreateProject = useServerFn(createProject)
+
   const filteredFeatures = data.features.filter((feature) =>
     feature.name.toLowerCase().includes(search.toLowerCase())
   )
@@ -70,7 +75,7 @@ function App() {
   )
 
   const handleCreateProject = async (name: string) => {
-    const project = await createProject({
+    const project = await requestCreateProject({
       data: {
         name,
       },

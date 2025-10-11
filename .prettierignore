@@ -13,3 +13,4 @@ yarn.lock
 .vscode/
 routeTree.gen.ts
 .output/
+.nitro/

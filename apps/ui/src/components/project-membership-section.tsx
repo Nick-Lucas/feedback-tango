@@ -1,9 +1,7 @@
 import { useRouter } from '@tanstack/react-router'
-import {
-  searchUsers,
-  addProjectMember,
-  removeProjectMember,
-} from '@/server-functions'
+import { removeProjectMember } from '@/server-functions/removeProjectMember'
+import { addProjectMember } from '@/server-functions/addProjectMember'
+import { searchUsers } from '@/server-functions/searchUsers'
 import {
   Card,
   CardContent,
@@ -15,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { X, UserPlus } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import { useServerFn } from '@tanstack/react-start'
 import {
   Command,
   CommandEmpty,
@@ -61,12 +60,16 @@ export function ProjectMembershipSection({
   const [isSearching, setIsSearching] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
 
+  const requestSearchUsers = useServerFn(searchUsers)
+  const requestAddProjectMember = useServerFn(addProjectMember)
+  const requestRemoveProjectMember = useServerFn(removeProjectMember)
+
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (searchQuery.trim().length > 0) {
         setIsSearching(true)
         try {
-          const results = await searchUsers({
+          const results = await requestSearchUsers({
             data: {
               query: searchQuery,
               projectId,
@@ -84,12 +87,12 @@ export function ProjectMembershipSection({
     }, 300)
 
     return () => clearTimeout(timer)
-  }, [searchQuery, projectId])
+  }, [searchQuery, projectId, requestSearchUsers])
 
   const handleAddMember = async (userId: string) => {
     setIsAdding(true)
     try {
-      await addProjectMember({
+      await requestAddProjectMember({
         data: {
           projectId,
           userId,
@@ -112,7 +115,7 @@ export function ProjectMembershipSection({
 
   const handleRemoveMember = async (userId: string) => {
     try {
-      await removeProjectMember({
+      await requestRemoveProjectMember({
         data: {
           projectId,
           userId,
