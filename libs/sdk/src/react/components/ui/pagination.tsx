@@ -1,4 +1,4 @@
-import * as React from 'react'
+import type * as React from 'react'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -6,7 +6,8 @@ import {
 } from 'lucide-react'
 
 import { cn } from '@/src/react/lib/utils'
-import { Button, buttonVariants } from '@/src/react/components/ui/button'
+import type { Button } from '@/src/react/components/ui/button'
+import { buttonVariants } from '@/src/react/components/ui/button'
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (

@@ -20,7 +20,7 @@
  * - client_secret from MCP Client is used only to validate it matches what the Proxy Server has (not) cached https://github.com/modelcontextprotocol/typescript-sdk/blob/c94ba4b43cd305e39d88985c73d6b9bc1153da84/src/server/auth/middleware/clientAuth.ts#L37
  */
 
-import { ProxyOAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/providers/proxyProvider.js'
+import type { ProxyOAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/providers/proxyProvider.js'
 
 import type { OAuthRegisteredClientsStore } from '@modelcontextprotocol/sdk/server/auth/clients.js'
 import type { OAuthClientInformationFull } from '@modelcontextprotocol/sdk/shared/auth.js'

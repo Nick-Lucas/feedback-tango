@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import chalk from 'chalk'
-import { createInterface, Interface } from 'readline'
+import type { Interface } from 'readline'
+import { createInterface } from 'readline'
 import { FeedbackAgent } from '@feedback-thing/agents'
 
 class ChatCLI {
