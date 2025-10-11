@@ -13,3 +13,5 @@ export function createDb(opts?: { ignoreMissingConnectionString?: boolean }) {
 
   return drizzle(client, { schema })
 }
+
+export type Db = ReturnType<typeof createDb>

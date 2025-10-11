@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { MergeFeaturesModal } from '@/components/merge-features-modal'
-import { suggestMergedFeatureDetails } from '@/server-functions'
+import { suggestMergedFeatureDetails } from '@/server-functions/suggestMergedFeatureDetails'
 import { useServerFn } from '@tanstack/react-start'
 
 interface Feature {

@@ -1,12 +1,12 @@
-import type { createDb } from '@feedback-thing/db'
+import type { Db } from '@feedback-thing/db'
 import { Feedbacks, Features, ProjectMembers } from '@feedback-thing/db'
 import { and, eq, inArray, getTableColumns } from 'drizzle-orm'
 
 export class AuthorizationChecks {
-  private db: ReturnType<typeof createDb>
+  private db: Db
 
-  constructor(db: ReturnType<typeof createDb>) {
-    this.db = db
+  constructor(getDb: () => Db) {
+    this.db = getDb()
   }
 
   async checkProjectAccessAndThrow(userId: string, projectId: string) {

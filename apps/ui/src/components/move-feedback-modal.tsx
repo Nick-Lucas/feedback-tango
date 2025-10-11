@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ArrowRight } from 'lucide-react'
 import { useRouter } from '@tanstack/react-router'
-import { getFeatures, moveFeedbackToFeature } from '@/server-functions'
+import { moveFeedbackToFeature } from '@/server-functions/moveFeedbackToFeature'
+import { getFeatures } from '@/server-functions/getFeatures'
 import { useServerFn } from '@tanstack/react-start'
 
 interface MoveFeedbackModalProps {
