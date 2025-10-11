@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { mergeFeatures } from '@/server-functions/mergeFeatures'
 import { SquareArrowOutUpRight } from 'lucide-react'
+import { useServerFn } from '@tanstack/react-start'
 
 interface Feature {
   id: string
@@ -45,6 +46,8 @@ export function MergeFeaturesModal({
   )
   const [isMerging, setIsMerging] = useState(false)
 
+  const requestMergeFeatures = useServerFn(mergeFeatures)
+
   // Use availableFeatures directly as they are pre-selected from sidebar
   const selectedFeatures = availableFeatures
 
@@ -59,7 +62,7 @@ export function MergeFeaturesModal({
 
     setIsMerging(true)
     try {
-      const result = await mergeFeatures({
+      const result = await requestMergeFeatures({
         data: {
           featureIds: selectedFeatures.map((f) => f.id),
           newFeatureName,
