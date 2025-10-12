@@ -46,7 +46,7 @@ export function MergeFeaturesModal({
 
   const mergeFeaturesMutation = useMergeFeaturesMutation({
     onMerged() {
-      handleClose()
+      handleClose('complete')
     },
   })
 
@@ -80,8 +80,8 @@ export function MergeFeaturesModal({
     }
   }
 
-  const handleClose = () => {
-    onOpenChange(false)
+  const handleClose = (reason?: 'cancel' | 'complete') => {
+    onOpenChange(false, reason)
     setNewFeatureName('')
     setNewFeatureDescription('')
   }
@@ -140,7 +140,7 @@ export function MergeFeaturesModal({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+          <Button variant="outline" onClick={() => handleClose('cancel')}>
             Cancel
           </Button>
           <Button
