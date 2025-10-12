@@ -1,22 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getFeature } from '@/server-functions/getFeature'
 import { FeedbackCard } from '@/components/feedback-card'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { featureQueryOptions } from '@/lib/query-options'
 
 export const Route = createFileRoute(
   '/projects/$projectId/features/$featureId'
 )({
   component: RouteComponent,
-  loader: async ({ params }) => {
-    const feature = await getFeature({ data: { featureId: params.featureId } })
-    if (!feature) {
-      throw new Error('Feature not found')
-    }
-    return { feature }
+  loader: async (ctx) => {
+    const queryClient = ctx.context.queryClient
+    await queryClient.ensureQueryData(featureQueryOptions(ctx.params.featureId))
   },
 })
 
 function RouteComponent() {
-  const { feature } = Route.useLoaderData()
+  const { featureId } = Route.useParams()
+  const { data: feature } = useSuspenseQuery(featureQueryOptions(featureId))
 
   if (!feature) {
     return <div className="p-8">Feature not found</div>

@@ -1,7 +1,3 @@
-import { useRouter } from '@tanstack/react-router'
-import { removeProjectMember } from '@/server-functions/removeProjectMember'
-import { addProjectMember } from '@/server-functions/addProjectMember'
-import { searchUsers } from '@/server-functions/searchUsers'
 import {
   Card,
   CardContent,
@@ -11,9 +7,14 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { X, UserPlus } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
-import { useServerFn } from '@tanstack/react-start'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  searchUsersQueryOptions,
+  useAddProjectMemberMutation,
+  useRemoveProjectMemberMutation,
+} from '@/lib/query-options'
 import {
   Command,
   CommandEmpty,
@@ -51,78 +52,49 @@ export function ProjectMembershipSection({
   projectCreatorId,
   isOwner,
 }: ProjectMembershipSectionProps) {
-  const router = useRouter()
+  const queryClient = useQueryClient()
   const [addMemberOpen, setAddMemberOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<
-    Awaited<ReturnType<typeof searchUsers>>
-  >([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [isAdding, setIsAdding] = useState(false)
 
-  const requestSearchUsers = useServerFn(searchUsers)
-  const requestAddProjectMember = useServerFn(addProjectMember)
-  const requestRemoveProjectMember = useServerFn(removeProjectMember)
+  const { data: searchResults = [], isLoading: isSearching } = useQuery({
+    ...searchUsersQueryOptions(searchQuery, projectId),
+    enabled: searchQuery.trim().length > 0,
+  })
 
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (searchQuery.trim().length > 0) {
-        setIsSearching(true)
-        try {
-          const results = await requestSearchUsers({
-            data: {
-              query: searchQuery,
-              projectId,
-            },
-          })
-          setSearchResults(results)
-        } catch {
-          toast.error('Failed to search users')
-        } finally {
-          setIsSearching(false)
-        }
-      } else {
-        setSearchResults([])
-      }
-    }, 300)
-
-    return () => clearTimeout(timer)
-  }, [searchQuery, projectId, requestSearchUsers])
+  const addMemberMutation = useAddProjectMemberMutation()
+  const removeMemberMutation = useRemoveProjectMemberMutation()
 
   const handleAddMember = async (userId: string) => {
-    setIsAdding(true)
     try {
-      await requestAddProjectMember({
-        data: {
-          projectId,
-          userId,
-          role: 'editor',
-        },
+      await addMemberMutation.mutateAsync({
+        projectId,
+        userId,
       })
       toast.success('Member added successfully')
       setAddMemberOpen(false)
       setSearchQuery('')
-      setSearchResults([])
-      await router.invalidate()
+      // Invalidate project members query
+      await queryClient.invalidateQueries({
+        queryKey: ['projects', projectId, 'members'],
+      })
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'Failed to add member'
       )
-    } finally {
-      setIsAdding(false)
     }
   }
 
   const handleRemoveMember = async (userId: string) => {
     try {
-      await requestRemoveProjectMember({
-        data: {
-          projectId,
-          userId,
-        },
+      await removeMemberMutation.mutateAsync({
+        projectId,
+        userId,
       })
       toast.success('Member removed successfully')
-      await router.invalidate()
+      // Invalidate project members query
+      await queryClient.invalidateQueries({
+        queryKey: ['projects', projectId, 'members'],
+      })
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'Failed to remove member'
@@ -175,7 +147,9 @@ export function ProjectMembershipSection({
                           return (
                             <CommandItem
                               key={user.id}
-                              disabled={isAlreadyMember || isAdding}
+                              disabled={
+                                isAlreadyMember || addMemberMutation.isPending
+                              }
                               onSelect={() => handleAddMember(user.id)}
                               className="flex items-center gap-3"
                             >

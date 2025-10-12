@@ -1,6 +1,4 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { getProjectMembers } from '@/server-functions/getProjectMembers'
-import { getProject } from '@/server-functions/getProject'
 import {
   Card,
   CardContent,
@@ -15,36 +13,40 @@ import { Copy, Check, Home, Notebook } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ProjectMembershipSection } from '@/components/project-membership-section'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import {
+  projectQueryOptions,
+  projectMembersQueryOptions,
+} from '@/lib/query-options'
 
 export const Route = createFileRoute('/projects/$projectId/config')({
   component: RouteComponent,
   async loader(ctx) {
-    const project = await getProject({
-      data: { projectId: ctx.params.projectId },
-    })
+    const queryClient = ctx.context.queryClient
+    const projectId = ctx.params.projectId
 
-    const members = await getProjectMembers({
-      data: { projectId: ctx.params.projectId },
-    })
-
-    return {
-      project,
-      members,
-    }
+    await Promise.all([
+      queryClient.ensureQueryData(projectQueryOptions(projectId)),
+      queryClient.ensureQueryData(projectMembersQueryOptions(projectId)),
+    ])
   },
 })
 
 function RouteComponent() {
-  const data = Route.useLoaderData()
+  const { projectId } = Route.useParams()
+  const { data: project } = useSuspenseQuery(projectQueryOptions(projectId))
+  const { data: members } = useSuspenseQuery(
+    projectMembersQueryOptions(projectId)
+  )
   const [copied, setCopied] = useState(false)
 
-  const currentUserMembership = data.members.find(
-    (m) => m.user.id === data.project.createdBy
+  const currentUserMembership = members.find(
+    (m) => m.user.id === project.createdBy
   )
   const isOwner = currentUserMembership?.role === 'owner'
 
   const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(data.project.id)
+    await navigator.clipboard.writeText(project.id)
     setCopied(true)
     toast.success('Copied to clipboard')
     setTimeout(() => setCopied(false), 2000)
@@ -63,7 +65,7 @@ function RouteComponent() {
 
         <Link
           to="/projects/$projectId/features"
-          params={{ projectId: data.project.id }}
+          params={{ projectId: project.id }}
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <Notebook className="h-4 w-4" />
@@ -89,7 +91,7 @@ function RouteComponent() {
         <CardContent className="flex gap-2">
           <Input
             id="public-key"
-            value={data.project.id}
+            value={project.id}
             readOnly
             className="font-mono"
           />
@@ -110,9 +112,9 @@ function RouteComponent() {
       </Card>
 
       <ProjectMembershipSection
-        projectId={data.project.id}
-        members={data.members}
-        projectCreatorId={data.project.createdBy}
+        projectId={project.id}
+        members={members}
+        projectCreatorId={project.createdBy}
         isOwner={isOwner}
       />
 
