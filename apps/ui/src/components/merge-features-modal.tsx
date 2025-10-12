@@ -44,7 +44,11 @@ export function MergeFeaturesModal({
     suggestion?.description || ''
   )
 
-  const mergeFeaturesMutation = useMergeFeaturesMutation()
+  const mergeFeaturesMutation = useMergeFeaturesMutation({
+    onMerged() {
+      handleClose()
+    },
+  })
 
   // Use availableFeatures directly as they are pre-selected from sidebar
   const selectedFeatures = availableFeatures

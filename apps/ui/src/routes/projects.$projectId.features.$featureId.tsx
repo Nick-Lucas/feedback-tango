@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { FeedbackCard } from '@/components/feedback-card'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { featureQueryOptions } from '@/lib/query-options'
+import { featureQueryOptions, useFeatureQuery } from '@/lib/query-options'
 
 export const Route = createFileRoute(
   '/projects/$projectId/features/$featureId'
@@ -9,13 +8,17 @@ export const Route = createFileRoute(
   component: RouteComponent,
   loader: async (ctx) => {
     const queryClient = ctx.context.queryClient
-    await queryClient.ensureQueryData(featureQueryOptions(ctx.params.featureId))
+    await queryClient.ensureQueryData(
+      featureQueryOptions({
+        data: { featureId: ctx.params.featureId },
+      })
+    )
   },
 })
 
 function RouteComponent() {
   const { featureId } = Route.useParams()
-  const { data: feature } = useSuspenseQuery(featureQueryOptions(featureId))
+  const { data: feature } = useFeatureQuery(featureId)
 
   if (!feature) {
     return <div className="p-8">Feature not found</div>

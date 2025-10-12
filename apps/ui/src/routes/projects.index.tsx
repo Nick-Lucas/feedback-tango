@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query'
 import {
   projectsQueryOptions,
+  useProjectsQuery,
   useCreateProjectMutation,
 } from '@/lib/query-options'
 
@@ -11,14 +11,13 @@ export const Route = createFileRoute('/projects/')({
   component: RouteComponent,
   async loader(ctx) {
     const queryClient = ctx.context.queryClient
-    await queryClient.ensureQueryData(projectsQueryOptions())
+    await queryClient.ensureQueryData(projectsQueryOptions({}))
   },
 })
 
 function RouteComponent() {
-  const { data: projects } = useSuspenseQuery(projectsQueryOptions())
+  const { data: projects } = useProjectsQuery()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const [projectName, setProjectName] = useState('')
 
   const createProjectMutation = useCreateProjectMutation()
@@ -31,9 +30,6 @@ function RouteComponent() {
       const project = await createProjectMutation.mutateAsync({
         name: projectName.trim(),
       })
-
-      // Invalidate projects query to refetch
-      await queryClient.invalidateQueries({ queryKey: ['projects'] })
 
       await navigate({
         to: '/projects/$projectId/config',

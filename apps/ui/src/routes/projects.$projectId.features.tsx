@@ -22,10 +22,11 @@ import { ProjectPicker } from '@/components/project-picker'
 import { FeaturesSelectionMenu } from '@/components/features-selection-menu'
 import { cn } from '@/lib/utils'
 import { X, Plus } from 'lucide-react'
-import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query'
 import {
   projectsQueryOptions,
   featuresQueryOptions,
+  useProjectsQuery,
+  useFeaturesQuery,
   useCreateProjectMutation,
 } from '@/lib/query-options'
 
@@ -36,18 +37,21 @@ export const Route = createFileRoute('/projects/$projectId/features')({
     const queryClient = ctx.context.queryClient
 
     await Promise.all([
-      queryClient.ensureQueryData(projectsQueryOptions()),
-      queryClient.ensureQueryData(featuresQueryOptions(projectId)),
+      queryClient.ensureQueryData(projectsQueryOptions({})),
+      queryClient.ensureQueryData(
+        featuresQueryOptions({
+          data: { projectId },
+        })
+      ),
     ])
   },
 })
 
 function App() {
   const { projectId } = Route.useParams()
-  const { data: projects } = useSuspenseQuery(projectsQueryOptions())
-  const { data: features } = useSuspenseQuery(featuresQueryOptions(projectId))
+  const { data: projects } = useProjectsQuery()
+  const { data: features } = useFeaturesQuery(projectId)
   const router = useRouter()
-  const queryClient = useQueryClient()
 
   const project = projects.find((p) => p.id === projectId)!
 
@@ -77,9 +81,6 @@ function App() {
       name,
     })
 
-    // Invalidate projects query
-    await queryClient.invalidateQueries({ queryKey: ['projects'] })
-
     await router.navigate({
       to: '/projects/$projectId/features',
       params: { projectId: newProject.id },
@@ -96,12 +97,8 @@ function App() {
     setSelectedFeatureIds(newSelected)
   }
 
-  const handleMergeComplete = async () => {
+  const handleMergeComplete = () => {
     setSelectedFeatureIds(new Set())
-    // Invalidate features query to refetch
-    await queryClient.invalidateQueries({
-      queryKey: ['projects', projectId, 'features'],
-    })
   }
 
   return (

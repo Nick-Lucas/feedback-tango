@@ -13,10 +13,11 @@ import { Copy, Check, Home, Notebook } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ProjectMembershipSection } from '@/components/project-membership-section'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import {
   projectQueryOptions,
   projectMembersQueryOptions,
+  useProjectQuery,
+  useProjectMembersQuery,
 } from '@/lib/query-options'
 
 export const Route = createFileRoute('/projects/$projectId/config')({
@@ -26,18 +27,24 @@ export const Route = createFileRoute('/projects/$projectId/config')({
     const projectId = ctx.params.projectId
 
     await Promise.all([
-      queryClient.ensureQueryData(projectQueryOptions(projectId)),
-      queryClient.ensureQueryData(projectMembersQueryOptions(projectId)),
+      queryClient.ensureQueryData(
+        projectQueryOptions({
+          data: { projectId },
+        })
+      ),
+      queryClient.ensureQueryData(
+        projectMembersQueryOptions({
+          data: { projectId },
+        })
+      ),
     ])
   },
 })
 
 function RouteComponent() {
   const { projectId } = Route.useParams()
-  const { data: project } = useSuspenseQuery(projectQueryOptions(projectId))
-  const { data: members } = useSuspenseQuery(
-    projectMembersQueryOptions(projectId)
-  )
+  const { data: project } = useProjectQuery(projectId)
+  const { data: members } = useProjectMembersQuery(projectId)
   const [copied, setCopied] = useState(false)
 
   const currentUserMembership = members.find(

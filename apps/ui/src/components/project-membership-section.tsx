@@ -9,9 +9,8 @@ import { Button } from '@/components/ui/button'
 import { X, UserPlus } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  searchUsersQueryOptions,
+  useSearchUsersQuery,
   useAddProjectMemberMutation,
   useRemoveProjectMemberMutation,
 } from '@/lib/query-options'
@@ -52,14 +51,11 @@ export function ProjectMembershipSection({
   projectCreatorId,
   isOwner,
 }: ProjectMembershipSectionProps) {
-  const queryClient = useQueryClient()
   const [addMemberOpen, setAddMemberOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const { data: searchResults = [], isLoading: isSearching } = useQuery({
-    ...searchUsersQueryOptions(searchQuery, projectId),
-    enabled: searchQuery.trim().length > 0,
-  })
+  const { data: searchResults = [], isLoading: isSearching } =
+    useSearchUsersQuery(searchQuery, projectId)
 
   const addMemberMutation = useAddProjectMemberMutation()
   const removeMemberMutation = useRemoveProjectMemberMutation()
@@ -73,10 +69,6 @@ export function ProjectMembershipSection({
       toast.success('Member added successfully')
       setAddMemberOpen(false)
       setSearchQuery('')
-      // Invalidate project members query
-      await queryClient.invalidateQueries({
-        queryKey: ['projects', projectId, 'members'],
-      })
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'Failed to add member'
@@ -91,10 +83,6 @@ export function ProjectMembershipSection({
         userId,
       })
       toast.success('Member removed successfully')
-      // Invalidate project members query
-      await queryClient.invalidateQueries({
-        queryKey: ['projects', projectId, 'members'],
-      })
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'Failed to remove member'

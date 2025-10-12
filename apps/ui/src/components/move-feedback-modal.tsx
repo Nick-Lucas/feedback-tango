@@ -10,9 +10,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ArrowRight } from 'lucide-react'
-import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  featuresQueryOptions,
+  useFeaturesQuery,
   useMoveFeedbackToFeatureMutation,
 } from '@/lib/query-options'
 
@@ -31,10 +30,7 @@ export function MoveFeedbackModal({
   onOpenChange,
   feedback,
 }: MoveFeedbackModalProps) {
-  const queryClient = useQueryClient()
-  const { data: features } = useSuspenseQuery(
-    featuresQueryOptions(feedback.projectId)
-  )
+  const { data: features } = useFeaturesQuery(feedback.projectId)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(
     null
@@ -65,10 +61,6 @@ export function MoveFeedbackModal({
       await moveFeedbackMutation.mutateAsync({
         feedbackId: feedback.id,
         featureId: selectedFeatureId,
-      })
-      // Invalidate features query to refetch
-      await queryClient.invalidateQueries({
-        queryKey: ['features'],
       })
       void handleOpenChange(false)
     } catch (error) {

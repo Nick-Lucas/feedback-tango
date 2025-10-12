@@ -1,12 +1,13 @@
 import { createFeedbackClient } from '@feedback-thing/sdk/client'
 import { FeedbackWidget } from '@feedback-thing/sdk/react'
-import { useParams, useRouter } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import { useMemo } from 'react'
 
 import '@feedback-thing/sdk/styles.css'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function FeedbackButton() {
-  const { invalidate } = useRouter()
+  const queryClient = useQueryClient()
   const maybeProjectId = useParams({ strict: false }).projectId
   const appliesToThisProject = !!maybeProjectId
 
@@ -50,7 +51,7 @@ export function FeedbackButton() {
             : 'Feedback about Feedback Thing'
         }
         client={feedbackClient}
-        onFeedbackSubmitted={invalidate}
+        onFeedbackSubmitted={() => queryClient.invalidateQueries()}
       />
     </div>
   )
