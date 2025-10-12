@@ -20,11 +20,11 @@
     "drizzle-orm": "catalog:",
     "express": "catalog:",
     "qs": "catalog:",
-    "zod": "^3"
+    "zod3": "npm:zod@^3"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
-    "tsx": "^4.7.1",
+    "tsx": "catalog:",
     "typescript": "^5.8.3"
   }
 }

@@ -16,8 +16,8 @@
     "@feedback-thing/agents": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
     "better-auth": "catalog:",
-    "chalk": "^5.3.0",
-    "dotenv": "^16.4.0"
+    "chalk": "catalog:",
+    "dotenv": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
