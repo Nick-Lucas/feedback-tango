@@ -14,23 +14,25 @@ export const getProjectMembers = authedServerFn()
       ctx.data.projectId
     )
 
-    const result = await getDb().query.user.findMany({
+    const result = await getDb().query.ProjectMembers.findMany({
+      columns: {
+        role: true,
+      },
       with: {
-        projectMemberships: {
-          with: {
-            user: {
-              columns: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-                role: true,
-              },
-            },
+        user: {
+          columns: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true,
           },
         },
       },
+      where(fields, operators) {
+        return operators.eq(fields.projectId, ctx.data.projectId)
+      },
     })
 
-    return result.flatMap((u) => u.projectMemberships)
+    return result
   })

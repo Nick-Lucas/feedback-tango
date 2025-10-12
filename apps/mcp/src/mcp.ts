@@ -8,7 +8,7 @@ import {
 import { embedText } from '@feedback-thing/agents'
 
 // We have to use zod3 for now because of https://github.com/modelcontextprotocol/typescript-sdk/issues/925
-import { z } from 'zod'
+import { z } from 'zod3'
 
 export const mcp = new McpServer({
   name: 'feedback-thing',
