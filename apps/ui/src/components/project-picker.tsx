@@ -109,17 +109,20 @@ export function ProjectPicker({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
             role="combobox"
             aria-expanded={open}
-            className={cn('w-full h-8 justify-between', className)}
+            className={cn(
+              'h-7 justify-between px-2 hover:bg-background/50',
+              className
+            )}
           >
             {selectedProject.name || 'Select project...'}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+        <PopoverContent className="w-80 p-0" align="start">
           <Command>
             <CommandInput placeholder="Search projects..." />
             <CommandList>
