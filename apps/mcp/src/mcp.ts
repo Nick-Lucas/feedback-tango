@@ -4,6 +4,7 @@ import {
   projectAccess,
   featureAccess,
   feedbackAccess,
+  rawFeedbackAccess,
 } from '@feedback-thing/core'
 import { embedText } from '@feedback-thing/agents'
 
@@ -179,6 +180,52 @@ mcp.registerTool(
         {
           type: 'text',
           text: JSON.stringify(result, null, 2),
+        },
+      ],
+    }
+  }
+)
+
+mcp.registerTool(
+  'createRawFeedback',
+  {
+    title: 'Create Raw Feedback',
+    description:
+      'Submit raw feedback that will be processed asynchronously. This is the fastest way to submit feedback as it only requires a project ID and the feedback content. The system will handle safety checks and feature association automatically in the background. Use this when you want to quickly capture user feedback without waiting for processing.',
+    inputSchema: {
+      feedback: z.string().describe('Feedback content'),
+      projectId: z.string().describe('Project ID this feedback belongs to'),
+      email: z
+        .string()
+        .email()
+        .optional()
+        .describe('Optional email of the person submitting feedback'),
+    },
+  },
+  async (input, extra) => {
+    const userId = extra.authInfo?.extra?.userId || ''
+    if (typeof userId !== 'string' || userId.length === 0) {
+      throw new Error('No user ID found in token.')
+    }
+
+    const result = await rawFeedbackAccess.create({
+      feedback: input.feedback,
+      projectId: input.projectId,
+      email: input.email || null,
+    })
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(
+            {
+              ...result,
+              message:
+                'Raw feedback submitted successfully. It will be processed asynchronously for safety and feature association.',
+            },
+            null,
+            2
+          ),
         },
       ],
     }
