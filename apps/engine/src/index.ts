@@ -41,6 +41,17 @@ while (true) {
     }
     const rawFeedback = queryResult[0]!
 
-    await processRawFeedback({ tx, rawFeedback, agentUserId })
+    const result = await Promise.race([
+      setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
+
+      // TODO: might need to pass in an abort signal and check it frequently to avoid tx writes on a rolled back transaction logging weird errors
+      processRawFeedback({ tx, rawFeedback, agentUserId }),
+    ])
+
+    if (result === 'TIMEOUT') {
+      console.log('Processing timed out, marking feedback with error...')
+
+      throw new Error('Processing timed out')
+    }
   })
 }

@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button'
 import { ProjectPicker } from '@/components/project-picker'
 import { FeaturesSelectionMenu } from '@/components/features-selection-menu'
 import { cn } from '@/lib/utils'
-import { X, Plus } from 'lucide-react'
+import { X, Plus, Home, Notebook, Database } from 'lucide-react'
 import {
   projectsQueryOptions,
   featuresQueryOptions,
@@ -201,6 +201,34 @@ function App() {
           <div className="md:hidden fixed top-2 left-2 z-50">
             <SidebarTrigger className="size-8" />
           </div>
+          <nav className="flex gap-4 mb-6">
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
+
+            <Link
+              to="/projects/$projectId/features"
+              params={{ projectId }}
+              className="flex items-center gap-2 text-sm text-foreground font-medium"
+            >
+              <Notebook className="h-4 w-4" />
+              Feedback
+            </Link>
+
+            <Link
+              to="/projects/$projectId/raw-feedback"
+              params={{ projectId }}
+              search={{ filter: 'pending' }}
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Database className="h-4 w-4" />
+              Raw Feedback
+            </Link>
+          </nav>
           <Outlet />
         </main>
       </div>
