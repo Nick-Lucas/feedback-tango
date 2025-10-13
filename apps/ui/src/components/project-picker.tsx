@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Check, ChevronsUpDown, Cog, Plus } from 'lucide-react'
+import { Check, ChevronsUpDown, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Project {
@@ -108,38 +108,15 @@ export function ProjectPicker({
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <div className="w-full flex flex-row">
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className={cn(
-                'flex-1 h-8 justify-between rounded-tr-none',
-                className
-              )}
-            >
-              {selectedProject.name || 'Select project...'}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-
-            <Button
-              variant="outline"
-              size="icon"
-              aria-expanded={open}
-              className={cn(
-                'flex-0 h-8 justify-between ml-[-1px] rounded-tl-none',
-                className
-              )}
-              asChild
-            >
-              <Link
-                to="/projects/$projectId/config"
-                params={{ projectId: selectedProject.id }}
-              >
-                <Cog className="m-2 h-4 w-4 shrink-0 opacity-50" />
-              </Link>
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn('w-full h-8 justify-between', className)}
+          >
+            {selectedProject.name || 'Select project...'}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
         </PopoverTrigger>
 
         <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
