@@ -3,7 +3,6 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import {
   projectAccess,
   featureAccess,
-  feedbackAccess,
   rawFeedbackAccess,
 } from '@feedback-thing/core'
 import { embedText } from '@feedback-thing/agents'
@@ -151,47 +150,11 @@ mcp.registerTool(
 )
 
 mcp.registerTool(
-  'createFeedback',
-  {
-    title: 'Create Feedback',
-    description:
-      'Create new feedback when the user has submitted some. use the search tools to find the relevant project and feature ID, you may create a new project/feature first if needed',
-    inputSchema: {
-      feedback: z.string().describe('Feedback content'),
-      projectId: z.string().describe('Project ID this feedback belongs to'),
-      featureId: z.string().describe('Feature ID this feedback belongs to'),
-      createdBy: z.string().describe('Creator of the feedback'),
-    },
-  },
-  async (input, extra) => {
-    const userId = extra.authInfo?.extra?.userId || ''
-    if (typeof userId !== 'string' || userId.length === 0) {
-      throw new Error('No user ID found in token.')
-    }
-
-    const result = await feedbackAccess.create({
-      feedback: input.feedback,
-      projectId: input.projectId,
-      featureId: input.featureId,
-      createdBy: userId,
-    })
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    }
-  }
-)
-
-mcp.registerTool(
   'createRawFeedback',
   {
     title: 'Create Raw Feedback',
     description:
-      'Submit raw feedback that will be processed asynchronously. This is the fastest way to submit feedback as it only requires a project ID and the feedback content. The system will handle safety checks and feature association automatically in the background. Use this when you want to quickly capture user feedback without waiting for processing.',
+      'Create new feedback when the user has submitted some. use the search tools to find the relevant project ID, you may create a new project first if needed',
     inputSchema: {
       feedback: z.string().describe('Feedback content'),
       projectId: z.string().describe('Project ID this feedback belongs to'),
