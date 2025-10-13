@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMatches, useNavigate } from '@tanstack/react-router'
+import { useMatches, useNavigate, useParams } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -26,34 +26,39 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Check, ChevronsUpDown, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-interface Project {
-  id: string
-  name: string
-}
+import { useProjectsQuery, useCreateProjectMutation } from '@/lib/query-options'
 
 interface ProjectPickerProps {
-  projects: Project[]
-  selectedProject: Project
-  onCreateProject?: (name: string) => Promise<void> | void
   className?: string
 }
 
-export function ProjectPicker({
-  projects,
-  selectedProject,
-  onCreateProject,
-  className,
-}: ProjectPickerProps) {
+export function ProjectPicker({ className }: ProjectPickerProps) {
+  const { projectId } = useParams({
+    from: '/projects/$projectId',
+  })
   const leafMatchId = useProjectRouteId()
   const navigate = useNavigate({ from: '/projects/$projectId' })
+
+  const { data: projects } = useProjectsQuery()
+  const createProjectMutation = useCreateProjectMutation()
+
   const [open, setOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [projectName, setProjectName] = useState('')
 
+  const selectedProject = projects.find((p) => p.id === projectId)
+
   const handleCreateProject = async () => {
-    if (projectName.trim() && onCreateProject) {
-      await onCreateProject(projectName.trim())
+    if (projectName.trim()) {
+      const newProject = await createProjectMutation.mutateAsync({
+        name: projectName.trim(),
+      })
+
+      await navigate({
+        to: '/projects/$projectId/features',
+        params: { projectId: newProject.id },
+      })
+
       setProjectName('')
       setDialogOpen(false)
     }
@@ -118,7 +123,7 @@ export function ProjectPicker({
               className
             )}
           >
-            {selectedProject.name || 'Select project...'}
+            {selectedProject?.name || 'Select project...'}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -147,7 +152,7 @@ export function ProjectPicker({
                     <Check
                       className={cn(
                         'mr-2 h-4 w-4',
-                        selectedProject.id === project.id
+                        selectedProject?.id === project.id
                           ? 'opacity-100'
                           : 'opacity-0'
                       )}
@@ -156,19 +161,17 @@ export function ProjectPicker({
                   </CommandItem>
                 ))}
               </CommandGroup>
-              {onCreateProject && (
-                <CommandGroup>
-                  <CommandItem
-                    onSelect={() => {
-                      setOpen(false)
-                      setDialogOpen(true)
-                    }}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create project
-                  </CommandItem>
-                </CommandGroup>
-              )}
+              <CommandGroup>
+                <CommandItem
+                  onSelect={() => {
+                    setOpen(false)
+                    setDialogOpen(true)
+                  }}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create project
+                </CommandItem>
+              </CommandGroup>
             </CommandList>
           </Command>
         </PopoverContent>

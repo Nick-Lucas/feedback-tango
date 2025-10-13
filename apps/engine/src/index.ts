@@ -49,9 +49,11 @@ while (true) {
     ])
 
     if (result === 'TIMEOUT') {
-      console.log('Processing timed out, marking feedback with error...')
+      console.log('Processing timed out... rolling back transaction')
 
-      throw new Error('Processing timed out')
+      tx.rollback()
+
+      return
     }
   })
 }

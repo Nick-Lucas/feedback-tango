@@ -1,28 +1,17 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useParams, useMatches } from '@tanstack/react-router'
 import { Notebook, Database, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ProjectPicker } from './project-picker'
 
-interface Project {
-  id: string
-  name: string
-}
+export function ProjectTabs() {
+  const { projectId } = useParams({ from: '/projects/$projectId' })
 
-interface ProjectTabsProps {
-  projectId: string
-  activeTab: 'feedback' | 'raw-feedback' | 'config'
-  projects: Project[]
-  selectedProject: Project
-  onCreateProject: (name: string) => Promise<void> | void
-}
+  const leafMatch = useMatches({
+    select(matches) {
+      return matches[matches.length - 1]
+    },
+  })
 
-export function ProjectTabs({
-  projectId,
-  activeTab,
-  projects,
-  selectedProject,
-  onCreateProject,
-}: ProjectTabsProps) {
   const tabs = [
     {
       id: 'feedback' as const,
@@ -50,14 +39,10 @@ export function ProjectTabs({
 
   return (
     <nav className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground gap-1">
-      <ProjectPicker
-        projects={projects}
-        selectedProject={selectedProject}
-        onCreateProject={onCreateProject}
-      />
+      <ProjectPicker />
       {tabs.map((tab) => {
         const Icon = tab.icon
-        const isActive = activeTab === tab.id
+        const isActive = leafMatch.routeId.startsWith(tab.to)
 
         return (
           <Link
