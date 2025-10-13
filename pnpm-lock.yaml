@@ -425,9 +425,6 @@ importers:
       '@feedback-thing/db':
         specifier: workspace:*
         version: link:../../libs/db
-      '@hono/node-server':
-        specifier: 'catalog:'
-        version: 1.19.3(hono@4.9.7)
       ai:
         specifier: 'catalog:'
         version: 5.0.44(zod@4.1.12)
