@@ -30,7 +30,7 @@ export function ProjectTabs() {
     },
     {
       id: 'config' as const,
-      label: 'Project Config',
+      label: 'Config',
       icon: Settings,
       to: '/projects/$projectId/config' as const,
       params: { projectId },

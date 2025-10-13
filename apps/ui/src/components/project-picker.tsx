@@ -55,7 +55,7 @@ export function ProjectPicker({ className }: ProjectPickerProps) {
       })
 
       await navigate({
-        to: '/projects/$projectId/features',
+        to: '/projects/$projectId/config',
         params: { projectId: newProject.id },
       })
 

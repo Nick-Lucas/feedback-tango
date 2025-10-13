@@ -86,7 +86,7 @@ function App() {
       <div className="flex min-h-screen w-full">
         <Sidebar>
           <SidebarContent className="gap-0">
-            <div className="p-2 space-y-2">
+            <div className="sticky top-0 z-10 bg-sidebar pt-2 pl-2 pr-1 space-y-2">
               <Input
                 type="search"
                 placeholder="Search features..."
@@ -104,7 +104,7 @@ function App() {
               />
             </div>
 
-            <SidebarGroup>
+            <SidebarGroup className="pt-2">
               <SidebarGroupContent>
                 <SidebarMenu className="gap-0">
                   {filteredFeatures.map((feature) => {
