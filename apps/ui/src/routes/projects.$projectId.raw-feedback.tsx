@@ -14,6 +14,8 @@ import {
   Clock,
   AlertCircle,
   ExternalLink,
+  Home,
+  Notebook,
 } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -186,11 +188,32 @@ function RouteComponent() {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Raw Feedback</h1>
-      <p className="text-gray-400 mb-6">
-        All submitted feedback and processing status
-      </p>
+    <div className="max-w-4xl mx-auto px-6 pt-6 space-y-6">
+      <nav className="flex gap-4">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Home className="h-4 w-4" />
+          Home
+        </Link>
+
+        <Link
+          to="/projects/$projectId/features"
+          params={{ projectId }}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Notebook className="h-4 w-4" />
+          Feedback
+        </Link>
+      </nav>
+
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Raw Feedback</h1>
+        <p className="text-gray-400 mb-6">
+          All submitted feedback and processing status
+        </p>
+      </div>
 
       <div className="flex gap-4 mb-6">
         <Badge
