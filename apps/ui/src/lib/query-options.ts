@@ -19,6 +19,7 @@ import { mergeFeatures } from '@/server-functions/mergeFeatures'
 import { moveFeedbackToFeature } from '@/server-functions/moveFeedbackToFeature'
 import { searchUsers } from '@/server-functions/searchUsers'
 import { getRawFeedbacks } from '@/server-functions/getRawFeedbacks'
+import { getRawFeedbackCounts } from '@/server-functions/getRawFeedbackCounts'
 
 // Query Options Factories
 
@@ -73,6 +74,11 @@ export const searchUsersQueryOptions = createQueryFactory({
 export const rawFeedbacksQueryOptions = createQueryFactory({
   baseKey: ['raw-feedbacks'],
   defaultFunction: getRawFeedbacks,
+})
+
+export const rawFeedbackCountsQueryOptions = createQueryFactory({
+  baseKey: ['raw-feedback', 'counts'],
+  defaultFunction: getRawFeedbackCounts,
 })
 
 // Query Hooks
@@ -142,11 +148,25 @@ export const useSearchUsersQuery = (query: string, projectId: string) => {
   })
 }
 
-export const useRawFeedbacksQuery = (projectId: string) => {
+export const useRawFeedbacksQuery = (
+  projectId: string,
+  filter?: 'all' | 'pending' | 'completed' | 'errors'
+) => {
   const fn = useServerFn(getRawFeedbacks)
 
   return useSuspenseQuery(
     rawFeedbacksQueryOptions({
+      fn,
+      data: { projectId, filter },
+    })
+  )
+}
+
+export const useRawFeedbackCountsQuery = (projectId: string) => {
+  const fn = useServerFn(getRawFeedbackCounts)
+
+  return useSuspenseQuery(
+    rawFeedbackCountsQueryOptions({
       fn,
       data: { projectId },
     })

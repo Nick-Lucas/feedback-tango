@@ -1,23 +1,45 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import {
   rawFeedbacksQueryOptions,
+  rawFeedbackCountsQueryOptions,
   useRawFeedbacksQuery,
+  useRawFeedbackCountsQuery,
 } from '@/lib/query-options'
 import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
 export const Route = createFileRoute('/projects/$projectId/raw-feedback')({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      filter:
+        (search.filter as 'all' | 'pending' | 'completed' | 'errors') ||
+        'pending',
+    }
+  },
+  loaderDeps: ({ search }) => ({ filter: search.filter }),
   loader: async (ctx) => {
     const queryClient = ctx.context.queryClient
-    await queryClient.ensureQueryData(
-      rawFeedbacksQueryOptions({
-        data: { projectId: ctx.params.projectId },
-      })
-    )
+    await Promise.all([
+      queryClient.ensureQueryData(
+        rawFeedbacksQueryOptions({
+          data: {
+            projectId: ctx.params.projectId,
+            filter: ctx.deps.filter,
+          },
+        })
+      ),
+      queryClient.ensureQueryData(
+        rawFeedbackCountsQueryOptions({
+          data: {
+            projectId: ctx.params.projectId,
+          },
+        })
+      ),
+    ])
   },
 })
 
@@ -127,18 +149,24 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
   )
 }
 
+type FilterType = 'all' | 'pending' | 'completed' | 'errors'
+
 function RouteComponent() {
   const { projectId } = Route.useParams()
-  const { data: rawFeedbacks } = useRawFeedbacksQuery(projectId)
+  const search = Route.useSearch()
+  const navigate = useNavigate()
+  const filter = search.filter || 'pending'
 
-  const pendingCount = rawFeedbacks.filter((f) => !f.safetyCheckComplete).length
-  const processingCount = rawFeedbacks.filter(
-    (f) => f.safetyCheckComplete && !f.featureAssociationComplete
-  ).length
-  const completedCount = rawFeedbacks.filter(
-    (f) => f.featureAssociationComplete
-  ).length
-  const errorCount = rawFeedbacks.filter((f) => f.processingError).length
+  const { data: rawFeedbacks } = useRawFeedbacksQuery(projectId, filter)
+  const { data: counts } = useRawFeedbackCountsQuery(projectId)
+
+  const handleFilterChange = (newFilter: FilterType) => {
+    void navigate({
+      to: '/projects/$projectId/raw-feedback',
+      params: { projectId },
+      search: { filter: newFilter },
+    })
+  }
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -148,17 +176,42 @@ function RouteComponent() {
       </p>
 
       <div className="flex gap-4 mb-6">
-        <Badge variant="secondary">Total: {rawFeedbacks.length}</Badge>
-        <Badge variant="outline">Pending: {pendingCount}</Badge>
-        <Badge variant="outline">Processing: {processingCount}</Badge>
-        <Badge variant="outline">Completed: {completedCount}</Badge>
-        {errorCount > 0 && (
-          <Badge variant="destructive">Errors: {errorCount}</Badge>
+        <Badge
+          variant={filter === 'all' ? 'default' : 'secondary'}
+          className="cursor-pointer"
+          onClick={() => handleFilterChange('all')}
+        >
+          Total: {counts.total}
+        </Badge>
+        <Badge
+          variant={filter === 'pending' ? 'default' : 'outline'}
+          className="cursor-pointer"
+          onClick={() => handleFilterChange('pending')}
+        >
+          Pending: {counts.pending}
+        </Badge>
+        <Badge
+          variant={filter === 'completed' ? 'default' : 'outline'}
+          className="cursor-pointer"
+          onClick={() => handleFilterChange('completed')}
+        >
+          Completed: {counts.completed}
+        </Badge>
+        {counts.errors > 0 && (
+          <Badge
+            variant={filter === 'errors' ? 'destructive' : 'outline'}
+            className="cursor-pointer"
+            onClick={() => handleFilterChange('errors')}
+          >
+            Errors: {counts.errors}
+          </Badge>
         )}
       </div>
 
       {rawFeedbacks.length === 0 ? (
-        <p className="text-gray-500">No raw feedback yet</p>
+        <p className="text-gray-500">
+          {filter === 'all' ? 'No raw feedback yet' : `No ${filter} feedback`}
+        </p>
       ) : (
         <div className="space-y-4">
           {rawFeedbacks.map((rawFeedback) => (
