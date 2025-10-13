@@ -165,12 +165,13 @@ export const useRawFeedbacksQuery = (
 export const useRawFeedbackCountsQuery = (projectId: string) => {
   const fn = useServerFn(getRawFeedbackCounts)
 
-  return useSuspenseQuery(
-    rawFeedbackCountsQueryOptions({
+  return useSuspenseQuery({
+    ...rawFeedbackCountsQueryOptions({
       fn,
       data: { projectId },
-    })
-  )
+    }),
+    refetchInterval: 5000,
+  })
 }
 
 // Mutation Hooks
