@@ -15,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -196,7 +197,10 @@ function App() {
           </SidebarContent>
         </Sidebar>
 
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 relative">
+          <div className="md:hidden fixed top-2 left-2 z-50">
+            <SidebarTrigger className="size-8" />
+          </div>
           <Outlet />
         </main>
       </div>
