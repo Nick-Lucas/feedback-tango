@@ -102,6 +102,7 @@ export const RawFeedbacks = pgTable(
     createdAt: timestamp().defaultNow().notNull(),
 
     // Processing status fields
+    lock: timestamp(),
     safetyCheckComplete: timestamp(),
     featureAssociationComplete: timestamp(),
     processingError: text(),

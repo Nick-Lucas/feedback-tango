@@ -6,8 +6,7 @@
     // "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@feedback-thing/db": ["./libs/db/src"],
-      "@feedback-thing/core": ["./libs/core/src"]
+      "@feedback-thing/*": ["./libs/*/src", "./apps/*/src"]
     },
 
     // Environment Settings

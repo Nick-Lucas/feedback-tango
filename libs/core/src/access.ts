@@ -13,14 +13,9 @@ export type NewFeature = typeof Features.$inferInsert
 export type Feedback = typeof Feedbacks.$inferSelect
 export type NewFeedback = typeof Feedbacks.$inferInsert
 export type RawFeedback = typeof RawFeedbacks.$inferSelect
-export type NewRawFeedback = Omit<
+export type NewRawFeedback = Pick<
   typeof RawFeedbacks.$inferInsert,
-  | 'id'
-  | 'createdAt'
-  | 'safetyCheckComplete'
-  | 'featureAssociationComplete'
-  | 'processingError'
-  | 'processedFeedbackId'
+  'email' | 'feedback'
 >
 
 export const db = createDb()
