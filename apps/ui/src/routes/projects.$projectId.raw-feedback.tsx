@@ -8,8 +8,15 @@ import {
   useRawFeedbacksQuery,
   useRawFeedbackCountsQuery,
 } from '@/lib/query-options'
-import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react'
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  AlertCircle,
+  ExternalLink,
+} from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/projects/$projectId/raw-feedback')({
   component: RouteComponent,
@@ -85,14 +92,24 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
           <p className="text-card-foreground italic flex-1">
             "{rawFeedback.feedback.trim()}"
           </p>
-          {isProcessed && (
-            <Link
-              to="/projects/$projectId/features"
-              params={{ projectId: rawFeedback.projectId }}
-              className="text-xs text-blue-500 hover:underline whitespace-nowrap"
+          {isProcessed && rawFeedback.processedFeedbackId && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 shrink-0"
+              asChild
             >
-              View Processed
-            </Link>
+              <Link
+                to="/projects/$projectId/feedback/$feedbackId"
+                params={{
+                  projectId: rawFeedback.projectId,
+                  feedbackId: rawFeedback.processedFeedbackId,
+                }}
+                target="_blank"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </Link>
+            </Button>
           )}
         </div>
 
