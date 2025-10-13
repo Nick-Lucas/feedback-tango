@@ -48,6 +48,8 @@
     "@tailwindcss/vite": "catalog:",
     "@tanstack/nitro-v2-vite-plugin": "catalog:",
     "@tanstack/react-devtools": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-query-devtools": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-router-devtools": "catalog:",
     "@tanstack/react-router-ssr-query": "catalog:",

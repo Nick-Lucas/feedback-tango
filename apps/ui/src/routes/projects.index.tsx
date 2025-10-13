@@ -1,37 +1,34 @@
 import { Button } from '@/components/ui/button'
-import { createProject } from '@/server-functions/createProject'
-import { getProjects } from '@/server-functions/getProjects'
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
 import { useState } from 'react'
+import {
+  projectsQueryOptions,
+  useProjectsQuery,
+  useCreateProjectMutation,
+} from '@/lib/query-options'
 
 export const Route = createFileRoute('/projects/')({
   component: RouteComponent,
-  async loader() {
-    return {
-      projects: await getProjects(),
-    }
+  async loader(ctx) {
+    const queryClient = ctx.context.queryClient
+    await queryClient.ensureQueryData(projectsQueryOptions({}))
   },
 })
 
 function RouteComponent() {
-  const { projects } = Route.useLoaderData()
+  const { data: projects } = useProjectsQuery()
   const navigate = useNavigate()
   const [projectName, setProjectName] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const requestCreateProject = useServerFn(createProject)
+  const createProjectMutation = useCreateProjectMutation()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!projectName.trim() || isSubmitting) return
+    if (!projectName.trim() || createProjectMutation.isPending) return
 
-    setIsSubmitting(true)
     try {
-      const project = await requestCreateProject({
-        data: {
-          name: projectName.trim(),
-        },
+      const project = await createProjectMutation.mutateAsync({
+        name: projectName.trim(),
       })
 
       await navigate({
@@ -40,7 +37,6 @@ function RouteComponent() {
       })
     } catch (error) {
       console.error('Failed to create project:', error)
-      setIsSubmitting(false)
     }
   }
 
@@ -74,10 +70,10 @@ function RouteComponent() {
 
             <Button
               type="submit"
-              disabled={!projectName.trim() || isSubmitting}
+              disabled={!projectName.trim() || createProjectMutation.isPending}
               className="w-full px-4 py-2 rounded-md"
             >
-              {isSubmitting ? 'Creating...' : 'Create'}
+              {createProjectMutation.isPending ? 'Creating...' : 'Create'}
             </Button>
           </form>
         </div>

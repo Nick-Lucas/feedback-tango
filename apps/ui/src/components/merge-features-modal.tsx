@@ -12,9 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { mergeFeatures } from '@/server-functions/mergeFeatures'
 import { SquareArrowOutUpRight } from 'lucide-react'
-import { useServerFn } from '@tanstack/react-start'
+import { useMergeFeaturesMutation } from '@/lib/query-options'
 
 interface Feature {
   id: string
@@ -44,9 +43,12 @@ export function MergeFeaturesModal({
   const [newFeatureDescription, setNewFeatureDescription] = useState(
     suggestion?.description || ''
   )
-  const [isMerging, setIsMerging] = useState(false)
 
-  const requestMergeFeatures = useServerFn(mergeFeatures)
+  const mergeFeaturesMutation = useMergeFeaturesMutation({
+    onMerged() {
+      handleClose('complete')
+    },
+  })
 
   // Use availableFeatures directly as they are pre-selected from sidebar
   const selectedFeatures = availableFeatures
@@ -60,14 +62,11 @@ export function MergeFeaturesModal({
       return
     }
 
-    setIsMerging(true)
     try {
-      const result = await requestMergeFeatures({
-        data: {
-          featureIds: selectedFeatures.map((f) => f.id),
-          newFeatureName,
-          newFeatureDescription,
-        },
+      const result = await mergeFeaturesMutation.mutateAsync({
+        featureIds: selectedFeatures.map((f) => f.id),
+        newFeatureName,
+        newFeatureDescription,
       })
       await navigate({
         to: '/projects/$projectId/features/$featureId',
@@ -78,13 +77,11 @@ export function MergeFeaturesModal({
       })
     } catch (error) {
       console.error('Failed to merge features:', error)
-    } finally {
-      setIsMerging(false)
     }
   }
 
-  const handleClose = () => {
-    onOpenChange(false)
+  const handleClose = (reason?: 'cancel' | 'complete') => {
+    onOpenChange(false, reason)
     setNewFeatureName('')
     setNewFeatureDescription('')
   }
@@ -143,19 +140,19 @@ export function MergeFeaturesModal({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+          <Button variant="outline" onClick={() => handleClose('cancel')}>
             Cancel
           </Button>
           <Button
             onClick={handleMerge}
             disabled={
-              isMerging ||
+              mergeFeaturesMutation.isPending ||
               selectedFeatures.length < 2 ||
               !newFeatureName ||
               !newFeatureDescription
             }
           >
-            {isMerging ? 'Merging...' : 'Merge Features'}
+            {mergeFeaturesMutation.isPending ? 'Merging...' : 'Merge Features'}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -18,39 +18,43 @@ import {
 } from '@/components/ui/sidebar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { getFeatures } from '@/server-functions/getFeatures'
-import { createProject } from '@/server-functions/createProject'
-import { getProjects } from '@/server-functions/getProjects'
 import { ProjectPicker } from '@/components/project-picker'
 import { FeaturesSelectionMenu } from '@/components/features-selection-menu'
 import { cn } from '@/lib/utils'
 import { X, Plus } from 'lucide-react'
-import { useServerFn } from '@tanstack/react-start'
+import {
+  projectsQueryOptions,
+  featuresQueryOptions,
+  useProjectsQuery,
+  useFeaturesQuery,
+  useCreateProjectMutation,
+} from '@/lib/query-options'
 
 export const Route = createFileRoute('/projects/$projectId/features')({
   component: App,
   async loader(ctx) {
-    const projects = await getProjects()
     const projectId = ctx.params.projectId
+    const queryClient = ctx.context.queryClient
 
-    return {
-      projects: await getProjects(),
-      project: projects.find((p) => p.id === projectId)!,
-      features: projectId
-        ? await getFeatures({
-            data: {
-              projectId,
-            },
-          })
-        : [],
-    }
+    await Promise.all([
+      queryClient.ensureQueryData(projectsQueryOptions({})),
+      queryClient.ensureQueryData(
+        featuresQueryOptions({
+          data: { projectId },
+        })
+      ),
+    ])
   },
 })
 
 function App() {
-  const data = Route.useLoaderData()
-  const router = useRouter()
   const { projectId } = Route.useParams()
+  const { data: projects } = useProjectsQuery()
+  const { data: features } = useFeaturesQuery(projectId)
+  const router = useRouter()
+
+  const project = projects.find((p) => p.id === projectId)!
+
   const featureMatches = useChildMatches({
     select(matches) {
       return matches.filter(
@@ -64,27 +68,22 @@ function App() {
     new Set()
   )
 
-  const requestCreateProject = useServerFn(createProject)
+  const createProjectMutation = useCreateProjectMutation()
 
-  const filteredFeatures = data.features.filter((feature) =>
+  const filteredFeatures = features.filter((feature) =>
     feature.name.toLowerCase().includes(search.toLowerCase())
   )
 
-  const selectedFeatures = data.features.filter((f) =>
-    selectedFeatureIds.has(f.id)
-  )
+  const selectedFeatures = features.filter((f) => selectedFeatureIds.has(f.id))
 
   const handleCreateProject = async (name: string) => {
-    const project = await requestCreateProject({
-      data: {
-        name,
-      },
+    const newProject = await createProjectMutation.mutateAsync({
+      name,
     })
-    await router.invalidate()
 
     await router.navigate({
       to: '/projects/$projectId/features',
-      params: { projectId: project.id },
+      params: { projectId: newProject.id },
     })
   }
 
@@ -98,9 +97,8 @@ function App() {
     setSelectedFeatureIds(newSelected)
   }
 
-  const handleMergeComplete = async () => {
+  const handleMergeComplete = () => {
     setSelectedFeatureIds(new Set())
-    await router.invalidate()
   }
 
   return (
@@ -111,8 +109,8 @@ function App() {
             <div className="p-2 space-y-2">
               <div>
                 <ProjectPicker
-                  projects={data.projects}
-                  selectedProject={data.project}
+                  projects={projects}
+                  selectedProject={project}
                   onCreateProject={handleCreateProject}
                   className="rounded-b-none"
                 />
@@ -127,7 +125,7 @@ function App() {
               </div>
 
               <FeaturesSelectionMenu
-                projectId={data.project.id}
+                projectId={project.id}
                 selectedFeatureIds={selectedFeatureIds}
                 selectedFeatures={selectedFeatures}
                 onClearSelection={() => setSelectedFeatureIds(new Set())}

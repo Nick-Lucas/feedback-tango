@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,10 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ArrowRight } from 'lucide-react'
-import { useRouter } from '@tanstack/react-router'
-import { moveFeedbackToFeature } from '@/server-functions/moveFeedbackToFeature'
-import { getFeatures } from '@/server-functions/getFeatures'
-import { useServerFn } from '@tanstack/react-start'
+import {
+  useFeaturesQuery,
+  useMoveFeedbackToFeatureMutation,
+} from '@/lib/query-options'
 
 interface MoveFeedbackModalProps {
   open: boolean
@@ -30,27 +30,13 @@ export function MoveFeedbackModal({
   onOpenChange,
   feedback,
 }: MoveFeedbackModalProps) {
-  const router = useRouter()
-  const [features, setFeatures] = useState<
-    Array<{ id: string; name: string; description: string }>
-  >([])
+  const { data: features } = useFeaturesQuery(feedback.projectId)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(
     null
   )
-  const [isMoving, setIsMoving] = useState(false)
 
-  const requestGetFeatures = useServerFn(getFeatures)
-  const requestMoveFeedbackToFeature = useServerFn(moveFeedbackToFeature)
-
-  // TODO: use tanstack query or tanstack db here, this is cheaply implemented for prototyping
-  useEffect(() => {
-    if (open && features.length === 0) {
-      requestGetFeatures({
-        data: { projectId: feedback.projectId },
-      }).then((result) => setFeatures(result))
-    }
-  }, [open, features.length, feedback.projectId])
+  const moveFeedbackMutation = useMoveFeedbackToFeatureMutation()
 
   const handleOpenChange = async (newOpen: boolean) => {
     if (!newOpen) {
@@ -71,17 +57,14 @@ export function MoveFeedbackModal({
       return
     }
 
-    setIsMoving(true)
     try {
-      await requestMoveFeedbackToFeature({
-        data: { feedbackId: feedback.id, featureId: selectedFeatureId },
+      await moveFeedbackMutation.mutateAsync({
+        feedbackId: feedback.id,
+        featureId: selectedFeatureId,
       })
-      await router.invalidate()
       void handleOpenChange(false)
     } catch (error) {
       console.error('Failed to move feedback:', error)
-    } finally {
-      setIsMoving(false)
     }
   }
 
@@ -134,9 +117,9 @@ export function MoveFeedbackModal({
           </Button>
           <Button
             onClick={handleMove}
-            disabled={!selectedFeatureId || isMoving}
+            disabled={!selectedFeatureId || moveFeedbackMutation.isPending}
           >
-            {isMoving ? (
+            {moveFeedbackMutation.isPending ? (
               'Moving...'
             ) : (
               <>
