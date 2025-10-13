@@ -1,5 +1,5 @@
 import { RawFeedbacks } from '@feedback-thing/db'
-import { eq, sql, count } from 'drizzle-orm'
+import { eq, count, and, isNull, isNotNull } from 'drizzle-orm'
 import { authedServerFn } from './core'
 import { getDb, authz } from './core.server'
 import z from 'zod'
@@ -13,21 +13,39 @@ export const getRawFeedbackCounts = authedServerFn()
   .handler(async (ctx) => {
     const { projectId } = ctx.data
 
-    // Check if user has access to this project
     await authz.checkProjectAccessAndThrow(ctx.context.user.id, projectId)
 
     const db = getDb()
 
-    // Get all counts in a single query using conditional aggregation with CASE
     const [result] = await db
       .select({
         total: count(),
-        pending: sql<number>`count(*) filter (where ${RawFeedbacks.featureAssociationComplete} is null and ${RawFeedbacks.processingError} is null)`,
-        completed: sql<number>`count(*) filter (where ${RawFeedbacks.featureAssociationComplete} is not null)`,
-        errors: sql<number>`count(*) filter (where ${RawFeedbacks.processingError} is not null)`,
+        pending: db.$count(
+          RawFeedbacks,
+          and(
+            eq(RawFeedbacks.projectId, projectId),
+            isNull(RawFeedbacks.featureAssociationComplete),
+            isNull(RawFeedbacks.processingError)
+          )
+        ),
+        completed: db.$count(
+          RawFeedbacks,
+          and(
+            eq(RawFeedbacks.projectId, projectId),
+            isNotNull(RawFeedbacks.safetyCheckComplete),
+            isNotNull(RawFeedbacks.featureAssociationComplete)
+          )
+        ),
+        errors: db.$count(
+          RawFeedbacks,
+          and(
+            eq(RawFeedbacks.projectId, projectId),
+            isNotNull(RawFeedbacks.processingError)
+          )
+        ),
       })
       .from(RawFeedbacks)
       .where(eq(RawFeedbacks.projectId, projectId))
 
-    return result || { total: 0, pending: 0, completed: 0, errors: 0 }
+    return result
   })

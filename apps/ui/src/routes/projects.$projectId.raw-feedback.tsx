@@ -197,15 +197,13 @@ function RouteComponent() {
         >
           Completed: {counts.completed}
         </Badge>
-        {counts.errors > 0 && (
-          <Badge
-            variant={filter === 'errors' ? 'destructive' : 'outline'}
-            className="cursor-pointer"
-            onClick={() => handleFilterChange('errors')}
-          >
-            Errors: {counts.errors}
-          </Badge>
-        )}
+        <Badge
+          variant={filter === 'errors' ? 'destructive' : 'outline'}
+          className="cursor-pointer"
+          onClick={() => handleFilterChange('errors')}
+        >
+          Errors: {counts.errors}
+        </Badge>
       </div>
 
       {rawFeedbacks.length === 0 ? (
