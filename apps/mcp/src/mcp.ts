@@ -3,7 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import {
   projectAccess,
   featureAccess,
-  feedbackAccess,
+  rawFeedbackAccess,
 } from '@feedback-thing/core'
 import { embedText } from '@feedback-thing/agents'
 
@@ -150,16 +150,19 @@ mcp.registerTool(
 )
 
 mcp.registerTool(
-  'createFeedback',
+  'createRawFeedback',
   {
-    title: 'Create Feedback',
+    title: 'Create Raw Feedback',
     description:
-      'Create new feedback when the user has submitted some. use the search tools to find the relevant project and feature ID, you may create a new project/feature first if needed',
+      'Create new feedback when the user has submitted some. use the search tools to find the relevant project ID, you may create a new project first if needed',
     inputSchema: {
       feedback: z.string().describe('Feedback content'),
       projectId: z.string().describe('Project ID this feedback belongs to'),
-      featureId: z.string().describe('Feature ID this feedback belongs to'),
-      createdBy: z.string().describe('Creator of the feedback'),
+      email: z
+        .string()
+        .email()
+        .optional()
+        .describe('Optional email of the person submitting feedback'),
     },
   },
   async (input, extra) => {
@@ -168,17 +171,24 @@ mcp.registerTool(
       throw new Error('No user ID found in token.')
     }
 
-    const result = await feedbackAccess.create({
+    const result = await rawFeedbackAccess.create({
       feedback: input.feedback,
       projectId: input.projectId,
-      featureId: input.featureId,
-      createdBy: userId,
+      email: input.email || null,
     })
     return {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(result, null, 2),
+          text: JSON.stringify(
+            {
+              ...result,
+              message:
+                'Raw feedback submitted successfully. It will be processed asynchronously for safety and feature association.',
+            },
+            null,
+            2
+          ),
         },
       ],
     }

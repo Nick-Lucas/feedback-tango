@@ -8,6 +8,7 @@
     "clean": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "build": "pnpm -r build",
     "dev": "pnpm -r --parallel --stream=true dev",
+    "temp:process-raw-feedback": "DOTENV_CONFIG_PATH=.env node -r dotenv/config ./apps/api/src/feedback/process-raw-feedback.ts",
     "test": "pnpm -r test",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",

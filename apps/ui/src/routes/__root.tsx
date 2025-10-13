@@ -95,7 +95,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const queryClient = Route.useRouteContext().queryClient
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" style={{ scrollbarGutter: 'stable' }}>
       <head>
         <HeadContent />
       </head>

@@ -13,6 +13,7 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "typescript.preferences.importModuleSpecifier": "project-relative",
   "chatgpt.commentCodeLensEnabled": false,
   "files.watcherExclude": {
     "**/routeTree.gen.ts": true

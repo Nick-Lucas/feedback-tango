@@ -1,9 +1,6 @@
-import { Feedbacks } from '@feedback-thing/db'
+import { RawFeedbacks } from '@feedback-thing/db'
 import { db, type App } from '../app.ts'
 import { z } from 'zod'
-import { findAgentUser } from './agent-user.ts'
-import { checkFeedbackSafety } from './feedback-safety.ts'
-import { handleFeedbackWithAgent } from './feedback-agent.ts'
 
 const FeedbackSubmission = z.object({
   email: z.email().max(100).optional(),
@@ -11,11 +8,6 @@ const FeedbackSubmission = z.object({
 })
 
 export function addFeedback(app: App) {
-  // TODO:
-  // We probably want to commit all feedback to a raw table, then process for safety and feature association later
-  // This would allow us to retry failed feedback processing, and also batch process feedback for feature association
-  // It would also allow us to store unsafe feedback for later review
-  // The tradoff is the feedback UI wouldn't be able to give any feedback to the user, but fast submission is probably the best UX anyway
   app.post('/api/feedback', async (c) => {
     console.log('[/api/feedback] received request')
 
@@ -35,9 +27,6 @@ export function addFeedback(app: App) {
     }
     console.log('[/api/feedback] project found:', project.name)
 
-    const agentUserId = await findAgentUser()
-    console.log('[/api/feedback] agent user ID:', agentUserId)
-
     const body = await c.req.json()
     const parsed = FeedbackSubmission.safeParse(body)
     if (!parsed.success) {
@@ -48,41 +37,22 @@ export function addFeedback(app: App) {
     }
     console.log('[/api/feedback] parsed submission:', parsed.data)
 
-    const safetyGrade = await checkFeedbackSafety(parsed.data.feedback)
-    console.log('[/api/feedback] safety grade:', safetyGrade)
-
-    if (safetyGrade.object.outcome === 'unsafe') {
-      // TODO: log the feedback in a raw form somewhere for later review
-      console.log('Rejected feedback:', {
+    // Insert raw feedback immediately for async processing
+    const [rawFeedback] = await db
+      .insert(RawFeedbacks)
+      .values({
+        projectId,
+        email: parsed.data.email,
         feedback: parsed.data.feedback,
-        reason: safetyGrade.object.reason,
       })
-      return c.json({ error: 'Invalid Submission' }, 400)
+      .returning()
+
+    if (!rawFeedback) {
+      return c.json({ error: 'Failed to store feedback' }, 500)
     }
 
-    const feature = await handleFeedbackWithAgent({
-      projectId,
-      agentUserId,
-      feedback: parsed.data.feedback,
-    })
-    console.log('[/api/feedback] feature result:', feature)
+    console.log('[/api/feedback] raw feedback stored:', rawFeedback.id)
 
-    if (feature.type === 'error') {
-      console.error('Failed to determine feature for feedback:', feature.error)
-      return c.json({ error: 'Failed to process feedback' }, 500)
-    }
-
-    await db.insert(Feedbacks).values({
-      projectId,
-      featureId: feature.featureId,
-      feedback: parsed.data.feedback,
-
-      // TODO: generate a user ID from the email address if possible or use a dummy user
-      createdBy: parsed.data.email ?? 'anonymous',
-    })
-
-    console.log('Feedback stored successfully')
-
-    return c.json({ status: 'ok' })
+    return c.json({ status: 'ok', rawFeedbackId: rawFeedback.id })
   })
 }

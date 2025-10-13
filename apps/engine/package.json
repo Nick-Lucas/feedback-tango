@@ -1,0 +1,25 @@
+{
+  "name": "@feedback-thing/engine",
+  "type": "module",
+  "scripts": {
+    "dev": "DOTENV_CONFIG_PATH=../../.env node -r dotenv/config --watch src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/google": "catalog:",
+    "@ai-sdk/provider": "catalog:",
+    "@feedback-thing/agents": "workspace:*",
+    "@feedback-thing/core": "workspace:*",
+    "@feedback-thing/db": "workspace:*",
+    "ai": "catalog:",
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "hono": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "catalog:",
+    "typescript": "^5.8.3"
+  }
+}

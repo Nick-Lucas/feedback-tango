@@ -76,10 +76,7 @@ export const Features = pgTable(
     createdAt: timestamp().defaultNow().notNull(),
   },
   (table) => [
-    index('features_name_embedding_idx_cosine').using(
-      'hnsw',
-      table.nameEmbedding.op('vector_cosine_ops')
-    ),
+    index().using('hnsw', table.nameEmbedding.op('halfvec_cosine_ops')),
   ]
 )
 
@@ -89,6 +86,46 @@ export const FeatureRelations = relations(Features, ({ one, many }) => ({
     references: [Projects.id],
   }),
   feedbacks: many(Feedbacks),
+}))
+
+export const RawFeedbacks = pgTable(
+  'raw_feedback',
+  {
+    id: uuid()
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    projectId: uuid()
+      .notNull()
+      .references(() => Projects.id),
+    email: text(),
+    feedback: text().notNull(),
+    createdAt: timestamp().defaultNow().notNull(),
+
+    // Processing status fields
+    safetyCheckComplete: timestamp(),
+    featureAssociationComplete: timestamp(),
+    processingError: text(),
+
+    // Link to final feedback entry once processed
+    processedFeedbackId: uuid().references(() => Feedbacks.id),
+  },
+  (table) => [
+    index().on(table.safetyCheckComplete),
+    index().on(table.featureAssociationComplete),
+    index().on(table.processingError),
+    index().on(table.projectId),
+  ]
+)
+
+export const RawFeedbackRelations = relations(RawFeedbacks, ({ one }) => ({
+  project: one(Projects, {
+    fields: [RawFeedbacks.projectId],
+    references: [Projects.id],
+  }),
+  processedFeedback: one(Feedbacks, {
+    fields: [RawFeedbacks.processedFeedbackId],
+    references: [Feedbacks.id],
+  }),
 }))
 
 export const Feedbacks = pgTable('feedback', {

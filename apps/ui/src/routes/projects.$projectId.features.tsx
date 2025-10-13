@@ -3,7 +3,6 @@ import {
   useChildMatches,
   Link,
   Outlet,
-  useRouter,
 } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
@@ -19,16 +18,13 @@ import {
 } from '@/components/ui/sidebar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { ProjectPicker } from '@/components/project-picker'
 import { FeaturesSelectionMenu } from '@/components/features-selection-menu'
 import { cn } from '@/lib/utils'
 import { X, Plus } from 'lucide-react'
 import {
   projectsQueryOptions,
   featuresQueryOptions,
-  useProjectsQuery,
   useFeaturesQuery,
-  useCreateProjectMutation,
 } from '@/lib/query-options'
 
 export const Route = createFileRoute('/projects/$projectId/features')({
@@ -50,11 +46,7 @@ export const Route = createFileRoute('/projects/$projectId/features')({
 
 function App() {
   const { projectId } = Route.useParams()
-  const { data: projects } = useProjectsQuery()
   const { data: features } = useFeaturesQuery(projectId)
-  const router = useRouter()
-
-  const project = projects.find((p) => p.id === projectId)!
 
   const featureMatches = useChildMatches({
     select(matches) {
@@ -69,24 +61,11 @@ function App() {
     new Set()
   )
 
-  const createProjectMutation = useCreateProjectMutation()
-
   const filteredFeatures = features.filter((feature) =>
     feature.name.toLowerCase().includes(search.toLowerCase())
   )
 
   const selectedFeatures = features.filter((f) => selectedFeatureIds.has(f.id))
-
-  const handleCreateProject = async (name: string) => {
-    const newProject = await createProjectMutation.mutateAsync({
-      name,
-    })
-
-    await router.navigate({
-      to: '/projects/$projectId/features',
-      params: { projectId: newProject.id },
-    })
-  }
 
   const toggleFeatureSelection = (featureId: string) => {
     const newSelected = new Set(selectedFeatureIds)
@@ -107,26 +86,17 @@ function App() {
       <div className="flex min-h-screen w-full">
         <Sidebar>
           <SidebarContent className="gap-0">
-            <div className="p-2 space-y-2">
-              <div>
-                <ProjectPicker
-                  projects={projects}
-                  selectedProject={project}
-                  onCreateProject={handleCreateProject}
-                  className="rounded-b-none"
-                />
-
-                <Input
-                  type="search"
-                  placeholder="Search features..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="h-8 rounded-t-none mt-[-1px]"
-                />
-              </div>
+            <div className="sticky top-0 z-10 bg-sidebar pt-2 pl-2 pr-1 space-y-2">
+              <Input
+                type="search"
+                placeholder="Search features..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-8"
+              />
 
               <FeaturesSelectionMenu
-                projectId={project.id}
+                projectId={projectId}
                 selectedFeatureIds={selectedFeatureIds}
                 selectedFeatures={selectedFeatures}
                 onClearSelection={() => setSelectedFeatureIds(new Set())}
@@ -134,7 +104,7 @@ function App() {
               />
             </div>
 
-            <SidebarGroup>
+            <SidebarGroup className="pt-2">
               <SidebarGroupContent>
                 <SidebarMenu className="gap-0">
                   {filteredFeatures.map((feature) => {
@@ -197,7 +167,7 @@ function App() {
           </SidebarContent>
         </Sidebar>
 
-        <main className="flex-1 p-6 relative">
+        <main className="flex-1 p-6 pt-16 relative">
           <div className="md:hidden fixed top-2 left-2 z-50">
             <SidebarTrigger className="size-8" />
           </div>
