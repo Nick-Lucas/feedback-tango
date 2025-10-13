@@ -15,7 +15,7 @@ export type NewFeedback = typeof Feedbacks.$inferInsert
 export type RawFeedback = typeof RawFeedbacks.$inferSelect
 export type NewRawFeedback = Pick<
   typeof RawFeedbacks.$inferInsert,
-  'email' | 'feedback'
+  'projectId' | 'email' | 'feedback'
 >
 
 export const db = createDb()

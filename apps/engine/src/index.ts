@@ -1,26 +1,46 @@
 import { setTimeout } from 'timers/promises'
 import { db } from './db.ts'
 import { RawFeedbacks } from '@feedback-thing/db'
-import { isNull, lt, or } from 'drizzle-orm'
-
-const MINUTE_MS = 60 * 1000
-const LOCK_TIMEOUT_MS = 1.5 * MINUTE_MS
+import { and, isNull } from 'drizzle-orm'
+import { processRawFeedback } from './feedback/process-raw-feedback.ts'
+import { findAgentUser } from './feedback/agent-user.ts'
 
 // TODO: Eventually we want to process data given an event from postgres or a queue
 // But for a prototype we can just poll the database
 while (true) {
-  await setTimeout(5000)
-
   console.log('Checking for new feedback...')
 
-  db.update(RawFeedbacks).set({ lock: new Date() }).returning()
-  db.select()
-    .from(RawFeedbacks)
-    .where(
-      or(
-        isNull(RawFeedbacks.lock),
-        lt(RawFeedbacks.lock, new Date(Date.now() + LOCK_TIMEOUT_MS))
+  // Get agent user ID once
+  const agentUserId = await findAgentUser()
+  console.log('Agent user ID:', agentUserId)
+
+  await db.transaction(async (tx) => {
+    // By using "FOR UPDATE" we can ensure that multiple instances of this
+    // processing loop don't try to process the same feedback at the same time,
+    // at least until this transaction is committed or rolled back
+    const queryResult = await tx
+      .select()
+      .from(RawFeedbacks)
+      .where(
+        and(
+          isNull(RawFeedbacks.featureAssociationComplete),
+
+          // TODO: implement retries and/or dead letter queue
+          isNull(RawFeedbacks.processingError)
+        )
       )
-    )
-    .limit(10)
+      .limit(1)
+      .for('update')
+
+    if (queryResult.length === 0) {
+      console.log('No new feedback found, sleeping...')
+
+      await setTimeout(5000)
+
+      return
+    }
+    const rawFeedback = queryResult[0]!
+
+    await processRawFeedback({ tx, rawFeedback, agentUserId })
+  })
 }

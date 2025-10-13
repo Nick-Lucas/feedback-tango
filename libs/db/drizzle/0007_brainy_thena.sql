@@ -1,1 +1,0 @@
-ALTER TABLE "raw_feedback" ADD COLUMN "lock" timestamp;

@@ -1,6 +1,6 @@
-import { db } from '../app.ts'
 import { auth } from '@feedback-thing/db/auth'
 import { randomUUID } from 'node:crypto'
+import { db } from '../db.ts'
 
 export async function findAgentUser() {
   const agentUserEmail = 'agent@nicklucas.dev'
