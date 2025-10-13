@@ -1,5 +1,5 @@
 import { RawFeedbacks } from '@feedback-thing/db'
-import { eq, isNull, isNotNull, and, count } from 'drizzle-orm'
+import { eq, sql, count } from 'drizzle-orm'
 import { authedServerFn } from './core'
 import { getDb, authz } from './core.server'
 import z from 'zod'
@@ -18,18 +18,13 @@ export const getRawFeedbackCounts = authedServerFn()
 
     const db = getDb()
 
-    // Get all counts in a single query using conditional aggregation
+    // Get all counts in a single query using conditional aggregation with CASE
     const [result] = await db
       .select({
         total: count(),
-        pending: count(
-          and(
-            isNull(RawFeedbacks.featureAssociationComplete),
-            isNull(RawFeedbacks.processingError)
-          )
-        ),
-        completed: count(isNotNull(RawFeedbacks.featureAssociationComplete)),
-        errors: count(isNotNull(RawFeedbacks.processingError)),
+        pending: sql<number>`count(*) filter (where ${RawFeedbacks.featureAssociationComplete} is null and ${RawFeedbacks.processingError} is null)`,
+        completed: sql<number>`count(*) filter (where ${RawFeedbacks.featureAssociationComplete} is not null)`,
+        errors: sql<number>`count(*) filter (where ${RawFeedbacks.processingError} is not null)`,
       })
       .from(RawFeedbacks)
       .where(eq(RawFeedbacks.projectId, projectId))

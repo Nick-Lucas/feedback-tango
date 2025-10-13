@@ -76,10 +76,7 @@ export const Features = pgTable(
     createdAt: timestamp().defaultNow().notNull(),
   },
   (table) => [
-    index('features_name_embedding_idx_cosine').using(
-      'hnsw',
-      table.nameEmbedding.op('vector_cosine_ops')
-    ),
+    index().using('hnsw', table.nameEmbedding.op('halfvec_cosine_ops')),
   ]
 )
 
@@ -113,11 +110,10 @@ export const RawFeedbacks = pgTable(
     processedFeedbackId: uuid().references(() => Feedbacks.id),
   },
   (table) => [
-    index('raw_feedback_safety_check_idx').on(table.safetyCheckComplete),
-    index('raw_feedback_feature_association_idx').on(
-      table.featureAssociationComplete
-    ),
-    index('raw_feedback_project_idx').on(table.projectId),
+    index().on(table.safetyCheckComplete),
+    index().on(table.featureAssociationComplete),
+    index().on(table.processingError),
+    index().on(table.projectId),
   ]
 )
 
