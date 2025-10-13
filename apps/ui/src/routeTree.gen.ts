@@ -15,6 +15,7 @@ import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ApiAuthRouteImport } from './routes/api.auth'
 import { Route as ProjectsProjectIdIndexRouteImport } from './routes/projects.$projectId.index'
 import { Route as CliSigninIndexRouteImport } from './routes/cli.signin.index'
+import { Route as ProjectsProjectIdRawFeedbackRouteImport } from './routes/projects.$projectId.raw-feedback'
 import { Route as ProjectsProjectIdFeaturesRouteImport } from './routes/projects.$projectId.features'
 import { Route as ProjectsProjectIdConfigRouteImport } from './routes/projects.$projectId.config'
 import { Route as ProjectsProjectIdFeaturesIndexRouteImport } from './routes/projects.$projectId.features.index'
@@ -51,6 +52,12 @@ const CliSigninIndexRoute = CliSigninIndexRouteImport.update({
   path: '/cli/signin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsProjectIdRawFeedbackRoute =
+  ProjectsProjectIdRawFeedbackRouteImport.update({
+    id: '/projects/$projectId/raw-feedback',
+    path: '/projects/$projectId/raw-feedback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProjectsProjectIdFeaturesRoute =
   ProjectsProjectIdFeaturesRouteImport.update({
     id: '/projects/$projectId/features',
@@ -87,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsIndexRoute
   '/projects/$projectId/config': typeof ProjectsProjectIdConfigRoute
   '/projects/$projectId/features': typeof ProjectsProjectIdFeaturesRouteWithChildren
+  '/projects/$projectId/raw-feedback': typeof ProjectsProjectIdRawFeedbackRoute
   '/cli/signin': typeof CliSigninIndexRoute
   '/projects/$projectId': typeof ProjectsProjectIdIndexRoute
   '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
@@ -99,6 +107,7 @@ export interface FileRoutesByTo {
   '/api/auth': typeof ApiAuthRoute
   '/projects': typeof ProjectsIndexRoute
   '/projects/$projectId/config': typeof ProjectsProjectIdConfigRoute
+  '/projects/$projectId/raw-feedback': typeof ProjectsProjectIdRawFeedbackRoute
   '/cli/signin': typeof CliSigninIndexRoute
   '/projects/$projectId': typeof ProjectsProjectIdIndexRoute
   '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
@@ -113,6 +122,7 @@ export interface FileRoutesById {
   '/projects/': typeof ProjectsIndexRoute
   '/projects/$projectId/config': typeof ProjectsProjectIdConfigRoute
   '/projects/$projectId/features': typeof ProjectsProjectIdFeaturesRouteWithChildren
+  '/projects/$projectId/raw-feedback': typeof ProjectsProjectIdRawFeedbackRoute
   '/cli/signin/': typeof CliSigninIndexRoute
   '/projects/$projectId/': typeof ProjectsProjectIdIndexRoute
   '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/projects/$projectId/config'
     | '/projects/$projectId/features'
+    | '/projects/$projectId/raw-feedback'
     | '/cli/signin'
     | '/projects/$projectId'
     | '/projects/$projectId/features/$featureId'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/api/auth'
     | '/projects'
     | '/projects/$projectId/config'
+    | '/projects/$projectId/raw-feedback'
     | '/cli/signin'
     | '/projects/$projectId'
     | '/projects/$projectId/features/$featureId'
@@ -153,6 +165,7 @@ export interface FileRouteTypes {
     | '/projects/'
     | '/projects/$projectId/config'
     | '/projects/$projectId/features'
+    | '/projects/$projectId/raw-feedback'
     | '/cli/signin/'
     | '/projects/$projectId/'
     | '/projects/$projectId/features/$featureId'
@@ -167,6 +180,7 @@ export interface RootRouteChildren {
   ProjectsIndexRoute: typeof ProjectsIndexRoute
   ProjectsProjectIdConfigRoute: typeof ProjectsProjectIdConfigRoute
   ProjectsProjectIdFeaturesRoute: typeof ProjectsProjectIdFeaturesRouteWithChildren
+  ProjectsProjectIdRawFeedbackRoute: typeof ProjectsProjectIdRawFeedbackRoute
   CliSigninIndexRoute: typeof CliSigninIndexRoute
   ProjectsProjectIdIndexRoute: typeof ProjectsProjectIdIndexRoute
   CliSigninCompleteIndexRoute: typeof CliSigninCompleteIndexRoute
@@ -214,6 +228,13 @@ declare module '@tanstack/react-router' {
       path: '/cli/signin'
       fullPath: '/cli/signin'
       preLoaderRoute: typeof CliSigninIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$projectId/raw-feedback': {
+      id: '/projects/$projectId/raw-feedback'
+      path: '/projects/$projectId/raw-feedback'
+      fullPath: '/projects/$projectId/raw-feedback'
+      preLoaderRoute: typeof ProjectsProjectIdRawFeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects/$projectId/features': {
@@ -278,6 +299,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsIndexRoute: ProjectsIndexRoute,
   ProjectsProjectIdConfigRoute: ProjectsProjectIdConfigRoute,
   ProjectsProjectIdFeaturesRoute: ProjectsProjectIdFeaturesRouteWithChildren,
+  ProjectsProjectIdRawFeedbackRoute: ProjectsProjectIdRawFeedbackRoute,
   CliSigninIndexRoute: CliSigninIndexRoute,
   ProjectsProjectIdIndexRoute: ProjectsProjectIdIndexRoute,
   CliSigninCompleteIndexRoute: CliSigninCompleteIndexRoute,

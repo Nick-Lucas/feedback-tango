@@ -91,6 +91,47 @@ export const FeatureRelations = relations(Features, ({ one, many }) => ({
   feedbacks: many(Feedbacks),
 }))
 
+export const RawFeedbacks = pgTable(
+  'raw_feedback',
+  {
+    id: uuid()
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    projectId: uuid()
+      .notNull()
+      .references(() => Projects.id),
+    email: text(),
+    feedback: text().notNull(),
+    createdAt: timestamp().defaultNow().notNull(),
+
+    // Processing status fields
+    safetyCheckComplete: timestamp(),
+    featureAssociationComplete: timestamp(),
+    processingError: text(),
+
+    // Link to final feedback entry once processed
+    processedFeedbackId: uuid().references(() => Feedbacks.id),
+  },
+  (table) => [
+    index('raw_feedback_safety_check_idx').on(table.safetyCheckComplete),
+    index('raw_feedback_feature_association_idx').on(
+      table.featureAssociationComplete
+    ),
+    index('raw_feedback_project_idx').on(table.projectId),
+  ]
+)
+
+export const RawFeedbackRelations = relations(RawFeedbacks, ({ one }) => ({
+  project: one(Projects, {
+    fields: [RawFeedbacks.projectId],
+    references: [Projects.id],
+  }),
+  processedFeedback: one(Feedbacks, {
+    fields: [RawFeedbacks.processedFeedbackId],
+    references: [Feedbacks.id],
+  }),
+}))
+
 export const Feedbacks = pgTable('feedback', {
   id: uuid()
     .primaryKey()

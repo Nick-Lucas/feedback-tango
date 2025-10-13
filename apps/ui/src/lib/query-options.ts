@@ -18,6 +18,7 @@ import { removeProjectMember } from '@/server-functions/removeProjectMember'
 import { mergeFeatures } from '@/server-functions/mergeFeatures'
 import { moveFeedbackToFeature } from '@/server-functions/moveFeedbackToFeature'
 import { searchUsers } from '@/server-functions/searchUsers'
+import { getRawFeedbacks } from '@/server-functions/getRawFeedbacks'
 
 // Query Options Factories
 
@@ -67,6 +68,11 @@ export const featureQueryOptions = createQueryFactory({
 export const searchUsersQueryOptions = createQueryFactory({
   baseKey: ['users', 'search'],
   defaultFunction: searchUsers,
+})
+
+export const rawFeedbacksQueryOptions = createQueryFactory({
+  baseKey: ['raw-feedbacks'],
+  defaultFunction: getRawFeedbacks,
 })
 
 // Query Hooks
@@ -134,6 +140,17 @@ export const useSearchUsersQuery = (query: string, projectId: string) => {
     }),
     enabled: query.length > 0,
   })
+}
+
+export const useRawFeedbacksQuery = (projectId: string) => {
+  const fn = useServerFn(getRawFeedbacks)
+
+  return useSuspenseQuery(
+    rawFeedbacksQueryOptions({
+      fn,
+      data: { projectId },
+    })
+  )
 }
 
 // Mutation Hooks
