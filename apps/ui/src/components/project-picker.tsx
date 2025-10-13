@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useMatches, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -45,7 +45,8 @@ export function ProjectPicker({
   onCreateProject,
   className,
 }: ProjectPickerProps) {
-  const navigate = useNavigate({ from: '/projects/$projectId/features/' })
+  const leafMatchId = useProjectRouteId()
+  const navigate = useNavigate({ from: '/projects/$projectId' })
   const [open, setOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [projectName, setProjectName] = useState('')
@@ -134,7 +135,7 @@ export function ProjectPicker({
                     value={project.name}
                     onSelect={async () => {
                       await navigate({
-                        to: '/projects/$projectId/features',
+                        to: leafMatchId,
                         params: {
                           projectId: project.id,
                         },
@@ -174,4 +175,23 @@ export function ProjectPicker({
       </Popover>
     </>
   )
+}
+function useProjectRouteId() {
+  return useMatches({
+    select(matches) {
+      const routeId = matches[matches.length - 1].routeId
+
+      type StripTrailingSlash<S extends string> = S extends `${infer T}/`
+        ? T
+        : S
+      type ProjectIdRoutes = StripTrailingSlash<
+        Extract<
+          typeof routeId,
+          `/projects/$projectId` | `/projects/$projectId/${string}`
+        >
+      >
+
+      return routeId as ProjectIdRoutes
+    },
+  })
 }
