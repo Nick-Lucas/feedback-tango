@@ -14,6 +14,7 @@ import {
   Infinity as InfinityIcon,
   ChevronDown,
 } from 'lucide-react'
+import { cn } from '../../lib/utils'
 
 export const Route = createFileRoute('/(public)/')({
   component: RouteComponent,
@@ -40,7 +41,7 @@ function RouteComponent() {
 
       {/* Hero Section with BubbleBackground */}
       <BubbleBackground interactive={true} className="h-screen relative">
-        <div className="relative z-10 flex flex-col h-screen items-center justify-evenly px-4">
+        <div className="relative z-10 flex flex-col h-screen items-center justify-center px-4">
           <div className="mx-auto max-w-4xl rounded-3xl bg-background/30 p-12 text-center shadow-2xl backdrop-blur-md">
             <Badge className="mb-6 border-0 bg-gradient-to-br from-primary to-accent-foreground px-5 py-2 text-sm">
               <Sparkles className="mr-1 size-3.5" />
@@ -78,14 +79,22 @@ function RouteComponent() {
               </Button>
             </div>
           </div>
+        </div>
 
-          <div className="mt-16 flex justify-center">
+        {/* Gradient fade overlay */}
+        <div
+          className={cn(
+            ' absolute inset-x-0 bottom-0 z-[50] h-48 bg-gradient-to-t from-background via-background/50 to-transparent',
+            'flex items-end justify-center pb-10'
+          )}
+        >
+          <div className="mt-16 flex justify-center  z-50">
             <button
               onClick={(e) => {
                 e.preventDefault()
                 scrollToFeatures()
               }}
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              className="p-2 text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Scroll down to features"
             >
               <ChevronDown className="size-8" />
