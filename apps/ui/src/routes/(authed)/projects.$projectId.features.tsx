@@ -51,7 +51,7 @@ function App() {
   const featureMatches = useChildMatches({
     select(matches) {
       return matches.filter(
-        (m) => m.routeId === '/projects/$projectId/features/$featureId'
+        (m) => m.routeId === '/(authed)/projects/$projectId/features/$featureId'
       )
     },
   })

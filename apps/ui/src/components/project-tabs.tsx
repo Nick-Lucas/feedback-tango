@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { ProjectPicker } from './project-picker'
 
 export function ProjectTabs() {
-  const { projectId } = useParams({ from: '/projects/$projectId' })
+  const { projectId } = useParams({ from: '/(authed)/projects/$projectId' })
 
   const leafMatch = useMatches({
     select(matches) {
