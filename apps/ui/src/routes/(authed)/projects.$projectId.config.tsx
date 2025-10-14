@@ -20,7 +20,7 @@ import {
   useProjectMembersQuery,
 } from '@/lib/query-options'
 
-export const Route = createFileRoute('/projects/$projectId/config')({
+export const Route = createFileRoute('/(authed)/projects/$projectId/config')({
   component: RouteComponent,
   async loader(ctx) {
     const queryClient = ctx.context.queryClient

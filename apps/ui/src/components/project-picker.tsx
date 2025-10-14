@@ -34,7 +34,7 @@ interface ProjectPickerProps {
 
 export function ProjectPicker({ className }: ProjectPickerProps) {
   const { projectId } = useParams({
-    from: '/projects/$projectId',
+    from: '/(authed)/projects/$projectId',
   })
   const leafMatchId = useProjectRouteId()
   const navigate = useNavigate({ from: '/projects/$projectId' })
@@ -182,19 +182,16 @@ export function ProjectPicker({ className }: ProjectPickerProps) {
 function useProjectRouteId() {
   return useMatches({
     select(matches) {
-      const routeId = matches[matches.length - 1].routeId
+      const routePath = matches[matches.length - 1].fullPath
 
-      type StripTrailingSlash<S extends string> = S extends `${infer T}/`
-        ? T
-        : S
+      type StripTrailingSlash<TPath extends string> =
+        TPath extends `${infer TStrippedPath}/` ? TStrippedPath : TPath
+
       type ProjectIdRoutes = StripTrailingSlash<
-        Extract<
-          typeof routeId,
-          `/projects/$projectId` | `/projects/$projectId/${string}`
-        >
+        Extract<typeof routePath, `/projects/$projectId/${string}`>
       >
 
-      return routeId as ProjectIdRoutes
+      return routePath as ProjectIdRoutes
     },
   })
 }

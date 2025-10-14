@@ -2,7 +2,7 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { ProjectTabs } from '@/components/project-tabs'
 import { projectsQueryOptions } from '@/lib/query-options'
 
-export const Route = createFileRoute('/projects/$projectId')({
+export const Route = createFileRoute('/(authed)/projects/$projectId')({
   component: ProjectLayout,
   async loader(ctx) {
     const queryClient = ctx.context.queryClient

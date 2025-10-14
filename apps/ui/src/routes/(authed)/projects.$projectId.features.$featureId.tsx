@@ -3,7 +3,7 @@ import { FeedbackCard } from '@/components/feedback-card'
 import { featureQueryOptions, useFeatureQuery } from '@/lib/query-options'
 
 export const Route = createFileRoute(
-  '/projects/$projectId/features/$featureId'
+  '/(authed)/projects/$projectId/features/$featureId'
 )({
   component: RouteComponent,
   loader: async (ctx) => {

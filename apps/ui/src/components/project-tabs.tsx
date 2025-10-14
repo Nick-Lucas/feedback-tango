@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { ProjectPicker } from './project-picker'
 
 export function ProjectTabs() {
-  const { projectId } = useParams({ from: '/projects/$projectId' })
+  const { projectId } = useParams({ from: '/(authed)/projects/$projectId' })
 
   const leafMatch = useMatches({
     select(matches) {
@@ -42,7 +42,9 @@ export function ProjectTabs() {
       <ProjectPicker />
       {tabs.map((tab) => {
         const Icon = tab.icon
-        const isActive = leafMatch.routeId.startsWith(tab.to)
+
+        // TODO: router probably has a method which can do this better
+        const isActive = leafMatch.fullPath.startsWith(tab.to)
 
         return (
           <Link
