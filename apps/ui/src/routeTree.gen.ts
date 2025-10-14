@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as authedRouteRouteImport } from './routes/(authed)/route'
 import { Route as publicIndexRouteImport } from './routes/(public)/index'
+import { Route as ApiPhRouteImport } from './routes/api/ph'
 import { Route as ApiAuthRouteImport } from './routes/api/auth'
 import { Route as signinSigninRouteImport } from './routes/(signin)/signin'
 import { Route as authedProjectsIndexRouteImport } from './routes/(authed)/projects.index'
@@ -32,6 +33,11 @@ const authedRouteRoute = authedRouteRouteImport.update({
 const publicIndexRoute = publicIndexRouteImport.update({
   id: '/(public)/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPhRoute = ApiPhRouteImport.update({
+  id: '/api/ph',
+  path: '/api/ph',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthRoute = ApiAuthRouteImport.update({
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/': typeof publicIndexRoute
   '/signin': typeof signinSigninRoute
   '/api/auth': typeof ApiAuthRoute
+  '/api/ph': typeof ApiPhRoute
   '/projects/$projectId': typeof authedProjectsProjectIdRouteWithChildren
   '/projects': typeof authedProjectsIndexRoute
   '/projects/$projectId/config': typeof authedProjectsProjectIdConfigRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByTo {
   '/': typeof publicIndexRoute
   '/signin': typeof signinSigninRoute
   '/api/auth': typeof ApiAuthRoute
+  '/api/ph': typeof ApiPhRoute
   '/projects': typeof authedProjectsIndexRoute
   '/projects/$projectId/config': typeof authedProjectsProjectIdConfigRoute
   '/projects/$projectId/raw-feedback': typeof authedProjectsProjectIdRawFeedbackRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/(authed)': typeof authedRouteRouteWithChildren
   '/(signin)/signin': typeof signinSigninRoute
   '/api/auth': typeof ApiAuthRoute
+  '/api/ph': typeof ApiPhRoute
   '/(public)/': typeof publicIndexRoute
   '/(authed)/projects/$projectId': typeof authedProjectsProjectIdRouteWithChildren
   '/(authed)/projects/': typeof authedProjectsIndexRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/'
     | '/signin'
     | '/api/auth'
+    | '/api/ph'
     | '/projects/$projectId'
     | '/projects'
     | '/projects/$projectId/config'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/'
     | '/signin'
     | '/api/auth'
+    | '/api/ph'
     | '/projects'
     | '/projects/$projectId/config'
     | '/projects/$projectId/raw-feedback'
@@ -192,6 +203,7 @@ export interface FileRouteTypes {
     | '/(authed)'
     | '/(signin)/signin'
     | '/api/auth'
+    | '/api/ph'
     | '/(public)/'
     | '/(authed)/projects/$projectId'
     | '/(authed)/projects/'
@@ -210,6 +222,7 @@ export interface RootRouteChildren {
   authedRouteRoute: typeof authedRouteRouteWithChildren
   signinSigninRoute: typeof signinSigninRoute
   ApiAuthRoute: typeof ApiAuthRoute
+  ApiPhRoute: typeof ApiPhRoute
   publicIndexRoute: typeof publicIndexRoute
   signinCliSigninIndexRoute: typeof signinCliSigninIndexRoute
   signinCliSigninCompleteIndexRoute: typeof signinCliSigninCompleteIndexRoute
@@ -229,6 +242,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof publicIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ph': {
+      id: '/api/ph'
+      path: '/api/ph'
+      fullPath: '/api/ph'
+      preLoaderRoute: typeof ApiPhRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth': {
@@ -386,6 +406,7 @@ const rootRouteChildren: RootRouteChildren = {
   authedRouteRoute: authedRouteRouteWithChildren,
   signinSigninRoute: signinSigninRoute,
   ApiAuthRoute: ApiAuthRoute,
+  ApiPhRoute: ApiPhRoute,
   publicIndexRoute: publicIndexRoute,
   signinCliSigninIndexRoute: signinCliSigninIndexRoute,
   signinCliSigninCompleteIndexRoute: signinCliSigninCompleteIndexRoute,

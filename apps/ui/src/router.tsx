@@ -6,15 +6,26 @@ import { routeTree } from './routeTree.gen'
 import { getQueryClient } from './lib/query-client'
 import { posthog as posthog_sdk } from 'posthog-js'
 
-const posthog = posthog_sdk.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
-  autocapture: true,
-  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-  loaded(ph) {
-    if (!import.meta.env.PROD) {
-      ph.opt_out_capturing()
-    }
-  },
-})
+const posthog = posthog_sdk.init.call(
+  posthog_sdk,
+  import.meta.env.VITE_PUBLIC_POSTHOG_KEY,
+  {
+    autocapture: true,
+    defaults: '2025-05-24',
+    person_profiles: 'identified_only',
+
+    api_host: '/api/ph',
+    ui_host: 'eu.posthog.com',
+    // api_host: 'https://ph-production-454b.up.railway.app',
+    // api_host: 'https://eu.i.posthog.com',
+    // disable_compression: true,
+    // loaded(_ph) {
+    //   // if (!import.meta.env.PROD) {
+    //   //   _ph.opt_out_capturing()
+    //   // }
+    // },
+  }
+)
 
 export const getRouter = () => {
   const queryClient = getQueryClient()
