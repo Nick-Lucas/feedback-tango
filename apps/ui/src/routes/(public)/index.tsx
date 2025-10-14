@@ -1,0 +1,382 @@
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { authClient } from '@/lib/auth'
+import { BubbleBackground } from '@/components/ui/shadcn-io/bubble-background'
+import {
+  Sparkles,
+  TrendingUp,
+  Zap,
+  MessageSquare,
+  ArrowRight,
+  CheckCircle2,
+  Infinity as InfinityIcon,
+  ChevronDown,
+} from 'lucide-react'
+import { cn } from '../../lib/utils'
+
+export const Route = createFileRoute('/(public)/')({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  const session = authClient.useSession()
+  const isAuthenticated = !!session.data
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
+      {/* Navigation */}
+      <nav className="px-4 fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xs">
+        <div className="container flex h-16 items-center justify-between justify-self-center">
+          <TangoLogoName />
+
+          <Button asChild variant={isAuthenticated ? 'default' : 'outline'}>
+            <Link to={isAuthenticated ? '/projects' : '/signin'}>
+              {isAuthenticated ? 'Go to App' : 'Sign In'}
+            </Link>
+          </Button>
+        </div>
+      </nav>
+
+      {/* Hero Section with BubbleBackground */}
+      <BubbleBackground interactive={true} className="h-screen relative">
+        <div className="relative z-10 flex flex-col h-screen items-center justify-center px-4">
+          <div className="mx-auto max-w-4xl rounded-3xl bg-background/30 p-12 text-center shadow-2xl backdrop-blur-md">
+            <Badge className="mb-6 border-0 bg-gradient-to-br from-primary to-accent-foreground px-5 py-2 text-sm">
+              <Sparkles className="mr-1 size-3.5" />
+              AI-Powered Feedback Management
+            </Badge>
+            <h1 className="mb-6 bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-6xl font-bold tracking-tight text-transparent drop-shadow-lg">
+              Make Every Customer <br />
+              Voice Count!
+            </h1>
+            <p className="mb-10 text-xl text-foreground/80 drop-shadow-md">
+              Transform chaos into clarity. Tango helps you collect, analyze,
+              and act on customer feedback with the power of AI, turning every
+              voice into actionable insights.
+            </p>
+
+            <div className="flex items-center justify-center gap-4">
+              <Button asChild size="lg" className="group">
+                <Link to={isAuthenticated ? '/projects' : '/signin'}>
+                  Get Started
+                  <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+
+              <Button asChild size="lg" variant="outline">
+                <a
+                  href="#features"
+                  onClick={(e) => {
+                    e.preventDefault()
+
+                    scrollToFeatures()
+                  }}
+                >
+                  Learn More
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Gradient fade overlay */}
+        <div
+          className={cn(
+            ' absolute inset-x-0 bottom-0 z-[50] h-48 bg-gradient-to-t from-background via-background/50 to-transparent',
+            'flex items-end justify-center pb-10'
+          )}
+        >
+          <div className="mt-16 flex justify-center  z-50">
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                scrollToFeatures()
+              }}
+              className="p-2 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Scroll down to features"
+            >
+              <ChevronDown className="size-8" />
+            </button>
+          </div>
+        </div>
+      </BubbleBackground>
+
+      <main className="px-4 justify-self-center">
+        {/* Feature Section 1: Make every user's voice heard */}
+        <section id="features" className="container py-24">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="flex flex-col justify-center">
+              <Badge variant="outline" className="mb-4 w-fit">
+                <InfinityIcon className="mr-1.5 size-3.5" />
+                Unlimited Scale
+              </Badge>
+              <h2 className="mb-4 text-4xl font-bold tracking-tight">
+                Make every user's voice heard
+              </h2>
+              <p className="mb-6 text-lg text-muted-foreground">
+                Tango can process an unlimited amount of customer insight,
+                ensuring that no feedback is ever lost or ignored. Whether you
+                receive 10 or 10,000 pieces of feedback daily, our platform
+                scales effortlessly to meet your needs.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Process unlimited feedback from any source
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Never miss a customer comment or suggestion
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Automatic prioritization based on volume and sentiment
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Real-time processing with instant insights
+                  </span>
+                </li>
+              </ul>
+            </div>
+            <div className="flex items-center justify-center">
+              <CardImage
+                src="/landing/user-voices.png"
+                alt="Infinite user voices being processed"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Section 2: Automatic feedback clustering */}
+        <section className="container py-24">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="order-2 flex items-center justify-center lg:order-1">
+              <CardImage
+                src="/landing/user-voices-clustered.png"
+                alt="Smart clustering of feedback topics"
+              />
+            </div>
+            <div className="order-1 flex flex-col justify-center lg:order-2">
+              <Badge variant="outline" className="mb-4 w-fit">
+                <Sparkles className="mr-1.5 size-3.5" />
+                AI-Powered Organization
+              </Badge>
+              <h2 className="mb-4 text-4xl font-bold tracking-tight">
+                Automatic feedback clustering
+              </h2>
+              <p className="mb-6 text-lg text-muted-foreground">
+                Our advanced AI algorithms automatically group similar feedback
+                together, revealing patterns and trends you might have missed.
+                Spend less time organizing and more time acting on insights.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Intelligent grouping of related feedback topics
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Identify emerging trends before they become critical
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Automatic tagging and categorization
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Discover hidden connections across feedback channels
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Section 3: Turn qualitative into quantitative */}
+        <section className="container py-24">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="flex flex-col justify-center">
+              <Badge variant="outline" className="mb-4 w-fit">
+                <TrendingUp className="mr-1.5 size-3.5" />
+                Data-Driven Insights
+              </Badge>
+              <h2 className="mb-4 text-4xl font-bold tracking-tight">
+                Turn qualitative feedback into quantitative data
+              </h2>
+              <p className="mb-6 text-lg text-muted-foreground">
+                Transform subjective customer opinions into concrete, measurable
+                metrics. Our platform extracts sentiment scores, frequency
+                analysis, and trend data from unstructured feedback, giving you
+                the numbers you need to make informed decisions.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Sentiment analysis with precise scoring
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Track feedback volume and trends over time
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Generate reports that executives understand
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Export data for deeper analysis in your favorite tools
+                  </span>
+                </li>
+              </ul>
+            </div>
+            <div className="flex items-center justify-center">
+              <CardImage
+                src="/landing/user-voices-stats.png"
+                alt="Analytics dashboard showing quantitative data"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Section 4: AI-first */}
+        <section className="container py-24">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="order-2 flex items-center justify-center lg:order-1">
+              <CardImage
+                src="/landing/ai-brain.png"
+                alt="AI-powered technology processing feedback"
+              />
+            </div>
+            <div className="order-1 flex flex-col justify-center lg:order-2">
+              <Badge variant="outline" className="mb-4 w-fit">
+                <Zap className="mr-1.5 size-3.5" />
+                Next-Generation Technology
+              </Badge>
+              <h2 className="mb-4 text-4xl font-bold tracking-tight">
+                AI-first approach
+              </h2>
+              <p className="mb-6 text-lg text-muted-foreground">
+                Built from the ground up with artificial intelligence at its
+                core, Tango doesn't just apply AI as an afterthought—it's
+                fundamental to how we process, understand, and derive value from
+                your customer feedback.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Natural language understanding that improves over time
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Contextual analysis that understands intent and emotion
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Predictive insights to anticipate customer needs
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
+                  <span className="text-muted-foreground">
+                    Continuous learning from your specific feedback patterns
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="container py-24">
+          <Card className="border-2 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10">
+            <CardContent className="flex flex-col items-center py-16 text-center">
+              <h2 className="mb-4 text-4xl font-bold tracking-tight">
+                Ready to transform your feedback?
+              </h2>
+              <p className="mb-8 max-w-2xl text-lg text-muted-foreground">
+                Join teams who are already making better decisions with Tango.
+                Start processing your customer feedback intelligently today.
+              </p>
+              <Button asChild size="lg" className="group">
+                <Link to={isAuthenticated ? '/projects' : '/signin'}>
+                  {isAuthenticated ? 'Go to Dashboard' : 'Get Started for Free'}
+                  <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Footer */}
+        <footer className="border-t py-12">
+          <div className="container">
+            <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+              <TangoLogoName />
+
+              <p className="text-sm text-muted-foreground">
+                © 2025 Tango. Making every voice count.
+              </p>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </div>
+  )
+}
+
+function CardImage(props: { src: string; alt: string }) {
+  return (
+    <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-transparent">
+      <img
+        src={props.src}
+        alt={props.alt}
+        className="size-full object-cover dark:invert dark:hue-rotate-215"
+      />
+    </div>
+  )
+}
+
+function TangoLogoName() {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent-foreground">
+        <MessageSquare className="size-5 text-gray-600" />
+      </div>
+
+      <span className="text-xl font-bold">Tango</span>
+    </div>
+  )
+}
+
+function scrollToFeatures() {
+  document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' })
+}
