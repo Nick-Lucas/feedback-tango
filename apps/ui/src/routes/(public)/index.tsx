@@ -6,13 +6,10 @@ import { Separator } from '@/components/ui/separator'
 import { authClient } from '@/lib/auth'
 import {
   Sparkles,
-  Users,
   TrendingUp,
   Zap,
   BarChart3,
-  Brain,
   MessageSquare,
-  Target,
   ArrowRight,
   CheckCircle2,
   Infinity as InfinityIcon,
@@ -32,8 +29,8 @@ function RouteComponent() {
       <nav className="px-4 fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg">
         <div className="container flex h-16 items-center justify-between justify-self-center">
           <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-600">
-              <MessageSquare className="size-5 text-white" />
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent-foreground">
+              <MessageSquare className="size-5 text-gray-600" />
             </div>
 
             <span className="text-xl font-bold">Tango</span>
@@ -51,7 +48,7 @@ function RouteComponent() {
         {/* Hero Section */}
         <section className="container pt-32 pb-20">
           <div className="mx-auto max-w-4xl text-center">
-            <Badge className="mb-6 bg-gradient-to-r from-purple-500 to-pink-600 px-4 py-1.5 text-sm">
+            <Badge className="mb-6 border-0 bg-gradient-to-br from-primary to-accent-foreground px-5 py-2 text-sm">
               <Sparkles className="mr-1 size-3.5" />
               AI-Powered Feedback Management
             </Badge>
@@ -138,16 +135,10 @@ function RouteComponent() {
               </ul>
             </div>
             <div className="flex items-center justify-center">
-              <Card className="w-full border-2">
-                <CardContent className="flex aspect-square items-center justify-center">
-                  <div className="text-center">
-                    <Users className="mx-auto mb-4 size-24 text-purple-500" />
-                    <p className="text-sm text-muted-foreground">
-                      Infinite User Voices Illustration
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <CardImage
+                src="/landing/user-voices.png"
+                alt="Infinite user voices being processed"
+              />
             </div>
           </div>
         </section>
@@ -156,16 +147,10 @@ function RouteComponent() {
         <section className="container py-24">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="order-2 flex items-center justify-center lg:order-1">
-              <Card className="w-full border-2">
-                <CardContent className="flex aspect-square items-center justify-center">
-                  <div className="text-center">
-                    <Target className="mx-auto mb-4 size-24 text-pink-500" />
-                    <p className="text-sm text-muted-foreground">
-                      Smart Clustering Visualization
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <CardImage
+                src="/landing/user-voices-clustered.png"
+                alt="Smart clustering of feedback topics"
+              />
             </div>
             <div className="order-1 flex flex-col justify-center lg:order-2">
               <Badge variant="outline" className="mb-4 w-fit">
@@ -255,16 +240,10 @@ function RouteComponent() {
               </ul>
             </div>
             <div className="flex items-center justify-center">
-              <Card className="w-full border-2">
-                <CardContent className="flex aspect-square items-center justify-center">
-                  <div className="text-center">
-                    <BarChart3 className="mx-auto mb-4 size-24 text-blue-500" />
-                    <p className="text-sm text-muted-foreground">
-                      Analytics Dashboard Illustration
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <CardImage
+                src="/landing/user-voices-stats.png"
+                alt="Analytics dashboard showing quantitative data"
+              />
             </div>
           </div>
         </section>
@@ -273,16 +252,10 @@ function RouteComponent() {
         <section className="container py-24">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="order-2 flex items-center justify-center lg:order-1">
-              <Card className="w-full border-2">
-                <CardContent className="flex aspect-square items-center justify-center">
-                  <div className="text-center">
-                    <Brain className="mx-auto mb-4 size-24 text-green-500" />
-                    <p className="text-sm text-muted-foreground">
-                      AI Technology Illustration
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <CardImage
+                src="/landing/ai-brain.png"
+                alt="AI-powered technology processing feedback"
+              />
             </div>
             <div className="order-1 flex flex-col justify-center lg:order-2">
               <Badge variant="outline" className="mb-4 w-fit">
@@ -366,6 +339,18 @@ function RouteComponent() {
           </div>
         </footer>
       </main>
+    </div>
+  )
+}
+
+function CardImage(props: { src: string; alt: string }) {
+  return (
+    <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-transparent">
+      <img
+        src={props.src}
+        alt={props.alt}
+        className="size-full object-cover dark:invert dark:hue-rotate-180"
+      />
     </div>
   )
 }
