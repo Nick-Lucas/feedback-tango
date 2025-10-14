@@ -67,6 +67,7 @@
     "lucide-react": "catalog:",
     "motion": "catalog:",
     "next-themes": "catalog:",
+    "posthog-js": "catalog:",
     "react": "^19.0.0",
     "react-day-picker": "catalog:",
     "react-dom": "^19.0.0",

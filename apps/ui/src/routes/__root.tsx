@@ -12,44 +12,46 @@ import { FeedbackButton } from '@/components/feedback-button'
 import type { QueryClient } from '@tanstack/react-query'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import type { PostHog } from 'posthog-js'
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
-  {
-    head: () => ({
-      meta: [
-        {
-          charSet: 'utf-8',
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1',
-        },
-        {
-          title: 'Feedback Tango',
-        },
-      ],
-      links: [
-        {
-          rel: 'stylesheet',
-          href: appCss,
-        },
-      ],
-    }),
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient
+  posthog: PostHog
+}>()({
+  head: () => ({
+    meta: [
+      {
+        charSet: 'utf-8',
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
+      },
+      {
+        title: 'Feedback Tango',
+      },
+    ],
+    links: [
+      {
+        rel: 'stylesheet',
+        href: appCss,
+      },
+    ],
+  }),
 
-    shellComponent: RootDocument,
+  shellComponent: RootDocument,
 
-    errorComponent: ({ error }) => {
-      return (
-        <div className="flex h-screen w-screen flex-col items-center justify-center bg-background text-foreground">
-          <h1 className="mb-4 text-2xl font-bold">App Error</h1>
-          <pre className="max-w-md whitespace-pre-wrap rounded bg-red-200 p-4 font-mono text-sm text-red-900">
-            {error.message}
-          </pre>
-        </div>
-      )
-    },
-  }
-)
+  errorComponent: ({ error }) => {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center bg-background text-foreground">
+        <h1 className="mb-4 text-2xl font-bold">App Error</h1>
+        <pre className="max-w-md whitespace-pre-wrap rounded bg-red-200 p-4 font-mono text-sm text-red-900">
+          {error.message}
+        </pre>
+      </div>
+    )
+  },
+})
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const queryClient = Route.useRouteContext().queryClient

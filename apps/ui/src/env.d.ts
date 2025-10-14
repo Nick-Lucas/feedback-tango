@@ -5,6 +5,8 @@ interface ImportMetaEnv {
   readonly VITE_BETTER_AUTH_URL: string
   readonly VITE_SELF_FEEDBACK_ENDPOINT: string
   readonly VITE_SELF_FEEDBACK_PUBLIC_KEY?: string
+  readonly VITE_PUBLIC_POSTHOG_KEY: string
+  readonly VITE_PUBLIC_POSTHOG_HOST: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
