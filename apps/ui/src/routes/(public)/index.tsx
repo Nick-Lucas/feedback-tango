@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { authClient } from '@/lib/auth'
-import { BubbleBackground } from '@/components/ui/shadcn-io/bubble-background'
 import {
   Sparkles,
   TrendingUp,
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { useIsMobile } from '../../hooks/use-mobile'
+import { SafariSafeBubbleBackground } from '@/components/SafariSafeBubbleBackground'
 
 export const Route = createFileRoute('/(public)/')({
   component: RouteComponent,
@@ -41,7 +42,10 @@ function RouteComponent() {
       </nav>
 
       {/* Hero Section with BubbleBackground */}
-      <BubbleBackground interactive={true} className="h-screen relative ">
+      <SafariSafeBubbleBackground
+        interactive={true}
+        className="h-screen relative "
+      >
         <div className="relative z-10 flex flex-col h-screen items-center justify-center px-4">
           <div
             className={cn(
@@ -114,7 +118,7 @@ function RouteComponent() {
             </button>
           </div>
         </div>
-      </BubbleBackground>
+      </SafariSafeBubbleBackground>
 
       <main className="px-4 justify-self-center">
         {/* Feature Section 1: Make every user's voice heard */}

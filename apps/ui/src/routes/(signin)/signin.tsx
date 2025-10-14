@@ -3,8 +3,8 @@ import { Card } from '@/components/ui/card'
 import { authClient } from '@/lib/auth'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import z from 'zod'
-import { BubbleBackground } from '@/components/ui/shadcn-io/bubble-background'
 import { cn } from '@/lib/utils'
+import { SafariSafeBubbleBackground } from '@/components/SafariSafeBubbleBackground'
 
 export const Route = createFileRoute('/(signin)/signin')({
   component: RouteComponent,
@@ -22,9 +22,9 @@ function RouteComponent() {
   }
 
   return (
-    <BubbleBackground interactive={true} className="min-h-screen">
+    <SafariSafeBubbleBackground interactive={true} className="min-h-screen">
       <SignInContent callbackURL={callbackURL} />
-    </BubbleBackground>
+    </SafariSafeBubbleBackground>
   )
 }
 
