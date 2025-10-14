@@ -6,7 +6,7 @@ import z from 'zod'
 import { BubbleBackground } from '@/components/ui/shadcn-io/bubble-background'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/signin')({
+export const Route = createFileRoute('/(signin)/signin')({
   component: RouteComponent,
   validateSearch: z.object({
     redirect: z.string().optional(),
