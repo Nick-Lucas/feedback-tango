@@ -77,7 +77,7 @@ function RouteComponent() {
           <div className="mt-16 flex justify-center">
             <a
               href="#features"
-              className="animate-bounce text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Scroll down to features"
             >
               <ChevronDown className="size-8" />
@@ -346,7 +346,7 @@ function CardImage(props: { src: string; alt: string }) {
       <img
         src={props.src}
         alt={props.alt}
-        className="size-full object-cover dark:invert dark:hue-rotate-180"
+        className="size-full object-cover dark:invert dark:hue-rotate-215"
       />
     </div>
   )
