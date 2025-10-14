@@ -366,7 +366,7 @@ function CardImage(props: { src: string; alt: string }) {
   }
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center opacity-75">
       <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-transparent">
         <img
           src={props.src}
