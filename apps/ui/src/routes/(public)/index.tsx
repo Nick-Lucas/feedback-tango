@@ -2,7 +2,6 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { authClient } from '@/lib/auth'
 import { BubbleBackground } from '@/components/ui/shadcn-io/bubble-background'
 import {
@@ -29,13 +28,7 @@ function RouteComponent() {
       {/* Navigation */}
       <nav className="px-4 fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xs">
         <div className="container flex h-16 items-center justify-between justify-self-center">
-          <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent-foreground">
-              <MessageSquare className="size-5 text-gray-600" />
-            </div>
-
-            <span className="text-xl font-bold">Tango</span>
-          </div>
+          <TangoLogoName />
 
           <Button asChild variant={isAuthenticated ? 'default' : 'outline'}>
             <Link to={isAuthenticated ? '/projects' : '/signin'}>
@@ -54,13 +47,15 @@ function RouteComponent() {
               AI-Powered Feedback Management
             </Badge>
             <h1 className="mb-6 bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-6xl font-bold tracking-tight text-transparent drop-shadow-lg">
-              Customer Feedback from Anywhere!
+              Make Every Customer <br />
+              Voice Count!
             </h1>
-            <p className="mb-10 text-xl text-muted-foreground drop-shadow-md">
+            <p className="mb-10 text-xl text-foreground/80 drop-shadow-md">
               Transform chaos into clarity. Tango helps you collect, analyze,
               and act on customer feedback with the power of AI, turning every
               voice into actionable insights.
             </p>
+
             <div className="flex items-center justify-center gap-4">
               <Button asChild size="lg" className="group">
                 <Link to={isAuthenticated ? '/projects' : '/signin'}>
@@ -68,20 +63,33 @@ function RouteComponent() {
                   <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
+
               <Button asChild size="lg" variant="outline">
-                <a href="#features">Learn More</a>
+                <a
+                  href="#features"
+                  onClick={(e) => {
+                    e.preventDefault()
+
+                    scrollToFeatures()
+                  }}
+                >
+                  Learn More
+                </a>
               </Button>
             </div>
           </div>
 
           <div className="mt-16 flex justify-center">
-            <a
-              href="#features"
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                scrollToFeatures()
+              }}
               className="text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Scroll down to features"
             >
               <ChevronDown className="size-8" />
-            </a>
+            </button>
           </div>
         </div>
       </BubbleBackground>
@@ -323,12 +331,8 @@ function RouteComponent() {
         <footer className="border-t py-12">
           <div className="container">
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-              <div className="flex items-center gap-2">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-600">
-                  <MessageSquare className="size-5 text-white" />
-                </div>
-                <span className="text-lg font-bold">Tango</span>
-              </div>
+              <TangoLogoName />
+
               <p className="text-sm text-muted-foreground">
                 © 2025 Tango. Making every voice count.
               </p>
@@ -350,4 +354,20 @@ function CardImage(props: { src: string; alt: string }) {
       />
     </div>
   )
+}
+
+function TangoLogoName() {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent-foreground">
+        <MessageSquare className="size-5 text-gray-600" />
+      </div>
+
+      <span className="text-xl font-bold">Tango</span>
+    </div>
+  )
+}
+
+function scrollToFeatures() {
+  document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' })
 }
