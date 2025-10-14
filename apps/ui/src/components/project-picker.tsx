@@ -27,6 +27,7 @@ import { Label } from '@/components/ui/label'
 import { Check, ChevronsUpDown, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useProjectsQuery, useCreateProjectMutation } from '@/lib/query-options'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 interface ProjectPickerProps {
   className?: string
@@ -43,9 +44,10 @@ export function ProjectPicker({ className }: ProjectPickerProps) {
   const createProjectMutation = useCreateProjectMutation()
 
   const [open, setOpen] = useState(false)
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [projectName, setProjectName] = useState('')
 
+  const isMobile = useIsMobile()
   const selectedProject = projects.find((p) => p.id === projectId)
 
   const handleCreateProject = async () => {
@@ -60,13 +62,61 @@ export function ProjectPicker({ className }: ProjectPickerProps) {
       })
 
       setProjectName('')
-      setDialogOpen(false)
+      setCreateDialogOpen(false)
     }
   }
 
+  const commandContent = (
+    <Command>
+      <CommandInput placeholder="Search projects..." />
+      <CommandList>
+        <CommandEmpty>No project found.</CommandEmpty>
+        <CommandGroup>
+          {projects.map((project) => (
+            <CommandItem
+              key={project.id}
+              value={project.name}
+              onSelect={async () => {
+                await navigate({
+                  to: leafMatchId,
+                  params: {
+                    projectId: project.id,
+                  },
+                })
+
+                setOpen(false)
+              }}
+            >
+              <Check
+                className={cn(
+                  'mr-2 h-4 w-4',
+                  selectedProject?.id === project.id
+                    ? 'opacity-100'
+                    : 'opacity-0'
+                )}
+              />
+              {project.name}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        <CommandGroup>
+          <CommandItem
+            onSelect={() => {
+              setOpen(false)
+              setCreateDialogOpen(true)
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Create project
+          </CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  )
+
   return (
     <>
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Project</DialogTitle>
@@ -96,7 +146,7 @@ export function ProjectPicker({ className }: ProjectPickerProps) {
             <Button
               variant="outline"
               onClick={() => {
-                setDialogOpen(false)
+                setCreateDialogOpen(false)
                 setProjectName('')
               }}
             >
@@ -112,12 +162,13 @@ export function ProjectPicker({ className }: ProjectPickerProps) {
         </DialogContent>
       </Dialog>
 
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+      {isMobile ? (
+        <>
           <Button
             variant="ghost"
             role="combobox"
             aria-expanded={open}
+            onClick={() => setOpen(true)}
             className={cn(
               'h-7 justify-between px-2 hover:bg-background/50',
               className
@@ -126,56 +177,37 @@ export function ProjectPicker({ className }: ProjectPickerProps) {
             {selectedProject?.name || 'Select project...'}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
-        </PopoverTrigger>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent
+              showCloseButton={false}
+              className="p-0 gap-0 max-w-[calc(100vw-2rem)] top-[4rem] translate-y-0"
+            >
+              {commandContent}
+            </DialogContent>
+          </Dialog>
+        </>
+      ) : (
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              role="combobox"
+              aria-expanded={open}
+              className={cn(
+                'h-7 justify-between px-2 hover:bg-background/50',
+                className
+              )}
+            >
+              {selectedProject?.name || 'Select project...'}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
 
-        <PopoverContent className="w-80 p-0" align="start">
-          <Command>
-            <CommandInput placeholder="Search projects..." />
-            <CommandList>
-              <CommandEmpty>No project found.</CommandEmpty>
-              <CommandGroup>
-                {projects.map((project) => (
-                  <CommandItem
-                    key={project.id}
-                    value={project.name}
-                    onSelect={async () => {
-                      await navigate({
-                        to: leafMatchId,
-                        params: {
-                          projectId: project.id,
-                        },
-                      })
-
-                      setOpen(false)
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        'mr-2 h-4 w-4',
-                        selectedProject?.id === project.id
-                          ? 'opacity-100'
-                          : 'opacity-0'
-                      )}
-                    />
-                    {project.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-              <CommandGroup>
-                <CommandItem
-                  onSelect={() => {
-                    setOpen(false)
-                    setDialogOpen(true)
-                  }}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create project
-                </CommandItem>
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
+          <PopoverContent className="w-80 p-0" align="start">
+            {commandContent}
+          </PopoverContent>
+        </Popover>
+      )}
     </>
   )
 }

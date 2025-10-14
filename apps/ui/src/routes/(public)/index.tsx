@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { authClient } from '@/lib/auth'
-import { BubbleBackground } from '@/components/ui/shadcn-io/bubble-background'
 import {
   Sparkles,
   TrendingUp,
@@ -15,6 +15,8 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
+import { useIsMobile } from '../../hooks/use-mobile'
+import { SafariSafeBubbleBackground } from '@/components/SafariSafeBubbleBackground'
 
 export const Route = createFileRoute('/(public)/')({
   component: RouteComponent,
@@ -40,18 +42,33 @@ function RouteComponent() {
       </nav>
 
       {/* Hero Section with BubbleBackground */}
-      <BubbleBackground interactive={true} className="h-screen relative">
+      <SafariSafeBubbleBackground
+        interactive={true}
+        className="h-screen relative "
+      >
         <div className="relative z-10 flex flex-col h-screen items-center justify-center px-4">
-          <div className="mx-auto max-w-4xl rounded-3xl bg-background/30 p-12 text-center shadow-2xl backdrop-blur-md">
+          <div
+            className={cn(
+              'flex flex-col items-center',
+              'mx-auto max-w-4xl rounded-3xl bg-background/30 text-center shadow-2xl backdrop-blur-md',
+              'py-8 px-4 md:p-12'
+            )}
+          >
             <Badge className="mb-6 border-0 bg-gradient-to-br from-primary to-accent-foreground px-5 py-2 text-sm">
               <Sparkles className="mr-1 size-3.5" />
-              AI-Powered Feedback Management
+              AI-Powered Feedback
             </Badge>
-            <h1 className="mb-6 bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-6xl font-bold tracking-tight text-transparent drop-shadow-lg">
-              Make Every Customer <br />
-              Voice Count!
+
+            <h1
+              className={cn(
+                'mb-6 bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text',
+                'max-w-150 text-4xl lg:text-6xl font-bold tracking-tight text-transparent drop-shadow-lg'
+              )}
+            >
+              Make Every Customer Voice Count!
             </h1>
-            <p className="mb-10 text-xl text-foreground/80 drop-shadow-md">
+
+            <p className="mb-10 text-md md:text-lg text-foreground/80 drop-shadow-md">
               Transform chaos into clarity. Tango helps you collect, analyze,
               and act on customer feedback with the power of AI, turning every
               voice into actionable insights.
@@ -101,11 +118,11 @@ function RouteComponent() {
             </button>
           </div>
         </div>
-      </BubbleBackground>
+      </SafariSafeBubbleBackground>
 
       <main className="px-4 justify-self-center">
         {/* Feature Section 1: Make every user's voice heard */}
-        <section id="features" className="container py-24">
+        <Section id="features">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col justify-center">
               <Badge variant="outline" className="mb-4 w-fit">
@@ -148,24 +165,20 @@ function RouteComponent() {
                 </li>
               </ul>
             </div>
-            <div className="flex items-center justify-center">
-              <CardImage
-                src="/landing/user-voices.png"
-                alt="Infinite user voices being processed"
-              />
-            </div>
+            <CardImage
+              src="/landing/user-voices.png"
+              alt="Infinite user voices being processed"
+            />
           </div>
-        </section>
+        </Section>
 
         {/* Feature Section 2: Automatic feedback clustering */}
-        <section className="container py-24">
+        <Section>
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-            <div className="order-2 flex items-center justify-center lg:order-1">
-              <CardImage
-                src="/landing/user-voices-clustered.png"
-                alt="Smart clustering of feedback topics"
-              />
-            </div>
+            <CardImage
+              src="/landing/user-voices-clustered.png"
+              alt="Smart clustering of feedback topics"
+            />
             <div className="order-1 flex flex-col justify-center lg:order-2">
               <Badge variant="outline" className="mb-4 w-fit">
                 <Sparkles className="mr-1.5 size-3.5" />
@@ -207,10 +220,10 @@ function RouteComponent() {
               </ul>
             </div>
           </div>
-        </section>
+        </Section>
 
         {/* Feature Section 3: Turn qualitative into quantitative */}
-        <section className="container py-24">
+        <Section>
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col justify-center">
               <Badge variant="outline" className="mb-4 w-fit">
@@ -253,24 +266,20 @@ function RouteComponent() {
                 </li>
               </ul>
             </div>
-            <div className="flex items-center justify-center">
-              <CardImage
-                src="/landing/user-voices-stats.png"
-                alt="Analytics dashboard showing quantitative data"
-              />
-            </div>
+            <CardImage
+              src="/landing/user-voices-stats.png"
+              alt="Analytics dashboard showing quantitative data"
+            />
           </div>
-        </section>
+        </Section>
 
         {/* Feature Section 4: AI-first */}
-        <section className="container py-24">
+        <Section>
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-            <div className="order-2 flex items-center justify-center lg:order-1">
-              <CardImage
-                src="/landing/ai-brain.png"
-                alt="AI-powered technology processing feedback"
-              />
-            </div>
+            <CardImage
+              src="/landing/ai-brain.png"
+              alt="AI-powered technology processing feedback"
+            />
             <div className="order-1 flex flex-col justify-center lg:order-2">
               <Badge variant="outline" className="mb-4 w-fit">
                 <Zap className="mr-1.5 size-3.5" />
@@ -313,19 +322,20 @@ function RouteComponent() {
               </ul>
             </div>
           </div>
-        </section>
+        </Section>
 
         {/* CTA Section */}
-        <section className="container py-24">
+        <section className="container py-6 md:py-24">
           <Card className="border-2 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10">
-            <CardContent className="flex flex-col items-center py-16 text-center">
-              <h2 className="mb-4 text-4xl font-bold tracking-tight">
+            <CardContent className="flex flex-col items-center py-4 md:py-16 text-center">
+              <h2 className="mb-4 text-2xl md:text-4xl font-bold tracking-tight">
                 Ready to transform your feedback?
               </h2>
-              <p className="mb-8 max-w-2xl text-lg text-muted-foreground">
+              <p className="mb-8 max-w-2xl text-md md:text-lg text-muted-foreground">
                 Join teams who are already making better decisions with Tango.
                 Start processing your customer feedback intelligently today.
               </p>
+
               <Button asChild size="lg" className="group">
                 <Link to={isAuthenticated ? '/projects' : '/signin'}>
                   {isAuthenticated ? 'Go to Dashboard' : 'Get Started for Free'}
@@ -354,13 +364,20 @@ function RouteComponent() {
 }
 
 function CardImage(props: { src: string; alt: string }) {
+  const isMobile = useIsMobile()
+  if (isMobile) {
+    return null
+  }
+
   return (
-    <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-transparent">
-      <img
-        src={props.src}
-        alt={props.alt}
-        className="size-full object-cover dark:invert dark:hue-rotate-215"
-      />
+    <div className="flex items-center justify-center opacity-75">
+      <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-transparent">
+        <img
+          src={props.src}
+          alt={props.alt}
+          className="size-full object-cover dark:invert dark:hue-rotate-215"
+        />
+      </div>
     </div>
   )
 }
@@ -374,6 +391,14 @@ function TangoLogoName() {
 
       <span className="text-xl font-bold">Tango</span>
     </div>
+  )
+}
+
+function Section(props: { id?: string; children: React.ReactNode }) {
+  return (
+    <section id={props.id} className="container py-6 md:py-24">
+      {props.children}
+    </section>
   )
 }
 

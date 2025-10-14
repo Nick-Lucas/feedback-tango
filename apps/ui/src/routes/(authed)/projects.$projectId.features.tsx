@@ -168,8 +168,8 @@ function App() {
         </Sidebar>
 
         <main className="flex-1 p-6 pt-16 relative">
-          <div className="md:hidden fixed top-2 left-2 z-50">
-            <SidebarTrigger className="size-8" />
+          <div className="md:hidden fixed top-4 left-4 z-50">
+            <SidebarTrigger className="size-9" />
           </div>
           <Outlet />
         </main>
