@@ -18,7 +18,9 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 
-export const Route = createFileRoute('/(authed)/projects/$projectId/raw-feedback')({
+export const Route = createFileRoute(
+  '/(authed)/projects/$projectId/raw-feedback'
+)({
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>) => {
     return {

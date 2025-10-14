@@ -42,7 +42,9 @@ export function ProjectTabs() {
       <ProjectPicker />
       {tabs.map((tab) => {
         const Icon = tab.icon
-        const isActive = leafMatch.routeId.startsWith(tab.to)
+
+        // TODO: router probably has a method which can do this better
+        const isActive = leafMatch.fullPath.startsWith(tab.to)
 
         return (
           <Link

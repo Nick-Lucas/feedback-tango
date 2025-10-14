@@ -182,25 +182,16 @@ export function ProjectPicker({ className }: ProjectPickerProps) {
 function useProjectRouteId() {
   return useMatches({
     select(matches) {
-      const routeId = matches[matches.length - 1].routeId
+      const routePath = matches[matches.length - 1].fullPath
 
-      type StripTrailingSlash<S extends string> = S extends `${infer T}/`
-        ? T
-        : S
-      type StripAuthed<S extends string> = S extends `/(authed)${infer T}`
-        ? T
-        : S
-      type ProjectIdRoutes = StripAuthed<
-        StripTrailingSlash<
-          Extract<
-            typeof routeId,
-            | `/(authed)/projects/$projectId`
-            | `/(authed)/projects/$projectId/${string}`
-          >
-        >
+      type StripTrailingSlash<TPath extends string> =
+        TPath extends `${infer TStrippedPath}/` ? TStrippedPath : TPath
+
+      type ProjectIdRoutes = StripTrailingSlash<
+        Extract<typeof routePath, `/projects/$projectId/${string}`>
       >
 
-      return routeId as ProjectIdRoutes
+      return routePath as ProjectIdRoutes
     },
   })
 }
