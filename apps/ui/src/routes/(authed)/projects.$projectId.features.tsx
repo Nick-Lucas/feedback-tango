@@ -27,7 +27,7 @@ import {
   useFeaturesQuery,
 } from '@/lib/query-options'
 
-export const Route = createFileRoute('/projects/$projectId/features')({
+export const Route = createFileRoute('/(authed)/projects/$projectId/features')({
   component: App,
   async loader(ctx) {
     const projectId = ctx.params.projectId

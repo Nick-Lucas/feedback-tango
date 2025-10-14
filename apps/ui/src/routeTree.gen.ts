@@ -10,142 +10,150 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SigninRouteImport } from './routes/signin'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
-import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
+import { Route as authedRouteRouteImport } from './routes/(authed)/route'
+import { Route as authedIndexRouteImport } from './routes/(authed)/index'
 import { Route as ApiAuthRouteImport } from './routes/api.auth'
-import { Route as ProjectsProjectIdIndexRouteImport } from './routes/projects.$projectId.index'
 import { Route as CliSigninIndexRouteImport } from './routes/cli.signin.index'
-import { Route as ProjectsProjectIdRawFeedbackRouteImport } from './routes/projects.$projectId.raw-feedback'
-import { Route as ProjectsProjectIdFeaturesRouteImport } from './routes/projects.$projectId.features'
-import { Route as ProjectsProjectIdConfigRouteImport } from './routes/projects.$projectId.config'
-import { Route as ProjectsProjectIdFeaturesIndexRouteImport } from './routes/projects.$projectId.features.index'
+import { Route as authedProjectsIndexRouteImport } from './routes/(authed)/projects.index'
+import { Route as authedProjectsProjectIdRouteImport } from './routes/(authed)/projects.$projectId'
 import { Route as CliSigninCompleteIndexRouteImport } from './routes/cli.signin.complete.index'
-import { Route as ProjectsProjectIdFeedbackFeedbackIdRouteImport } from './routes/projects.$projectId.feedback.$feedbackId'
-import { Route as ProjectsProjectIdFeaturesFeatureIdRouteImport } from './routes/projects.$projectId.features.$featureId'
+import { Route as authedProjectsProjectIdIndexRouteImport } from './routes/(authed)/projects.$projectId.index'
+import { Route as authedProjectsProjectIdRawFeedbackRouteImport } from './routes/(authed)/projects.$projectId.raw-feedback'
+import { Route as authedProjectsProjectIdFeaturesRouteImport } from './routes/(authed)/projects.$projectId.features'
+import { Route as authedProjectsProjectIdConfigRouteImport } from './routes/(authed)/projects.$projectId.config'
+import { Route as authedProjectsProjectIdFeaturesIndexRouteImport } from './routes/(authed)/projects.$projectId.features.index'
+import { Route as authedProjectsProjectIdFeedbackFeedbackIdRouteImport } from './routes/(authed)/projects.$projectId.feedback.$feedbackId'
+import { Route as authedProjectsProjectIdFeaturesFeatureIdRouteImport } from './routes/(authed)/projects.$projectId.features.$featureId'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const authedRouteRoute = authedRouteRouteImport.update({
+  id: '/(authed)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authedIndexRoute = authedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
-  id: '/projects/',
-  path: '/projects/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
-  id: '/projects/$projectId',
-  path: '/projects/$projectId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => authedRouteRoute,
 } as any)
 const ApiAuthRoute = ApiAuthRouteImport.update({
   id: '/api/auth',
   path: '/api/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsProjectIdIndexRoute = ProjectsProjectIdIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ProjectsProjectIdRoute,
-} as any)
 const CliSigninIndexRoute = CliSigninIndexRouteImport.update({
   id: '/cli/signin/',
   path: '/cli/signin/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsProjectIdRawFeedbackRoute =
-  ProjectsProjectIdRawFeedbackRouteImport.update({
-    id: '/raw-feedback',
-    path: '/raw-feedback',
-    getParentRoute: () => ProjectsProjectIdRoute,
-  } as any)
-const ProjectsProjectIdFeaturesRoute =
-  ProjectsProjectIdFeaturesRouteImport.update({
-    id: '/features',
-    path: '/features',
-    getParentRoute: () => ProjectsProjectIdRoute,
-  } as any)
-const ProjectsProjectIdConfigRoute = ProjectsProjectIdConfigRouteImport.update({
-  id: '/config',
-  path: '/config',
-  getParentRoute: () => ProjectsProjectIdRoute,
+const authedProjectsIndexRoute = authedProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => authedRouteRoute,
 } as any)
-const ProjectsProjectIdFeaturesIndexRoute =
-  ProjectsProjectIdFeaturesIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => ProjectsProjectIdFeaturesRoute,
-  } as any)
+const authedProjectsProjectIdRoute = authedProjectsProjectIdRouteImport.update({
+  id: '/projects/$projectId',
+  path: '/projects/$projectId',
+  getParentRoute: () => authedRouteRoute,
+} as any)
 const CliSigninCompleteIndexRoute = CliSigninCompleteIndexRouteImport.update({
   id: '/cli/signin/complete/',
   path: '/cli/signin/complete/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsProjectIdFeedbackFeedbackIdRoute =
-  ProjectsProjectIdFeedbackFeedbackIdRouteImport.update({
+const authedProjectsProjectIdIndexRoute =
+  authedProjectsProjectIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => authedProjectsProjectIdRoute,
+  } as any)
+const authedProjectsProjectIdRawFeedbackRoute =
+  authedProjectsProjectIdRawFeedbackRouteImport.update({
+    id: '/raw-feedback',
+    path: '/raw-feedback',
+    getParentRoute: () => authedProjectsProjectIdRoute,
+  } as any)
+const authedProjectsProjectIdFeaturesRoute =
+  authedProjectsProjectIdFeaturesRouteImport.update({
+    id: '/features',
+    path: '/features',
+    getParentRoute: () => authedProjectsProjectIdRoute,
+  } as any)
+const authedProjectsProjectIdConfigRoute =
+  authedProjectsProjectIdConfigRouteImport.update({
+    id: '/config',
+    path: '/config',
+    getParentRoute: () => authedProjectsProjectIdRoute,
+  } as any)
+const authedProjectsProjectIdFeaturesIndexRoute =
+  authedProjectsProjectIdFeaturesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => authedProjectsProjectIdFeaturesRoute,
+  } as any)
+const authedProjectsProjectIdFeedbackFeedbackIdRoute =
+  authedProjectsProjectIdFeedbackFeedbackIdRouteImport.update({
     id: '/feedback/$feedbackId',
     path: '/feedback/$feedbackId',
-    getParentRoute: () => ProjectsProjectIdRoute,
+    getParentRoute: () => authedProjectsProjectIdRoute,
   } as any)
-const ProjectsProjectIdFeaturesFeatureIdRoute =
-  ProjectsProjectIdFeaturesFeatureIdRouteImport.update({
+const authedProjectsProjectIdFeaturesFeatureIdRoute =
+  authedProjectsProjectIdFeaturesFeatureIdRouteImport.update({
     id: '/$featureId',
     path: '/$featureId',
-    getParentRoute: () => ProjectsProjectIdFeaturesRoute,
+    getParentRoute: () => authedProjectsProjectIdFeaturesRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof authedIndexRoute
   '/signin': typeof SigninRoute
   '/api/auth': typeof ApiAuthRoute
-  '/projects/$projectId': typeof ProjectsProjectIdRouteWithChildren
-  '/projects': typeof ProjectsIndexRoute
-  '/projects/$projectId/config': typeof ProjectsProjectIdConfigRoute
-  '/projects/$projectId/features': typeof ProjectsProjectIdFeaturesRouteWithChildren
-  '/projects/$projectId/raw-feedback': typeof ProjectsProjectIdRawFeedbackRoute
+  '/projects/$projectId': typeof authedProjectsProjectIdRouteWithChildren
+  '/projects': typeof authedProjectsIndexRoute
   '/cli/signin': typeof CliSigninIndexRoute
-  '/projects/$projectId/': typeof ProjectsProjectIdIndexRoute
-  '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
-  '/projects/$projectId/feedback/$feedbackId': typeof ProjectsProjectIdFeedbackFeedbackIdRoute
+  '/projects/$projectId/config': typeof authedProjectsProjectIdConfigRoute
+  '/projects/$projectId/features': typeof authedProjectsProjectIdFeaturesRouteWithChildren
+  '/projects/$projectId/raw-feedback': typeof authedProjectsProjectIdRawFeedbackRoute
+  '/projects/$projectId/': typeof authedProjectsProjectIdIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteIndexRoute
-  '/projects/$projectId/features/': typeof ProjectsProjectIdFeaturesIndexRoute
+  '/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRoute
+  '/projects/$projectId/feedback/$feedbackId': typeof authedProjectsProjectIdFeedbackFeedbackIdRoute
+  '/projects/$projectId/features/': typeof authedProjectsProjectIdFeaturesIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/signin': typeof SigninRoute
   '/api/auth': typeof ApiAuthRoute
-  '/projects': typeof ProjectsIndexRoute
-  '/projects/$projectId/config': typeof ProjectsProjectIdConfigRoute
-  '/projects/$projectId/raw-feedback': typeof ProjectsProjectIdRawFeedbackRoute
+  '/': typeof authedIndexRoute
+  '/projects': typeof authedProjectsIndexRoute
   '/cli/signin': typeof CliSigninIndexRoute
-  '/projects/$projectId': typeof ProjectsProjectIdIndexRoute
-  '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
-  '/projects/$projectId/feedback/$feedbackId': typeof ProjectsProjectIdFeedbackFeedbackIdRoute
+  '/projects/$projectId/config': typeof authedProjectsProjectIdConfigRoute
+  '/projects/$projectId/raw-feedback': typeof authedProjectsProjectIdRawFeedbackRoute
+  '/projects/$projectId': typeof authedProjectsProjectIdIndexRoute
   '/cli/signin/complete': typeof CliSigninCompleteIndexRoute
-  '/projects/$projectId/features': typeof ProjectsProjectIdFeaturesIndexRoute
+  '/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRoute
+  '/projects/$projectId/feedback/$feedbackId': typeof authedProjectsProjectIdFeedbackFeedbackIdRoute
+  '/projects/$projectId/features': typeof authedProjectsProjectIdFeaturesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/(authed)': typeof authedRouteRouteWithChildren
   '/signin': typeof SigninRoute
   '/api/auth': typeof ApiAuthRoute
-  '/projects/$projectId': typeof ProjectsProjectIdRouteWithChildren
-  '/projects/': typeof ProjectsIndexRoute
-  '/projects/$projectId/config': typeof ProjectsProjectIdConfigRoute
-  '/projects/$projectId/features': typeof ProjectsProjectIdFeaturesRouteWithChildren
-  '/projects/$projectId/raw-feedback': typeof ProjectsProjectIdRawFeedbackRoute
+  '/(authed)/': typeof authedIndexRoute
+  '/(authed)/projects/$projectId': typeof authedProjectsProjectIdRouteWithChildren
+  '/(authed)/projects/': typeof authedProjectsIndexRoute
   '/cli/signin/': typeof CliSigninIndexRoute
-  '/projects/$projectId/': typeof ProjectsProjectIdIndexRoute
-  '/projects/$projectId/features/$featureId': typeof ProjectsProjectIdFeaturesFeatureIdRoute
-  '/projects/$projectId/feedback/$feedbackId': typeof ProjectsProjectIdFeedbackFeedbackIdRoute
+  '/(authed)/projects/$projectId/config': typeof authedProjectsProjectIdConfigRoute
+  '/(authed)/projects/$projectId/features': typeof authedProjectsProjectIdFeaturesRouteWithChildren
+  '/(authed)/projects/$projectId/raw-feedback': typeof authedProjectsProjectIdRawFeedbackRoute
+  '/(authed)/projects/$projectId/': typeof authedProjectsProjectIdIndexRoute
   '/cli/signin/complete/': typeof CliSigninCompleteIndexRoute
-  '/projects/$projectId/features/': typeof ProjectsProjectIdFeaturesIndexRoute
+  '/(authed)/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRoute
+  '/(authed)/projects/$projectId/feedback/$feedbackId': typeof authedProjectsProjectIdFeedbackFeedbackIdRoute
+  '/(authed)/projects/$projectId/features/': typeof authedProjectsProjectIdFeaturesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -155,53 +163,52 @@ export interface FileRouteTypes {
     | '/api/auth'
     | '/projects/$projectId'
     | '/projects'
+    | '/cli/signin'
     | '/projects/$projectId/config'
     | '/projects/$projectId/features'
     | '/projects/$projectId/raw-feedback'
-    | '/cli/signin'
     | '/projects/$projectId/'
+    | '/cli/signin/complete'
     | '/projects/$projectId/features/$featureId'
     | '/projects/$projectId/feedback/$feedbackId'
-    | '/cli/signin/complete'
     | '/projects/$projectId/features/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/signin'
     | '/api/auth'
+    | '/'
     | '/projects'
+    | '/cli/signin'
     | '/projects/$projectId/config'
     | '/projects/$projectId/raw-feedback'
-    | '/cli/signin'
     | '/projects/$projectId'
+    | '/cli/signin/complete'
     | '/projects/$projectId/features/$featureId'
     | '/projects/$projectId/feedback/$feedbackId'
-    | '/cli/signin/complete'
     | '/projects/$projectId/features'
   id:
     | '__root__'
-    | '/'
+    | '/(authed)'
     | '/signin'
     | '/api/auth'
-    | '/projects/$projectId'
-    | '/projects/'
-    | '/projects/$projectId/config'
-    | '/projects/$projectId/features'
-    | '/projects/$projectId/raw-feedback'
+    | '/(authed)/'
+    | '/(authed)/projects/$projectId'
+    | '/(authed)/projects/'
     | '/cli/signin/'
-    | '/projects/$projectId/'
-    | '/projects/$projectId/features/$featureId'
-    | '/projects/$projectId/feedback/$feedbackId'
+    | '/(authed)/projects/$projectId/config'
+    | '/(authed)/projects/$projectId/features'
+    | '/(authed)/projects/$projectId/raw-feedback'
+    | '/(authed)/projects/$projectId/'
     | '/cli/signin/complete/'
-    | '/projects/$projectId/features/'
+    | '/(authed)/projects/$projectId/features/$featureId'
+    | '/(authed)/projects/$projectId/feedback/$feedbackId'
+    | '/(authed)/projects/$projectId/features/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  authedRouteRoute: typeof authedRouteRouteWithChildren
   SigninRoute: typeof SigninRoute
   ApiAuthRoute: typeof ApiAuthRoute
-  ProjectsProjectIdRoute: typeof ProjectsProjectIdRouteWithChildren
-  ProjectsIndexRoute: typeof ProjectsIndexRoute
   CliSigninIndexRoute: typeof CliSigninIndexRoute
   CliSigninCompleteIndexRoute: typeof CliSigninCompleteIndexRoute
 }
@@ -215,26 +222,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/(authed)': {
+      id: '/(authed)'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof authedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/': {
-      id: '/projects/'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof ProjectsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/projects/$projectId': {
-      id: '/projects/$projectId'
-      path: '/projects/$projectId'
-      fullPath: '/projects/$projectId'
-      preLoaderRoute: typeof ProjectsProjectIdRouteImport
-      parentRoute: typeof rootRouteImport
+    '/(authed)/': {
+      id: '/(authed)/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof authedIndexRouteImport
+      parentRoute: typeof authedRouteRoute
     }
     '/api/auth': {
       id: '/api/auth'
@@ -243,13 +243,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/$projectId/': {
-      id: '/projects/$projectId/'
-      path: '/'
-      fullPath: '/projects/$projectId/'
-      preLoaderRoute: typeof ProjectsProjectIdIndexRouteImport
-      parentRoute: typeof ProjectsProjectIdRoute
-    }
     '/cli/signin/': {
       id: '/cli/signin/'
       path: '/cli/signin'
@@ -257,33 +250,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CliSigninIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/$projectId/raw-feedback': {
-      id: '/projects/$projectId/raw-feedback'
-      path: '/raw-feedback'
-      fullPath: '/projects/$projectId/raw-feedback'
-      preLoaderRoute: typeof ProjectsProjectIdRawFeedbackRouteImport
-      parentRoute: typeof ProjectsProjectIdRoute
+    '/(authed)/projects/': {
+      id: '/(authed)/projects/'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof authedProjectsIndexRouteImport
+      parentRoute: typeof authedRouteRoute
     }
-    '/projects/$projectId/features': {
-      id: '/projects/$projectId/features'
-      path: '/features'
-      fullPath: '/projects/$projectId/features'
-      preLoaderRoute: typeof ProjectsProjectIdFeaturesRouteImport
-      parentRoute: typeof ProjectsProjectIdRoute
-    }
-    '/projects/$projectId/config': {
-      id: '/projects/$projectId/config'
-      path: '/config'
-      fullPath: '/projects/$projectId/config'
-      preLoaderRoute: typeof ProjectsProjectIdConfigRouteImport
-      parentRoute: typeof ProjectsProjectIdRoute
-    }
-    '/projects/$projectId/features/': {
-      id: '/projects/$projectId/features/'
-      path: '/'
-      fullPath: '/projects/$projectId/features/'
-      preLoaderRoute: typeof ProjectsProjectIdFeaturesIndexRouteImport
-      parentRoute: typeof ProjectsProjectIdFeaturesRoute
+    '/(authed)/projects/$projectId': {
+      id: '/(authed)/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof authedProjectsProjectIdRouteImport
+      parentRoute: typeof authedRouteRoute
     }
     '/cli/signin/complete/': {
       id: '/cli/signin/complete/'
@@ -292,66 +271,121 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CliSigninCompleteIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/$projectId/feedback/$feedbackId': {
-      id: '/projects/$projectId/feedback/$feedbackId'
+    '/(authed)/projects/$projectId/': {
+      id: '/(authed)/projects/$projectId/'
+      path: '/'
+      fullPath: '/projects/$projectId/'
+      preLoaderRoute: typeof authedProjectsProjectIdIndexRouteImport
+      parentRoute: typeof authedProjectsProjectIdRoute
+    }
+    '/(authed)/projects/$projectId/raw-feedback': {
+      id: '/(authed)/projects/$projectId/raw-feedback'
+      path: '/raw-feedback'
+      fullPath: '/projects/$projectId/raw-feedback'
+      preLoaderRoute: typeof authedProjectsProjectIdRawFeedbackRouteImport
+      parentRoute: typeof authedProjectsProjectIdRoute
+    }
+    '/(authed)/projects/$projectId/features': {
+      id: '/(authed)/projects/$projectId/features'
+      path: '/features'
+      fullPath: '/projects/$projectId/features'
+      preLoaderRoute: typeof authedProjectsProjectIdFeaturesRouteImport
+      parentRoute: typeof authedProjectsProjectIdRoute
+    }
+    '/(authed)/projects/$projectId/config': {
+      id: '/(authed)/projects/$projectId/config'
+      path: '/config'
+      fullPath: '/projects/$projectId/config'
+      preLoaderRoute: typeof authedProjectsProjectIdConfigRouteImport
+      parentRoute: typeof authedProjectsProjectIdRoute
+    }
+    '/(authed)/projects/$projectId/features/': {
+      id: '/(authed)/projects/$projectId/features/'
+      path: '/'
+      fullPath: '/projects/$projectId/features/'
+      preLoaderRoute: typeof authedProjectsProjectIdFeaturesIndexRouteImport
+      parentRoute: typeof authedProjectsProjectIdFeaturesRoute
+    }
+    '/(authed)/projects/$projectId/feedback/$feedbackId': {
+      id: '/(authed)/projects/$projectId/feedback/$feedbackId'
       path: '/feedback/$feedbackId'
       fullPath: '/projects/$projectId/feedback/$feedbackId'
-      preLoaderRoute: typeof ProjectsProjectIdFeedbackFeedbackIdRouteImport
-      parentRoute: typeof ProjectsProjectIdRoute
+      preLoaderRoute: typeof authedProjectsProjectIdFeedbackFeedbackIdRouteImport
+      parentRoute: typeof authedProjectsProjectIdRoute
     }
-    '/projects/$projectId/features/$featureId': {
-      id: '/projects/$projectId/features/$featureId'
+    '/(authed)/projects/$projectId/features/$featureId': {
+      id: '/(authed)/projects/$projectId/features/$featureId'
       path: '/$featureId'
       fullPath: '/projects/$projectId/features/$featureId'
-      preLoaderRoute: typeof ProjectsProjectIdFeaturesFeatureIdRouteImport
-      parentRoute: typeof ProjectsProjectIdFeaturesRoute
+      preLoaderRoute: typeof authedProjectsProjectIdFeaturesFeatureIdRouteImport
+      parentRoute: typeof authedProjectsProjectIdFeaturesRoute
     }
   }
 }
 
-interface ProjectsProjectIdFeaturesRouteChildren {
-  ProjectsProjectIdFeaturesFeatureIdRoute: typeof ProjectsProjectIdFeaturesFeatureIdRoute
-  ProjectsProjectIdFeaturesIndexRoute: typeof ProjectsProjectIdFeaturesIndexRoute
+interface authedProjectsProjectIdFeaturesRouteChildren {
+  authedProjectsProjectIdFeaturesFeatureIdRoute: typeof authedProjectsProjectIdFeaturesFeatureIdRoute
+  authedProjectsProjectIdFeaturesIndexRoute: typeof authedProjectsProjectIdFeaturesIndexRoute
 }
 
-const ProjectsProjectIdFeaturesRouteChildren: ProjectsProjectIdFeaturesRouteChildren =
+const authedProjectsProjectIdFeaturesRouteChildren: authedProjectsProjectIdFeaturesRouteChildren =
   {
-    ProjectsProjectIdFeaturesFeatureIdRoute:
-      ProjectsProjectIdFeaturesFeatureIdRoute,
-    ProjectsProjectIdFeaturesIndexRoute: ProjectsProjectIdFeaturesIndexRoute,
+    authedProjectsProjectIdFeaturesFeatureIdRoute:
+      authedProjectsProjectIdFeaturesFeatureIdRoute,
+    authedProjectsProjectIdFeaturesIndexRoute:
+      authedProjectsProjectIdFeaturesIndexRoute,
   }
 
-const ProjectsProjectIdFeaturesRouteWithChildren =
-  ProjectsProjectIdFeaturesRoute._addFileChildren(
-    ProjectsProjectIdFeaturesRouteChildren,
+const authedProjectsProjectIdFeaturesRouteWithChildren =
+  authedProjectsProjectIdFeaturesRoute._addFileChildren(
+    authedProjectsProjectIdFeaturesRouteChildren,
   )
 
-interface ProjectsProjectIdRouteChildren {
-  ProjectsProjectIdConfigRoute: typeof ProjectsProjectIdConfigRoute
-  ProjectsProjectIdFeaturesRoute: typeof ProjectsProjectIdFeaturesRouteWithChildren
-  ProjectsProjectIdRawFeedbackRoute: typeof ProjectsProjectIdRawFeedbackRoute
-  ProjectsProjectIdIndexRoute: typeof ProjectsProjectIdIndexRoute
-  ProjectsProjectIdFeedbackFeedbackIdRoute: typeof ProjectsProjectIdFeedbackFeedbackIdRoute
+interface authedProjectsProjectIdRouteChildren {
+  authedProjectsProjectIdConfigRoute: typeof authedProjectsProjectIdConfigRoute
+  authedProjectsProjectIdFeaturesRoute: typeof authedProjectsProjectIdFeaturesRouteWithChildren
+  authedProjectsProjectIdRawFeedbackRoute: typeof authedProjectsProjectIdRawFeedbackRoute
+  authedProjectsProjectIdIndexRoute: typeof authedProjectsProjectIdIndexRoute
+  authedProjectsProjectIdFeedbackFeedbackIdRoute: typeof authedProjectsProjectIdFeedbackFeedbackIdRoute
 }
 
-const ProjectsProjectIdRouteChildren: ProjectsProjectIdRouteChildren = {
-  ProjectsProjectIdConfigRoute: ProjectsProjectIdConfigRoute,
-  ProjectsProjectIdFeaturesRoute: ProjectsProjectIdFeaturesRouteWithChildren,
-  ProjectsProjectIdRawFeedbackRoute: ProjectsProjectIdRawFeedbackRoute,
-  ProjectsProjectIdIndexRoute: ProjectsProjectIdIndexRoute,
-  ProjectsProjectIdFeedbackFeedbackIdRoute:
-    ProjectsProjectIdFeedbackFeedbackIdRoute,
+const authedProjectsProjectIdRouteChildren: authedProjectsProjectIdRouteChildren =
+  {
+    authedProjectsProjectIdConfigRoute: authedProjectsProjectIdConfigRoute,
+    authedProjectsProjectIdFeaturesRoute:
+      authedProjectsProjectIdFeaturesRouteWithChildren,
+    authedProjectsProjectIdRawFeedbackRoute:
+      authedProjectsProjectIdRawFeedbackRoute,
+    authedProjectsProjectIdIndexRoute: authedProjectsProjectIdIndexRoute,
+    authedProjectsProjectIdFeedbackFeedbackIdRoute:
+      authedProjectsProjectIdFeedbackFeedbackIdRoute,
+  }
+
+const authedProjectsProjectIdRouteWithChildren =
+  authedProjectsProjectIdRoute._addFileChildren(
+    authedProjectsProjectIdRouteChildren,
+  )
+
+interface authedRouteRouteChildren {
+  authedIndexRoute: typeof authedIndexRoute
+  authedProjectsProjectIdRoute: typeof authedProjectsProjectIdRouteWithChildren
+  authedProjectsIndexRoute: typeof authedProjectsIndexRoute
 }
 
-const ProjectsProjectIdRouteWithChildren =
-  ProjectsProjectIdRoute._addFileChildren(ProjectsProjectIdRouteChildren)
+const authedRouteRouteChildren: authedRouteRouteChildren = {
+  authedIndexRoute: authedIndexRoute,
+  authedProjectsProjectIdRoute: authedProjectsProjectIdRouteWithChildren,
+  authedProjectsIndexRoute: authedProjectsIndexRoute,
+}
+
+const authedRouteRouteWithChildren = authedRouteRoute._addFileChildren(
+  authedRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  authedRouteRoute: authedRouteRouteWithChildren,
   SigninRoute: SigninRoute,
   ApiAuthRoute: ApiAuthRoute,
-  ProjectsProjectIdRoute: ProjectsProjectIdRouteWithChildren,
-  ProjectsIndexRoute: ProjectsIndexRoute,
   CliSigninIndexRoute: CliSigninIndexRoute,
   CliSigninCompleteIndexRoute: CliSigninCompleteIndexRoute,
 }

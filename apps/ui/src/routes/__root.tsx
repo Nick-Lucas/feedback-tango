@@ -2,37 +2,16 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
-  redirect,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Toaster } from '@/components/ui/sonner'
-import { authClient } from '@/lib/auth'
 
 import appCss from '../styles.css?url'
-import { createServerFn } from '@tanstack/react-start'
-import { getRequestHeader } from '@tanstack/react-start/server'
 import { FeedbackButton } from '@/components/feedback-button'
 import type { QueryClient } from '@tanstack/react-query'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
-
-const getSession = createServerFn().handler(async () => {
-  const cookie = getRequestHeader('Cookie')
-
-  if (cookie) {
-    return await authClient.getSession({
-      fetchOptions: {
-        headers: {
-          // Forward cookie manually during SSR
-          Cookie: cookie,
-        },
-      },
-    })
-  } else {
-    return null
-  }
-})
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -58,25 +37,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     }),
 
     shellComponent: RootDocument,
-
-    async beforeLoad(ctx) {
-      const session = await getSession()
-
-      // TODO: use a proper protected parent route or layout
-      if (!ctx.location.pathname.includes('/signin') && !session?.data) {
-        throw redirect({
-          to: '/signin',
-          replace: true,
-          search: {
-            redirect: ctx.location.url,
-          },
-        })
-      }
-
-      return {
-        session: session?.data ?? null,
-      }
-    },
 
     errorComponent: ({ error }) => {
       return (

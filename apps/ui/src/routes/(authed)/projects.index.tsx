@@ -7,7 +7,7 @@ import {
   useCreateProjectMutation,
 } from '@/lib/query-options'
 
-export const Route = createFileRoute('/projects/')({
+export const Route = createFileRoute('/(authed)/projects/')({
   component: RouteComponent,
   async loader(ctx) {
     const queryClient = ctx.context.queryClient
