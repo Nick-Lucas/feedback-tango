@@ -4,15 +4,16 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { authClient } from '@/lib/auth'
+import { BubbleBackground } from '@/components/ui/shadcn-io/bubble-background'
 import {
   Sparkles,
   TrendingUp,
   Zap,
-  BarChart3,
   MessageSquare,
   ArrowRight,
   CheckCircle2,
   Infinity as InfinityIcon,
+  ChevronDown,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/(public)/')({
@@ -26,7 +27,7 @@ function RouteComponent() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
       {/* Navigation */}
-      <nav className="px-4 fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg">
+      <nav className="px-4 fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xs">
         <div className="container flex h-16 items-center justify-between justify-self-center">
           <div className="flex items-center gap-2">
             <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent-foreground">
@@ -44,18 +45,18 @@ function RouteComponent() {
         </div>
       </nav>
 
-      <main className="px-4 justify-self-center">
-        {/* Hero Section */}
-        <section className="container pt-32 pb-20">
-          <div className="mx-auto max-w-4xl text-center">
+      {/* Hero Section with BubbleBackground */}
+      <BubbleBackground interactive={true} className="h-screen relative">
+        <div className="relative z-10 flex flex-col h-screen items-center justify-evenly px-4">
+          <div className="mx-auto max-w-4xl rounded-3xl bg-background/30 p-12 text-center shadow-2xl backdrop-blur-md">
             <Badge className="mb-6 border-0 bg-gradient-to-br from-primary to-accent-foreground px-5 py-2 text-sm">
               <Sparkles className="mr-1 size-3.5" />
               AI-Powered Feedback Management
             </Badge>
-            <h1 className="mb-6 bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-6xl font-bold tracking-tight text-transparent">
+            <h1 className="mb-6 bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-6xl font-bold tracking-tight text-transparent drop-shadow-lg">
               Customer Feedback from Anywhere!
             </h1>
-            <p className="mb-10 text-xl text-muted-foreground">
+            <p className="mb-10 text-xl text-muted-foreground drop-shadow-md">
               Transform chaos into clarity. Tango helps you collect, analyze,
               and act on customer feedback with the power of AI, turning every
               voice into actionable insights.
@@ -73,23 +74,19 @@ function RouteComponent() {
             </div>
           </div>
 
-          {/* Hero Image Placeholder */}
-          <div className="mx-auto mt-16 max-w-5xl">
-            <div className="overflow-hidden rounded-xl border bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10 p-1 shadow-2xl">
-              <div className="flex aspect-video items-center justify-center rounded-lg bg-background/50 backdrop-blur-sm">
-                <div className="text-center">
-                  <BarChart3 className="mx-auto mb-4 size-16 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    Dashboard Preview
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="mt-16 flex justify-center">
+            <a
+              href="#features"
+              className="animate-bounce text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Scroll down to features"
+            >
+              <ChevronDown className="size-8" />
+            </a>
           </div>
-        </section>
+        </div>
+      </BubbleBackground>
 
-        <Separator className="container" />
-
+      <main className="px-4 justify-self-center">
         {/* Feature Section 1: Make every user's voice heard */}
         <section id="features" className="container py-24">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
