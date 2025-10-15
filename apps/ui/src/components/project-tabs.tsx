@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import { Separator } from './ui/separator'
 
 export function ProjectTabs() {
   const { projectId } = useParams({ from: '/(authed)/projects/$projectId' })
@@ -47,8 +48,11 @@ export function ProjectTabs() {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden md:inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground gap-1">
+      <nav className="hidden md:inline-flex h-9 items-center justify-center rounded-lg bg-card text-muted-foreground gap-1">
         <ProjectPicker />
+
+        <Separator orientation="vertical" />
+
         {tabs.map((tab) => {
           const Icon = tab.icon
 
@@ -64,7 +68,7 @@ export function ProjectTabs() {
               className={cn(
                 'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
                 isActive
-                  ? 'bg-background text-foreground shadow'
+                  ? 'bg-accent text-foreground shadow '
                   : 'hover:bg-background/50'
               )}
             >
