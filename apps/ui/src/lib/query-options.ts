@@ -20,6 +20,7 @@ import { moveFeedbackToFeature } from '@/server-functions/moveFeedbackToFeature'
 import { searchUsers } from '@/server-functions/searchUsers'
 import { getRawFeedbacks } from '@/server-functions/getRawFeedbacks'
 import { getRawFeedbackCounts } from '@/server-functions/getRawFeedbackCounts'
+import { getRawFeedbackDetails } from '@/server-functions/getRawFeedbackDetails'
 
 // Query Options Factories
 
@@ -79,6 +80,11 @@ export const rawFeedbacksQueryOptions = createQueryFactory({
 export const rawFeedbackCountsQueryOptions = createQueryFactory({
   baseKey: ['raw-feedback', 'counts'],
   defaultFunction: getRawFeedbackCounts,
+})
+
+export const rawFeedbackDetailsQueryOptions = createQueryFactory({
+  baseKey: ['raw-feedback', 'details'],
+  defaultFunction: getRawFeedbackDetails,
 })
 
 // Query Hooks
@@ -172,6 +178,17 @@ export const useRawFeedbackCountsQuery = (projectId: string) => {
     }),
     refetchInterval: 5000,
   })
+}
+
+export const useRawFeedbackDetailsQuery = (rawFeedbackId: string) => {
+  const fn = useServerFn(getRawFeedbackDetails)
+
+  return useQuery(
+    rawFeedbackDetailsQueryOptions({
+      fn,
+      data: { rawFeedbackId },
+    })
+  )
 }
 
 // Mutation Hooks

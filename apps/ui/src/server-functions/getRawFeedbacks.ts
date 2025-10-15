@@ -52,6 +52,8 @@ export const getRawFeedbacks = authedServerFn()
       .orderBy(
         // Completed items first (nulls last)
         asc(RawFeedbacks.featureAssociationComplete),
+        // Completed items first (nulls last)
+        asc(RawFeedbacks.sentimentCheckComplete),
         // Then safety check complete (nulls last)
         asc(RawFeedbacks.safetyCheckComplete),
         // Then by creation date (newest first)

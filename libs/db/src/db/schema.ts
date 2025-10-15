@@ -129,7 +129,7 @@ export const RawFeedbackRelations = relations(
       fields: [RawFeedbacks.projectId],
       references: [Projects.id],
     }),
-    rawFeedback: many(Feedbacks),
+    feedbacks: many(Feedbacks),
   })
 )
 

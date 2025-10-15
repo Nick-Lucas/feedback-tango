@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -7,9 +7,24 @@ import {
   rawFeedbackCountsQueryOptions,
   useRawFeedbacksQuery,
   useRawFeedbackCountsQuery,
+  useRawFeedbackDetailsQuery,
 } from '@/lib/query-options'
-import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react'
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  AlertCircle,
+  ExternalLink,
+} from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
 
 export const Route = createFileRoute(
   '/(authed)/projects/$projectId/raw-feedback'
@@ -56,6 +71,101 @@ function FormattedDate({ date }: { date: Date | string }) {
   )
 }
 
+interface RawFeedbackDetailsDialogProps {
+  rawFeedbackId: string
+  originalFeedback: string
+  projectId: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+function RawFeedbackDetailsDialog({
+  rawFeedbackId,
+  originalFeedback,
+  projectId,
+  open,
+  onOpenChange,
+}: RawFeedbackDetailsDialogProps) {
+  // Only fetch when dialog is open
+  const { data: feedbackDetails, isLoading } =
+    useRawFeedbackDetailsQuery(rawFeedbackId)
+
+  const feedbacks = feedbackDetails?.feedbacks || []
+
+  if (!open) {
+    return null
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Processed Feedback Entries</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+          <div className="text-sm text-muted-foreground mb-4">
+            <p className="font-semibold mb-1">Original Feedback:</p>
+            <p className="italic">"{originalFeedback.trim()}"</p>
+          </div>
+          {isLoading ? (
+            <div className="text-center text-sm text-muted-foreground py-8">
+              Loading feedback details...
+            </div>
+          ) : feedbacks.length === 0 ? (
+            <div className="text-center text-sm text-muted-foreground py-8">
+              No feedback entries found
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="font-semibold text-sm">
+                Split into {feedbacks.length} feedback{' '}
+                {feedbacks.length === 1 ? 'item' : 'items'}:
+              </p>
+              {feedbacks.map((feedback, index) => (
+                <Card key={feedback.id} className="p-3 bg-muted/50">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm flex-1">
+                        {index + 1}. "{feedback.feedback}"
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 shrink-0"
+                        asChild
+                      >
+                        <Link
+                          to="/projects/$projectId/features/$featureId"
+                          params={{
+                            projectId,
+                            featureId: feedback.feature.id,
+                          }}
+                          target="_blank"
+                          onClick={() => onOpenChange(false)}
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                        </Link>
+                      </Button>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {feedback.feature.name}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {feedback.feature.description}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 interface RawFeedbackCardProps {
   rawFeedback: {
     id: string
@@ -72,10 +182,12 @@ interface RawFeedbackCardProps {
 }
 
 function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
+  const [dialogOpen, setDialogOpen] = useState(false)
   const safetyComplete = !!rawFeedback.safetyCheckComplete
   const sentimentComplete = !!rawFeedback.sentimentCheckComplete
   const featureComplete = !!rawFeedback.featureAssociationComplete
   const hasError = !!rawFeedback.processingError
+  const hasLinkedFeedback = featureComplete // Show button if processing is complete
 
   let progressValue = 0
   if (safetyComplete) progressValue = 33
@@ -89,20 +201,39 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
           <p className="text-card-foreground italic flex-1">
             "{rawFeedback.feedback.trim()}"
           </p>
-          {rawFeedback.sentimentCheckResult && (
-            <Badge
-              variant={
-                rawFeedback.sentimentCheckResult === 'positive'
-                  ? 'default'
-                  : rawFeedback.sentimentCheckResult === 'constructive'
-                    ? 'secondary'
-                    : 'destructive'
-              }
-              className="shrink-0"
-            >
-              {rawFeedback.sentimentCheckResult}
-            </Badge>
-          )}
+          <div className="flex items-center gap-2 shrink-0">
+            {rawFeedback.sentimentCheckResult && (
+              <Badge
+                variant={
+                  rawFeedback.sentimentCheckResult === 'positive'
+                    ? 'default'
+                    : rawFeedback.sentimentCheckResult === 'constructive'
+                      ? 'secondary'
+                      : 'destructive'
+                }
+              >
+                {rawFeedback.sentimentCheckResult}
+              </Badge>
+            )}
+            {hasLinkedFeedback && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDialogOpen(true)}
+                >
+                  View Feedback
+                </Button>
+                <RawFeedbackDetailsDialog
+                  rawFeedbackId={rawFeedback.id}
+                  originalFeedback={rawFeedback.feedback}
+                  projectId={rawFeedback.projectId}
+                  open={dialogOpen}
+                  onOpenChange={setDialogOpen}
+                />
+              </>
+            )}
+          </div>
         </div>
 
         <div className="text-sm text-card-foreground/70">
