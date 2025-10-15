@@ -167,6 +167,7 @@ export const useRawFeedbacksQuery = (
     })
   )
 }
+export type RawFeedbacksResult = Awaited<ReturnType<typeof getRawFeedbacks>>
 
 export const useRawFeedbackCountsQuery = (projectId: string) => {
   const fn = useServerFn(getRawFeedbackCounts)

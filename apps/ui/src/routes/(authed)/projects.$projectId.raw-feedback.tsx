@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
+import type { RawFeedbacksResult } from '@/lib/query-options'
 import {
   rawFeedbacksQueryOptions,
   rawFeedbackCountsQueryOptions,
@@ -73,33 +74,7 @@ function FormattedDate({ date }: { date: Date | string }) {
 }
 
 interface RawFeedbackCardProps {
-  rawFeedback: {
-    id: string
-    projectId: string
-    email: string | null
-    content: string
-    createdAt: Date | string
-    safetyCheckComplete: Date | string | null
-    splittingComplete: Date | string | null
-    processingComplete: Date | string | null
-    processingError: string | null
-    items: Array<{
-      id: string
-      sentimentCheckResult: 'positive' | 'constructive' | 'negative' | null
-      sentimentCheckComplete: Date | string | null
-      featureAssociationComplete: Date | string | null
-      processingError: string | null
-      content: string
-      feedback?: {
-        id: string
-        content: string
-        feature: {
-          id: string
-          name: string
-        }
-      } | null
-    }>
-  }
+  rawFeedback: RawFeedbacksResult[number]
 }
 
 const SENTIMENT_ICONS = {
@@ -181,7 +156,7 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
                   const itemSentimentComplete = !!item.sentimentCheckComplete
                   const itemFeatureComplete = !!item.featureAssociationComplete
                   const itemHasError = !!item.processingError
-                  const feedbackText = item.feedback?.content || 'Processing...'
+                  const feedbackText = item.content.trim()
 
                   return (
                     <div

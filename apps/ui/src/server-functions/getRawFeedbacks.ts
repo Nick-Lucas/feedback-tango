@@ -50,10 +50,22 @@ export const getRawFeedbacks = authedServerFn()
       orderBy: desc(RawFeedbacks.createdAt),
       with: {
         items: {
+          columns: {
+            createdAt: false,
+          },
+
           with: {
             feedback: {
+              columns: {
+                id: true,
+              },
               with: {
-                feature: true,
+                feature: {
+                  columns: {
+                    id: true,
+                    name: true,
+                  },
+                },
               },
             },
           },
