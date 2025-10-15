@@ -88,6 +88,11 @@ export const FeatureRelations = relations(Features, ({ one, many }) => ({
   feedbacks: many(Feedbacks),
 }))
 
+export const SentimentEnum = pgEnum('sentiment_enum', [
+  'positive',
+  'constructive',
+  'negative',
+])
 export const RawFeedbacks = pgTable(
   'raw_feedback',
   {
@@ -103,30 +108,30 @@ export const RawFeedbacks = pgTable(
 
     // Processing status fields
     safetyCheckComplete: timestamp(),
+    sentimentCheckResult: SentimentEnum(),
+    sentimentCheckComplete: timestamp(),
     featureAssociationComplete: timestamp(),
     processingError: text(),
-
-    // Link to final feedback entry once processed
-    processedFeedbackId: uuid().references(() => Feedbacks.id),
   },
   (table) => [
     index().on(table.safetyCheckComplete),
+    index().on(table.sentimentCheckResult),
     index().on(table.featureAssociationComplete),
     index().on(table.processingError),
     index().on(table.projectId),
   ]
 )
 
-export const RawFeedbackRelations = relations(RawFeedbacks, ({ one }) => ({
-  project: one(Projects, {
-    fields: [RawFeedbacks.projectId],
-    references: [Projects.id],
-  }),
-  processedFeedback: one(Feedbacks, {
-    fields: [RawFeedbacks.processedFeedbackId],
-    references: [Feedbacks.id],
-  }),
-}))
+export const RawFeedbackRelations = relations(
+  RawFeedbacks,
+  ({ one, many }) => ({
+    project: one(Projects, {
+      fields: [RawFeedbacks.projectId],
+      references: [Projects.id],
+    }),
+    rawFeedback: many(Feedbacks),
+  })
+)
 
 export const Feedbacks = pgTable('feedback', {
   id: uuid()
@@ -138,6 +143,7 @@ export const Feedbacks = pgTable('feedback', {
   featureId: uuid()
     .notNull()
     .references(() => Features.id),
+  rawFeedbackId: uuid().references(() => RawFeedbacks.id),
   feedback: text().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
   createdBy: text().notNull(),
@@ -151,6 +157,10 @@ export const FeedbackRelations = relations(Feedbacks, ({ one }) => ({
   feature: one(Features, {
     fields: [Feedbacks.featureId],
     references: [Features.id],
+  }),
+  rawFeedback: one(RawFeedbacks, {
+    fields: [Feedbacks.rawFeedbackId],
+    references: [RawFeedbacks.id],
   }),
   createdByUser: one(user, {
     fields: [Feedbacks.createdBy],

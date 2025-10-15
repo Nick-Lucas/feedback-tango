@@ -31,6 +31,7 @@ export async function processRawFeedback({
       .update(RawFeedbacks)
       .set({
         safetyCheckComplete: new Date(),
+        processingError: null,
       })
       .where(eq(RawFeedbacks.id, rawFeedback.id))
 
@@ -79,6 +80,7 @@ export async function processRawFeedback({
       .update(RawFeedbacks)
       .set({
         featureAssociationComplete: new Date(),
+        processingError: null,
       })
       .where(eq(RawFeedbacks.id, rawFeedback.id))
 
@@ -91,6 +93,7 @@ export async function processRawFeedback({
         featureId: feature.featureId,
         feedback: rawFeedback.feedback,
         createdBy: agentUserId,
+        rawFeedbackId: rawFeedback.id,
       })
       .returning()
 
@@ -101,14 +104,6 @@ export async function processRawFeedback({
     }
 
     console.log('Final feedback created:', finalFeedback.id)
-
-    // Link the raw feedback to the final feedback
-    await tx
-      .update(RawFeedbacks)
-      .set({
-        processedFeedbackId: finalFeedback.id,
-      })
-      .where(eq(RawFeedbacks.id, rawFeedback.id))
 
     console.log(`Successfully processed raw feedback ${rawFeedback.id}`)
   } catch (error) {
