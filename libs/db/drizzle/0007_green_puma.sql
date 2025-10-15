@@ -6,4 +6,13 @@ ALTER TABLE "raw_feedback" ADD COLUMN "sentimentCheckResult" "sentiment_enum";--
 ALTER TABLE "raw_feedback" ADD COLUMN "sentimentCheckComplete" timestamp;--> statement-breakpoint
 ALTER TABLE "feedback" ADD CONSTRAINT "feedback_rawFeedbackId_raw_feedback_id_fk" FOREIGN KEY ("rawFeedbackId") REFERENCES "public"."raw_feedback"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "raw_feedback_sentimentCheckResult_index" ON "raw_feedback" USING btree ("sentimentCheckResult");--> statement-breakpoint
-ALTER TABLE "raw_feedback" DROP COLUMN "processedFeedbackId";
+
+update "feedback" set "rawFeedbackId" = (
+  select rf.id 
+  from "raw_feedback" rf 
+  where rf."processedFeedbackId" = "feedback".id
+);--> statement-breakpoint
+
+ALTER TABLE "raw_feedback" DROP COLUMN "processedFeedbackId";--> statement-breakpoint
+
+update public.raw_feedback set "sentimentCheckComplete" = now(), "sentimentCheckResult" = 'constructive';

@@ -1,6 +1,8 @@
 import { RawFeedbacks, Feedbacks } from '@feedback-thing/db'
 import { eq } from 'drizzle-orm'
 import { checkFeedbackSafety } from './safety-checker.agent.ts'
+import { splitFeedback } from './feedback-splitter.agent.ts'
+import { checkFeedbackSentiment } from './sentiment-checker.agent.ts'
 import { associateFeatureWithFeedback } from './feature-associator.agent.ts'
 
 import type { Transaction } from '../db.ts'
@@ -50,62 +52,99 @@ export async function processRawFeedback({
       } as const
     }
 
-    // Step 2: Feature association
-    console.log('Running feature association...')
-    const feature = await associateFeatureWithFeedback({
-      projectId: rawFeedback.projectId,
-      agentUserId,
-      feedback: rawFeedback.feedback,
-    })
+    // Step 2: Split feedback into individual items
+    console.log('Splitting feedback into individual items...')
+    const splitResult = await splitFeedback(rawFeedback.feedback)
+    console.log(
+      `Feedback split into ${splitResult.object.feedbacks.length} item(s)`
+    )
 
-    if (feature.type === 'error') {
-      console.error('Failed to determine feature:', feature.error)
-      await tx
-        .update(RawFeedbacks)
-        .set({
-          processingError: `Feature association failed: ${feature.error.message}`,
-        })
-        .where(eq(RawFeedbacks.id, rawFeedback.id))
+    // Process each split feedback item
+    const processedFeedbacks = []
+    for (const [
+      index,
+      feedbackText,
+    ] of splitResult.object.feedbacks.entries()) {
+      console.log(`\nProcessing feedback item ${index + 1}...`)
 
-      return {
-        outcome: 'error',
-        reason: feature.error,
+      // Step 3: Check sentiment for this feedback item
+      console.log('Running sentiment check...')
+      const sentimentResult = await checkFeedbackSentiment(feedbackText)
+      console.log('Sentiment result:', sentimentResult.object.outcome)
+
+      // Update sentiment check completion (only on the last item)
+      if (index === splitResult.object.feedbacks.length - 1) {
+        await tx
+          .update(RawFeedbacks)
+          .set({
+            sentimentCheckComplete: new Date(),
+            sentimentCheckResult: sentimentResult.object.outcome,
+            processingError: null,
+          })
+          .where(eq(RawFeedbacks.id, rawFeedback.id))
       }
-    }
 
-    console.log('Feature determined:', feature.featureId)
-
-    // Update feature association completion
-    await tx
-      .update(RawFeedbacks)
-      .set({
-        featureAssociationComplete: new Date(),
-        processingError: null,
-      })
-      .where(eq(RawFeedbacks.id, rawFeedback.id))
-
-    // Step 3: Create final feedback entry
-    console.log('Creating final feedback entry...')
-    const [finalFeedback] = await tx
-      .insert(Feedbacks)
-      .values({
+      // Step 4: Feature association for this feedback item
+      console.log('Running feature association...')
+      const feature = await associateFeatureWithFeedback({
         projectId: rawFeedback.projectId,
-        featureId: feature.featureId,
-        feedback: rawFeedback.feedback,
-        createdBy: agentUserId,
-        rawFeedbackId: rawFeedback.id,
+        agentUserId,
+        feedback: feedbackText,
       })
-      .returning()
 
-    if (!finalFeedback) {
-      console.error('Failed to create final feedback entry')
+      if (feature.type === 'error') {
+        console.error('Failed to determine feature:', feature.error)
+        await tx
+          .update(RawFeedbacks)
+          .set({
+            processingError: `Feature association failed: ${feature.error.message}`,
+          })
+          .where(eq(RawFeedbacks.id, rawFeedback.id))
 
-      throw new Error('Failed to create final feedback entry')
+        return {
+          outcome: 'error',
+          reason: feature.error,
+        }
+      }
+
+      console.log('Feature determined:', feature.featureId)
+
+      // Update feature association completion (only on the last item)
+      if (index === splitResult.object.feedbacks.length - 1) {
+        await tx
+          .update(RawFeedbacks)
+          .set({
+            featureAssociationComplete: new Date(),
+            processingError: null,
+          })
+          .where(eq(RawFeedbacks.id, rawFeedback.id))
+      }
+
+      // Step 5: Create final feedback entry for this item
+      console.log('Creating final feedback entry...')
+      const [finalFeedback] = await tx
+        .insert(Feedbacks)
+        .values({
+          projectId: rawFeedback.projectId,
+          featureId: feature.featureId,
+          feedback: feedbackText,
+          createdBy: agentUserId,
+          rawFeedbackId: rawFeedback.id,
+        })
+        .returning()
+
+      if (!finalFeedback) {
+        console.error('Failed to create final feedback entry')
+        throw new Error('Failed to create final feedback entry')
+      }
+
+      console.log('Final feedback created:', finalFeedback.id)
+      processedFeedbacks.push(finalFeedback)
     }
 
-    console.log('Final feedback created:', finalFeedback.id)
-
-    console.log(`Successfully processed raw feedback ${rawFeedback.id}`)
+    console.log(
+      `Successfully processed raw feedback ${rawFeedback.id} into ${processedFeedbacks.length} feedback item(s)`
+    )
   } catch (error) {
     console.error(`Error processing raw feedback ${rawFeedback.id}:`, error)
     await tx

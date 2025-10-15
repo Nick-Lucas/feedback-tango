@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -8,15 +8,8 @@ import {
   useRawFeedbacksQuery,
   useRawFeedbackCountsQuery,
 } from '@/lib/query-options'
-import {
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertCircle,
-  ExternalLink,
-} from 'lucide-react'
+import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute(
   '/(authed)/projects/$projectId/raw-feedback'
@@ -71,20 +64,22 @@ interface RawFeedbackCardProps {
     feedback: string
     createdAt: Date | string
     safetyCheckComplete: Date | string | null
+    sentimentCheckResult: 'positive' | 'constructive' | 'negative' | null
+    sentimentCheckComplete: Date | string | null
     featureAssociationComplete: Date | string | null
     processingError: string | null
-    processedFeedbackId: string | null
   }
 }
 
 function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
   const safetyComplete = !!rawFeedback.safetyCheckComplete
+  const sentimentComplete = !!rawFeedback.sentimentCheckComplete
   const featureComplete = !!rawFeedback.featureAssociationComplete
   const hasError = !!rawFeedback.processingError
-  const isProcessed = !!rawFeedback.processedFeedbackId
 
   let progressValue = 0
-  if (safetyComplete) progressValue = 50
+  if (safetyComplete) progressValue = 33
+  if (sentimentComplete) progressValue = 66
   if (featureComplete) progressValue = 100
 
   return (
@@ -94,24 +89,19 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
           <p className="text-card-foreground italic flex-1">
             "{rawFeedback.feedback.trim()}"
           </p>
-          {isProcessed && rawFeedback.processedFeedbackId && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 shrink-0"
-              asChild
+          {rawFeedback.sentimentCheckResult && (
+            <Badge
+              variant={
+                rawFeedback.sentimentCheckResult === 'positive'
+                  ? 'default'
+                  : rawFeedback.sentimentCheckResult === 'constructive'
+                    ? 'secondary'
+                    : 'destructive'
+              }
+              className="shrink-0"
             >
-              <Link
-                to="/projects/$projectId/feedback/$feedbackId"
-                params={{
-                  projectId: rawFeedback.projectId,
-                  feedbackId: rawFeedback.processedFeedbackId,
-                }}
-                target="_blank"
-              >
-                <ExternalLink className="h-4 w-4" />
-              </Link>
-            </Button>
+              {rawFeedback.sentimentCheckResult}
+            </Badge>
           )}
         </div>
 
@@ -149,9 +139,20 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
               </div>
 
               <div className="flex items-center gap-1">
-                {featureComplete ? (
+                {sentimentComplete ? (
                   <CheckCircle className="h-3 w-3 text-green-500" />
                 ) : safetyComplete ? (
+                  <Clock className="h-3 w-3 text-yellow-500" />
+                ) : (
+                  <XCircle className="h-3 w-3 text-gray-500" />
+                )}
+                <span className="text-muted-foreground">Sentiment Check</span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                {featureComplete ? (
+                  <CheckCircle className="h-3 w-3 text-green-500" />
+                ) : sentimentComplete ? (
                   <Clock className="h-3 w-3 text-yellow-500" />
                 ) : (
                   <XCircle className="h-3 w-3 text-gray-500" />
