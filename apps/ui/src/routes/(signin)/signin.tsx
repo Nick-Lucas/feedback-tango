@@ -22,7 +22,7 @@ function RouteComponent() {
   }
 
   return (
-    <SafariSafeBubbleBackground interactive={true} className="min-h-screen">
+    <SafariSafeBubbleBackground className="min-h-screen">
       <SignInContent callbackURL={callbackURL} />
     </SafariSafeBubbleBackground>
   )

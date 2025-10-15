@@ -1,53 +1,22 @@
-import {
-  BubbleBackground,
-  type BubbleBackgroundProps,
-} from './ui/shadcn-io/bubble-background'
-import { GradientBackground } from './animate-ui/components/backgrounds/gradient'
-import { getRequestHeaders } from '@tanstack/react-start/server'
-import { createIsomorphicFn } from '@tanstack/react-start'
+export function SafariSafeBubbleBackground(props: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={`relative overflow-hidden h-[100vh] w-full ${props.className}`}
+    >
+      <div className="flex flex-col items-center absolute right-0 left-0 -top-10 blur-[5vh] z-0 animate-[spin_30s_linear_infinite] pointer-events-none select-none">
+        {/* <div className="flex flex-col items-end absolute -right-60 -top-10 blur-xl z-0 animate-[spin_30s_linear_infinite] pointer-events-none select-none"> */}
+        <div className="h-[30vh] rounded-full w-[60%] z-1 bg-gradient-to-b blur-[15vh] animate-[bounce_4.5s_linear_infinite] from-pink-900 to-primary"></div>
+        <div className="h-[30vh] rounded-full w-[90%] z-1 bg-gradient-to-b blur-[15vh] animate-[bounce_6s_linear_infinite] from-primary to-sky-500"></div>
+        <div className="h-[30vh] rounded-full w-[100%] z-1 bg-gradient-to-b blur-[15vh] animate-[bounce_5s_linear_infinite] from-purple-300 to-sky-600"></div>
+        <div className="h-[30vh] rounded-full w-[70%] z-1 bg-gradient-to-b blur-[15vh] animate-[bounce_4.5s_linear_infinite] from-pink-900 to-primary"></div>
+        <div className="absolute h-[100%] rounded-full w-[100%] z-1 bg-gradient-to-b blur-[20rem] animate-[spin_10s_linear_infinite] from-pink-900 to-primary opacity-20"></div>
+      </div>
+      <div className="absolute inset-0 z-0 bg-noise opacity-30"></div>
 
-type SafariSafeBubbleBackgroundProps = BubbleBackgroundProps
-
-const isSafari = createIsomorphicFn()
-  .client(() => {
-    const userAgent = window.navigator.userAgent.toLowerCase()
-
-    const isSafariBrowser =
-      userAgent.includes('safari') && !userAgent.includes('chrome')
-
-    const isIOS = /iphone|ipad|ipod/.test(userAgent)
-
-    return isSafariBrowser || isIOS
-  })
-  .server(() => {
-    const headers = getRequestHeaders()
-    const userAgent = headers.get('user-agent')?.toLowerCase() ?? ''
-
-    const isSafariBrowser =
-      userAgent.includes('safari') && !userAgent.includes('chrome')
-
-    const isIOS = /iphone|ipad|ipod/.test(userAgent)
-
-    return isSafariBrowser || isIOS
-  })
-
-export function SafariSafeBubbleBackground(
-  props: SafariSafeBubbleBackgroundProps
-) {
-  if (isSafari()) {
-    const { className, children } = props
-
-    return (
-      <GradientBackground
-        transition={{
-          duration: 2,
-        }}
-        className={className}
-      >
-        {children}
-      </GradientBackground>
-    )
-  }
-
-  return <BubbleBackground {...props} />
+      {props.children}
+    </div>
+  )
 }

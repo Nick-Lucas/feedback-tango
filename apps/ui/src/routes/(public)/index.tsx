@@ -42,10 +42,7 @@ function RouteComponent() {
       </nav>
 
       {/* Hero Section with BubbleBackground */}
-      <SafariSafeBubbleBackground
-        interactive={true}
-        className="h-screen relative "
-      >
+      <SafariSafeBubbleBackground className="h-screen relative ">
         <div className="relative z-10 flex flex-col h-screen items-center justify-center px-4">
           <div
             className={cn(
