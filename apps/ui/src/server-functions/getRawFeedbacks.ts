@@ -1,5 +1,5 @@
 import { RawFeedbacks } from '@feedback-thing/db'
-import { eq, desc, isNull, isNotNull, and, asc } from 'drizzle-orm'
+import { eq, desc, isNull, isNotNull, and } from 'drizzle-orm'
 import { authedServerFn } from './core'
 import { getDb, authz } from './core.server'
 import z from 'zod'
@@ -50,13 +50,13 @@ export const getRawFeedbacks = authedServerFn()
       .from(RawFeedbacks)
       .where(whereConditions)
       .orderBy(
-        // Completed items first (nulls last)
-        asc(RawFeedbacks.featureAssociationComplete),
-        // Completed items first (nulls last)
-        asc(RawFeedbacks.sentimentCheckComplete),
-        // Then safety check complete (nulls last)
-        asc(RawFeedbacks.safetyCheckComplete),
-        // Then by creation date (newest first)
+        // // Completed items first (nulls last)
+        // asc(RawFeedbacks.featureAssociationComplete),
+        // // Completed items first (nulls last)
+        // asc(RawFeedbacks.sentimentCheckComplete),
+        // // Then safety check complete (nulls last)
+        // asc(RawFeedbacks.safetyCheckComplete),
+        // // Then by creation date (newest first)
         desc(RawFeedbacks.createdAt)
       )
 

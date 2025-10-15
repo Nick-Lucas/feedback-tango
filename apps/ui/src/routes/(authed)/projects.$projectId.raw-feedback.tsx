@@ -15,6 +15,9 @@ import {
   Clock,
   AlertCircle,
   ExternalLink,
+  ThumbsUp,
+  ThumbsDown,
+  Wrench,
 } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
@@ -24,6 +27,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { useState } from 'react'
 
 export const Route = createFileRoute(
@@ -181,6 +190,12 @@ interface RawFeedbackCardProps {
   }
 }
 
+const SENTIMENT_ICONS = {
+  positive: <ThumbsUp fill="currentColor" className="h-3 w-3 text-green-500" />,
+  constructive: <Wrench fill="currentColor" className="h-3 w-3 text-primary" />,
+  negative: <ThumbsDown fill="currentColor" className="h-3 w-3 text-red-500" />,
+} as const
+
 function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const safetyComplete = !!rawFeedback.safetyCheckComplete
@@ -201,39 +216,24 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
           <p className="text-card-foreground italic flex-1">
             "{rawFeedback.feedback.trim()}"
           </p>
-          <div className="flex items-center gap-2 shrink-0">
-            {rawFeedback.sentimentCheckResult && (
-              <Badge
-                variant={
-                  rawFeedback.sentimentCheckResult === 'positive'
-                    ? 'default'
-                    : rawFeedback.sentimentCheckResult === 'constructive'
-                      ? 'secondary'
-                      : 'destructive'
-                }
+          {hasLinkedFeedback && (
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDialogOpen(true)}
               >
-                {rawFeedback.sentimentCheckResult}
-              </Badge>
-            )}
-            {hasLinkedFeedback && (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setDialogOpen(true)}
-                >
-                  View Feedback
-                </Button>
-                <RawFeedbackDetailsDialog
-                  rawFeedbackId={rawFeedback.id}
-                  originalFeedback={rawFeedback.feedback}
-                  projectId={rawFeedback.projectId}
-                  open={dialogOpen}
-                  onOpenChange={setDialogOpen}
-                />
-              </>
-            )}
-          </div>
+                View Feedback
+              </Button>
+              <RawFeedbackDetailsDialog
+                rawFeedbackId={rawFeedback.id}
+                originalFeedback={rawFeedback.feedback}
+                projectId={rawFeedback.projectId}
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
+              />
+            </div>
+          )}
         </div>
 
         <div className="text-sm text-card-foreground/70">
@@ -278,6 +278,22 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
                   <XCircle className="h-3 w-3 text-gray-500" />
                 )}
                 <span className="text-muted-foreground">Sentiment Check</span>
+                {rawFeedback.sentimentCheckResult && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="inline-flex">
+                          {SENTIMENT_ICONS[rawFeedback.sentimentCheckResult]}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="capitalize">
+                          {rawFeedback.sentimentCheckResult}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
 
               <div className="flex items-center gap-1">
