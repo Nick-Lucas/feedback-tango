@@ -7,7 +7,6 @@ import {
   rawFeedbackCountsQueryOptions,
   useRawFeedbacksQuery,
   useRawFeedbackCountsQuery,
-  useRawFeedbackDetailsQuery,
 } from '@/lib/query-options'
 import {
   CheckCircle,
@@ -20,12 +19,6 @@ import {
   Wrench,
 } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -33,7 +26,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useState } from 'react'
 
 export const Route = createFileRoute(
   '/(authed)/projects/$projectId/raw-feedback'
@@ -80,105 +72,6 @@ function FormattedDate({ date }: { date: Date | string }) {
   )
 }
 
-interface RawFeedbackDetailsDialogProps {
-  rawFeedbackId: string
-  originalFeedback: string
-  projectId: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-function RawFeedbackDetailsDialog({
-  rawFeedbackId,
-  originalFeedback,
-  projectId,
-  open,
-  onOpenChange,
-}: RawFeedbackDetailsDialogProps) {
-  // Only fetch when dialog is open
-  const { data: feedbackDetails, isLoading } =
-    useRawFeedbackDetailsQuery(rawFeedbackId)
-
-  const items = feedbackDetails?.items || []
-
-  if (!open) {
-    return null
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Processed Feedback Entries</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-          <div className="text-sm text-muted-foreground mb-4">
-            <p className="font-semibold mb-1">Original Feedback:</p>
-            <p className="italic">"{originalFeedback.trim()}"</p>
-          </div>
-          {isLoading ? (
-            <div className="text-center text-sm text-muted-foreground py-8">
-              Loading feedback details...
-            </div>
-          ) : items.length === 0 ? (
-            <div className="text-center text-sm text-muted-foreground py-8">
-              No feedback entries found
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <p className="font-semibold text-sm">
-                Split into {items.length} feedback{' '}
-                {items.length === 1 ? 'item' : 'items'}:
-              </p>
-              {items.map((item, index) => (
-                <Card key={item.id} className="p-3 bg-muted/50">
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm flex-1">
-                        {index + 1}. "{item.feedback}"
-                      </p>
-                      {item.feedback && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 shrink-0"
-                          asChild
-                        >
-                          <Link
-                            to="/projects/$projectId/features/$featureId"
-                            params={{
-                              projectId,
-                              featureId: item.feedback.feature.id,
-                            }}
-                            target="_blank"
-                            onClick={() => onOpenChange(false)}
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                          </Link>
-                        </Button>
-                      )}
-                    </div>
-                    {item.feedback && (
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          {item.feedback.feature.name}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {item.feedback.feature.description}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
 interface RawFeedbackCardProps {
   rawFeedback: {
     id: string
@@ -192,11 +85,18 @@ interface RawFeedbackCardProps {
     processingError: string | null
     items: Array<{
       id: string
-      feedback: string
       sentimentCheckResult: 'positive' | 'constructive' | 'negative' | null
       sentimentCheckComplete: Date | string | null
       featureAssociationComplete: Date | string | null
       processingError: string | null
+      feedback?: {
+        id: string
+        feedback: string
+        feature: {
+          id: string
+          name: string
+        }
+      } | null
     }>
   }
 }
@@ -208,7 +108,6 @@ const SENTIMENT_ICONS = {
 } as const
 
 function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
-  const [dialogOpen, setDialogOpen] = useState(false)
   const safetyComplete = !!rawFeedback.safetyCheckComplete
   const splittingComplete = !!rawFeedback.splittingComplete
   const processingComplete = !!rawFeedback.processingComplete
@@ -227,38 +126,12 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
           <p className="text-card-foreground italic flex-1">
             "{rawFeedback.feedback.trim()}"
           </p>
-          {hasItems && (
-            <div className="flex items-center gap-2 shrink-0">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setDialogOpen(true)}
-              >
-                View Details
-              </Button>
-              <RawFeedbackDetailsDialog
-                rawFeedbackId={rawFeedback.id}
-                originalFeedback={rawFeedback.feedback}
-                projectId={rawFeedback.projectId}
-                open={dialogOpen}
-                onOpenChange={setDialogOpen}
-              />
-            </div>
-          )}
         </div>
 
         <div className="text-sm text-card-foreground/70 flex items-center gap-2">
-          <div>
-            <FormattedDate date={rawFeedback.createdAt} />
-            <span className="mx-2">•</span>
-            <span>{rawFeedback.email || 'Anonymous'}</span>
-          </div>
-          {processingComplete && (
-            <Badge variant="outline" className="text-xs text-green-600">
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Complete
-            </Badge>
-          )}
+          <FormattedDate date={rawFeedback.createdAt} />
+          <span className="mx-2">•</span>
+          <span>{rawFeedback.email || 'Anonymous'}</span>
         </div>
 
         {hasError ? (
@@ -272,14 +145,6 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
           <div className="space-y-3">
             {/* Raw Feedback Level Progress */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">
-                  Initial Processing
-                </span>
-                <span className="text-muted-foreground">
-                  {progressValue === 100 ? 'Complete' : 'In Progress'}
-                </span>
-              </div>
               <Progress value={progressValue} className="h-2" />
 
               <div className="flex gap-4 text-xs">
@@ -315,16 +180,39 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
                   const itemSentimentComplete = !!item.sentimentCheckComplete
                   const itemFeatureComplete = !!item.featureAssociationComplete
                   const itemHasError = !!item.processingError
+                  const feedbackText =
+                    item.feedback?.feedback || 'Processing...'
 
                   return (
                     <div
                       key={item.id}
                       className="space-y-1 pb-2 border-b border-muted last:border-0"
                     >
-                      <p className="text-xs text-card-foreground/80">
-                        Item {index + 1}: "{item.feedback.substring(0, 60)}
-                        {item.feedback.length > 60 ? '...' : ''}"
-                      </p>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-xs text-card-foreground/80 flex-1">
+                          Item {index + 1}: "{feedbackText.substring(0, 60)}
+                          {feedbackText.length > 60 ? '...' : ''}"
+                        </p>
+                        {item.feedback && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                            asChild
+                          >
+                            <Link
+                              to="/projects/$projectId/features/$featureId"
+                              params={{
+                                projectId: rawFeedback.projectId,
+                                featureId: item.feedback.feature.id,
+                              }}
+                              target="_blank"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                            </Link>
+                          </Button>
+                        )}
+                      </div>
                       {itemHasError ? (
                         <div className="flex items-start gap-1">
                           <AlertCircle className="h-3 w-3 text-red-500 mt-0.5" />

@@ -14,46 +14,50 @@ while (true) {
   const agentUserId = await findAgentUser()
   console.log('Agent user ID:', agentUserId)
 
-  await db.transaction(async (tx) => {
-    // By using "FOR UPDATE" we can ensure that multiple instances of this
-    // processing loop don't try to process the same feedback at the same time,
-    // at least until this transaction is committed or rolled back
-    const queryResult = await tx
-      .select()
-      .from(RawFeedbacks)
-      .where(
-        and(
-          isNull(RawFeedbacks.splittingComplete),
+  await db
+    .transaction(async (tx) => {
+      // By using "FOR UPDATE" we can ensure that multiple instances of this
+      // processing loop don't try to process the same feedback at the same time,
+      // at least until this transaction is committed or rolled back
+      const queryResult = await tx
+        .select()
+        .from(RawFeedbacks)
+        .where(
+          and(
+            isNull(RawFeedbacks.splittingComplete),
 
-          // TODO: implement retries and/or dead letter queue
-          isNull(RawFeedbacks.processingError)
+            // TODO: implement retries and/or dead letter queue
+            isNull(RawFeedbacks.processingError)
+          )
         )
-      )
-      .limit(1)
-      .for('update')
+        .limit(1)
+        .for('update')
 
-    if (queryResult.length === 0) {
-      console.log('No new feedback found, sleeping...')
+      if (queryResult.length === 0) {
+        console.log('No new feedback found, sleeping...')
 
-      await setTimeout(5000)
+        await setTimeout(5000)
 
-      return
-    }
-    const rawFeedback = queryResult[0]!
+        return
+      }
+      const rawFeedback = queryResult[0]!
 
-    const result = await Promise.race([
-      setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
+      const result = await Promise.race([
+        setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
 
-      // TODO: might need to pass in an abort signal and check it frequently to avoid tx writes on a rolled back transaction logging weird errors
-      processRawFeedback({ tx, rawFeedback, agentUserId }),
-    ])
+        // TODO: might need to pass in an abort signal and check it frequently to avoid tx writes on a rolled back transaction logging weird errors
+        processRawFeedback({ tx, rawFeedback, agentUserId }),
+      ])
 
-    if (result === 'TIMEOUT') {
-      console.log('Processing timed out... rolling back transaction')
+      if (result === 'TIMEOUT') {
+        console.log('Processing timed out... rolling back transaction')
 
-      tx.rollback()
+        tx.rollback()
 
-      return
-    }
-  })
+        return
+      }
+    })
+    .catch((err) => {
+      console.error('Transaction error bubbled:', err)
+    })
 }
