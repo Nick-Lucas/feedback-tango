@@ -18,9 +18,13 @@ export const getRawFeedbackDetails = authedServerFn()
     const rawFeedbackWithDetails = await db.query.RawFeedbacks.findFirst({
       where: eq(RawFeedbacks.id, rawFeedbackId),
       with: {
-        feedbacks: {
+        items: {
           with: {
-            feature: true,
+            feedback: {
+              with: {
+                feature: true,
+              },
+            },
           },
         },
       },

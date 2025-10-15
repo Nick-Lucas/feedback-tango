@@ -108,15 +108,14 @@ export const RawFeedbacks = pgTable(
 
     // Processing status fields
     safetyCheckComplete: timestamp(),
-    sentimentCheckResult: SentimentEnum(),
-    sentimentCheckComplete: timestamp(),
-    featureAssociationComplete: timestamp(),
+    splittingComplete: timestamp(),
+    processingComplete: timestamp(),
     processingError: text(),
   },
   (table) => [
     index().on(table.safetyCheckComplete),
-    index().on(table.sentimentCheckResult),
-    index().on(table.featureAssociationComplete),
+    index().on(table.splittingComplete),
+    index().on(table.processingComplete),
     index().on(table.processingError),
     index().on(table.projectId),
   ]
@@ -129,7 +128,45 @@ export const RawFeedbackRelations = relations(
       fields: [RawFeedbacks.projectId],
       references: [Projects.id],
     }),
-    feedbacks: many(Feedbacks),
+    items: many(RawFeedbackItems),
+  })
+)
+
+export const RawFeedbackItems = pgTable(
+  'raw_feedback_items',
+  {
+    id: uuid()
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    rawFeedbackId: uuid()
+      .notNull()
+      .references(() => RawFeedbacks.id),
+    feedback: text().notNull(),
+    createdAt: timestamp().defaultNow().notNull(),
+
+    // Processing status fields
+    sentimentCheckResult: SentimentEnum(),
+    sentimentCheckComplete: timestamp(),
+    featureAssociationComplete: timestamp(),
+    processingError: text(),
+  },
+  (table) => [
+    index().on(table.rawFeedbackId),
+    index().on(table.sentimentCheckResult),
+    index().on(table.sentimentCheckComplete),
+    index().on(table.featureAssociationComplete),
+    index().on(table.processingError),
+  ]
+)
+
+export const RawFeedbackItemRelations = relations(
+  RawFeedbackItems,
+  ({ one }) => ({
+    rawFeedback: one(RawFeedbacks, {
+      fields: [RawFeedbackItems.rawFeedbackId],
+      references: [RawFeedbacks.id],
+    }),
+    feedback: one(Feedbacks),
   })
 )
 
@@ -143,7 +180,7 @@ export const Feedbacks = pgTable('feedback', {
   featureId: uuid()
     .notNull()
     .references(() => Features.id),
-  rawFeedbackId: uuid().references(() => RawFeedbacks.id),
+  rawFeedbackItemId: uuid().references(() => RawFeedbackItems.id),
   feedback: text().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
   createdBy: text().notNull(),
@@ -158,9 +195,9 @@ export const FeedbackRelations = relations(Feedbacks, ({ one }) => ({
     fields: [Feedbacks.featureId],
     references: [Features.id],
   }),
-  rawFeedback: one(RawFeedbacks, {
-    fields: [Feedbacks.rawFeedbackId],
-    references: [RawFeedbacks.id],
+  rawFeedbackItem: one(RawFeedbackItems, {
+    fields: [Feedbacks.rawFeedbackItemId],
+    references: [RawFeedbackItems.id],
   }),
   createdByUser: one(user, {
     fields: [Feedbacks.createdBy],

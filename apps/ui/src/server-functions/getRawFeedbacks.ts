@@ -26,14 +26,14 @@ export const getRawFeedbacks = authedServerFn()
       // Not completed and no errors
       whereConditions = and(
         whereConditions,
-        isNull(RawFeedbacks.featureAssociationComplete),
+        isNull(RawFeedbacks.processingComplete),
         isNull(RawFeedbacks.processingError)
       )!
     } else if (filter === 'completed') {
-      // Feature association complete
+      // Processing complete
       whereConditions = and(
         whereConditions,
-        isNotNull(RawFeedbacks.featureAssociationComplete)
+        isNotNull(RawFeedbacks.processingComplete)
       )!
     } else if (filter === 'errors') {
       // Has processing error
@@ -43,22 +43,14 @@ export const getRawFeedbacks = authedServerFn()
       )!
     }
 
-    // Query with filtering and sorting
-    // Sort by processing state (furthest along at the top)
-    const rawFeedbacks = await db
-      .select()
-      .from(RawFeedbacks)
-      .where(whereConditions)
-      .orderBy(
-        // // Completed items first (nulls last)
-        // asc(RawFeedbacks.featureAssociationComplete),
-        // // Completed items first (nulls last)
-        // asc(RawFeedbacks.sentimentCheckComplete),
-        // // Then safety check complete (nulls last)
-        // asc(RawFeedbacks.safetyCheckComplete),
-        // // Then by creation date (newest first)
-        desc(RawFeedbacks.createdAt)
-      )
+    // Query with filtering and sorting, including items
+    const rawFeedbacks = await db.query.RawFeedbacks.findMany({
+      where: whereConditions,
+      orderBy: desc(RawFeedbacks.createdAt),
+      with: {
+        items: true,
+      },
+    })
 
     return rawFeedbacks
   })

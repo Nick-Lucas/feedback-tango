@@ -99,7 +99,7 @@ function RawFeedbackDetailsDialog({
   const { data: feedbackDetails, isLoading } =
     useRawFeedbackDetailsQuery(rawFeedbackId)
 
-  const feedbacks = feedbackDetails?.feedbacks || []
+  const items = feedbackDetails?.items || []
 
   if (!open) {
     return null
@@ -120,50 +120,54 @@ function RawFeedbackDetailsDialog({
             <div className="text-center text-sm text-muted-foreground py-8">
               Loading feedback details...
             </div>
-          ) : feedbacks.length === 0 ? (
+          ) : items.length === 0 ? (
             <div className="text-center text-sm text-muted-foreground py-8">
               No feedback entries found
             </div>
           ) : (
             <div className="space-y-3">
               <p className="font-semibold text-sm">
-                Split into {feedbacks.length} feedback{' '}
-                {feedbacks.length === 1 ? 'item' : 'items'}:
+                Split into {items.length} feedback{' '}
+                {items.length === 1 ? 'item' : 'items'}:
               </p>
-              {feedbacks.map((feedback, index) => (
-                <Card key={feedback.id} className="p-3 bg-muted/50">
+              {items.map((item, index) => (
+                <Card key={item.id} className="p-3 bg-muted/50">
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm flex-1">
-                        {index + 1}. "{feedback.feedback}"
+                        {index + 1}. "{item.feedback}"
                       </p>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 shrink-0"
-                        asChild
-                      >
-                        <Link
-                          to="/projects/$projectId/features/$featureId"
-                          params={{
-                            projectId,
-                            featureId: feedback.feature.id,
-                          }}
-                          target="_blank"
-                          onClick={() => onOpenChange(false)}
+                      {item.feedback && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 shrink-0"
+                          asChild
                         >
-                          <ExternalLink className="h-3 w-3" />
-                        </Link>
-                      </Button>
+                          <Link
+                            to="/projects/$projectId/features/$featureId"
+                            params={{
+                              projectId,
+                              featureId: item.feedback.feature.id,
+                            }}
+                            target="_blank"
+                            onClick={() => onOpenChange(false)}
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                          </Link>
+                        </Button>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        {feedback.feature.name}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {feedback.feature.description}
-                      </span>
-                    </div>
+                    {item.feedback && (
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {item.feedback.feature.name}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {item.feedback.feature.description}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </Card>
               ))}
@@ -183,10 +187,17 @@ interface RawFeedbackCardProps {
     feedback: string
     createdAt: Date | string
     safetyCheckComplete: Date | string | null
-    sentimentCheckResult: 'positive' | 'constructive' | 'negative' | null
-    sentimentCheckComplete: Date | string | null
-    featureAssociationComplete: Date | string | null
+    splittingComplete: Date | string | null
+    processingComplete: Date | string | null
     processingError: string | null
+    items: Array<{
+      id: string
+      feedback: string
+      sentimentCheckResult: 'positive' | 'constructive' | 'negative' | null
+      sentimentCheckComplete: Date | string | null
+      featureAssociationComplete: Date | string | null
+      processingError: string | null
+    }>
   }
 }
 
@@ -199,15 +210,15 @@ const SENTIMENT_ICONS = {
 function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const safetyComplete = !!rawFeedback.safetyCheckComplete
-  const sentimentComplete = !!rawFeedback.sentimentCheckComplete
-  const featureComplete = !!rawFeedback.featureAssociationComplete
+  const splittingComplete = !!rawFeedback.splittingComplete
+  const processingComplete = !!rawFeedback.processingComplete
   const hasError = !!rawFeedback.processingError
-  const hasLinkedFeedback = featureComplete // Show button if processing is complete
+  const hasItems = rawFeedback.items.length > 0
 
+  // Calculate overall progress for raw feedback level (safety + splitting)
   let progressValue = 0
-  if (safetyComplete) progressValue = 33
-  if (sentimentComplete) progressValue = 66
-  if (featureComplete) progressValue = 100
+  if (safetyComplete) progressValue = 50
+  if (splittingComplete) progressValue = 100
 
   return (
     <Card className="p-4">
@@ -216,14 +227,14 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
           <p className="text-card-foreground italic flex-1">
             "{rawFeedback.feedback.trim()}"
           </p>
-          {hasLinkedFeedback && (
+          {hasItems && (
             <div className="flex items-center gap-2 shrink-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setDialogOpen(true)}
               >
-                View Feedback
+                View Details
               </Button>
               <RawFeedbackDetailsDialog
                 rawFeedbackId={rawFeedback.id}
@@ -236,10 +247,18 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
           )}
         </div>
 
-        <div className="text-sm text-card-foreground/70">
-          <FormattedDate date={rawFeedback.createdAt} />
-          <span className="mx-2">•</span>
-          <span>{rawFeedback.email || 'Anonymous'}</span>
+        <div className="text-sm text-card-foreground/70 flex items-center gap-2">
+          <div>
+            <FormattedDate date={rawFeedback.createdAt} />
+            <span className="mx-2">•</span>
+            <span>{rawFeedback.email || 'Anonymous'}</span>
+          </div>
+          {processingComplete && (
+            <Badge variant="outline" className="text-xs text-green-600">
+              <CheckCircle className="h-3 w-3 mr-1" />
+              Complete
+            </Badge>
+          )}
         </div>
 
         {hasError ? (
@@ -250,65 +269,121 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
             </AlertDescription>
           </Alert>
         ) : (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Processing Status</span>
-              <span className="text-muted-foreground">
-                {progressValue === 100 ? 'Complete' : 'In Progress'}
-              </span>
-            </div>
-            <Progress value={progressValue} className="h-2" />
-
-            <div className="flex gap-4 text-xs">
-              <div className="flex items-center gap-1">
-                {safetyComplete ? (
-                  <CheckCircle className="h-3 w-3 text-green-500" />
-                ) : (
-                  <Clock className="h-3 w-3 text-yellow-500" />
-                )}
-                <span className="text-muted-foreground">Safety Check</span>
-              </div>
-
-              <div className="flex items-center gap-1">
-                {sentimentComplete ? (
-                  <CheckCircle className="h-3 w-3 text-green-500" />
-                ) : safetyComplete ? (
-                  <Clock className="h-3 w-3 text-yellow-500" />
-                ) : (
-                  <XCircle className="h-3 w-3 text-gray-500" />
-                )}
-                <span className="text-muted-foreground">Sentiment Check</span>
-                {rawFeedback.sentimentCheckResult && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="inline-flex">
-                          {SENTIMENT_ICONS[rawFeedback.sentimentCheckResult]}
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="capitalize">
-                          {rawFeedback.sentimentCheckResult}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-              </div>
-
-              <div className="flex items-center gap-1">
-                {featureComplete ? (
-                  <CheckCircle className="h-3 w-3 text-green-500" />
-                ) : sentimentComplete ? (
-                  <Clock className="h-3 w-3 text-yellow-500" />
-                ) : (
-                  <XCircle className="h-3 w-3 text-gray-500" />
-                )}
+          <div className="space-y-3">
+            {/* Raw Feedback Level Progress */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground">
-                  Feature Association
+                  Initial Processing
+                </span>
+                <span className="text-muted-foreground">
+                  {progressValue === 100 ? 'Complete' : 'In Progress'}
                 </span>
               </div>
+              <Progress value={progressValue} className="h-2" />
+
+              <div className="flex gap-4 text-xs">
+                <div className="flex items-center gap-1">
+                  {safetyComplete ? (
+                    <CheckCircle className="h-3 w-3 text-green-500" />
+                  ) : (
+                    <Clock className="h-3 w-3 text-yellow-500" />
+                  )}
+                  <span className="text-muted-foreground">Safety Check</span>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  {splittingComplete ? (
+                    <CheckCircle className="h-3 w-3 text-green-500" />
+                  ) : safetyComplete ? (
+                    <Clock className="h-3 w-3 text-yellow-500" />
+                  ) : (
+                    <XCircle className="h-3 w-3 text-gray-500" />
+                  )}
+                  <span className="text-muted-foreground">
+                    Splitting ({rawFeedback.items.length} item
+                    {rawFeedback.items.length === 1 ? '' : 's'})
+                  </span>
+                </div>
+              </div>
             </div>
+
+            {/* Items Processing */}
+            {hasItems && (
+              <div className="space-y-2 pl-4 border-l-2 border-muted">
+                {rawFeedback.items.map((item, index) => {
+                  const itemSentimentComplete = !!item.sentimentCheckComplete
+                  const itemFeatureComplete = !!item.featureAssociationComplete
+                  const itemHasError = !!item.processingError
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="space-y-1 pb-2 border-b border-muted last:border-0"
+                    >
+                      <p className="text-xs text-card-foreground/80">
+                        Item {index + 1}: "{item.feedback.substring(0, 60)}
+                        {item.feedback.length > 60 ? '...' : ''}"
+                      </p>
+                      {itemHasError ? (
+                        <div className="flex items-start gap-1">
+                          <AlertCircle className="h-3 w-3 text-red-500 mt-0.5" />
+                          <span className="text-xs text-red-500">
+                            {item.processingError}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex gap-3 text-xs">
+                          <div className="flex items-center gap-1">
+                            {itemSentimentComplete ? (
+                              <CheckCircle className="h-3 w-3 text-green-500" />
+                            ) : (
+                              <Clock className="h-3 w-3 text-yellow-500" />
+                            )}
+                            <span className="text-muted-foreground">
+                              Sentiment
+                            </span>
+                            {item.sentimentCheckResult && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="inline-flex">
+                                      {
+                                        SENTIMENT_ICONS[
+                                          item.sentimentCheckResult
+                                        ]
+                                      }
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="capitalize">
+                                      {item.sentimentCheckResult}
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            {itemFeatureComplete ? (
+                              <CheckCircle className="h-3 w-3 text-green-500" />
+                            ) : itemSentimentComplete ? (
+                              <Clock className="h-3 w-3 text-yellow-500" />
+                            ) : (
+                              <XCircle className="h-3 w-3 text-gray-500" />
+                            )}
+                            <span className="text-muted-foreground">
+                              Feature
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>

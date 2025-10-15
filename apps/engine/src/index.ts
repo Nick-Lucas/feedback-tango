@@ -23,7 +23,7 @@ while (true) {
       .from(RawFeedbacks)
       .where(
         and(
-          isNull(RawFeedbacks.featureAssociationComplete),
+          isNull(RawFeedbacks.splittingComplete),
 
           // TODO: implement retries and/or dead letter queue
           isNull(RawFeedbacks.processingError)
