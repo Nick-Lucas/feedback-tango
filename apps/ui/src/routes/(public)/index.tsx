@@ -27,7 +27,7 @@ function RouteComponent() {
   const isAuthenticated = !!session.data
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
       {/* Navigation */}
       <nav className="px-4 fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xs">
         <div className="container flex h-16 items-center justify-between justify-self-center">
@@ -117,7 +117,7 @@ function RouteComponent() {
         </div>
       </SafariSafeBubbleBackground>
 
-      <main className="px-4 justify-self-center">
+      <main className="px-4">
         {/* Feature Section 1: Make every user's voice heard */}
         <Section id="features">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
