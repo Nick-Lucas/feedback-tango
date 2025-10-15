@@ -1,4 +1,4 @@
-export function SafariSafeBubbleBackground(props: {
+export function GradientBackground(props: {
   children: React.ReactNode
   className?: string
 }) {

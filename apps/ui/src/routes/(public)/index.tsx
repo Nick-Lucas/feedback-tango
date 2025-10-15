@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { useIsMobile } from '../../hooks/use-mobile'
-import { SafariSafeBubbleBackground } from '@/components/SafariSafeBubbleBackground'
+import { GradientBackground } from '@/components/gradient-background'
 
 export const Route = createFileRoute('/(public)/')({
   component: RouteComponent,
@@ -42,7 +42,7 @@ function RouteComponent() {
       </nav>
 
       {/* Hero Section with BubbleBackground */}
-      <SafariSafeBubbleBackground className="h-screen relative ">
+      <GradientBackground className="h-screen relative ">
         <div className="relative z-10 flex flex-col h-screen items-center justify-center px-4">
           <div
             className={cn(
@@ -115,7 +115,7 @@ function RouteComponent() {
             </button>
           </div>
         </div>
-      </SafariSafeBubbleBackground>
+      </GradientBackground>
 
       <main className="px-4">
         {/* Feature Section 1: Make every user's voice heard */}

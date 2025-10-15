@@ -4,7 +4,7 @@ import { authClient } from '@/lib/auth'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import z from 'zod'
 import { cn } from '@/lib/utils'
-import { SafariSafeBubbleBackground } from '@/components/SafariSafeBubbleBackground'
+import { GradientBackground } from '@/components/gradient-background'
 
 export const Route = createFileRoute('/(signin)/signin')({
   component: RouteComponent,
@@ -22,9 +22,9 @@ function RouteComponent() {
   }
 
   return (
-    <SafariSafeBubbleBackground className="min-h-screen">
+    <GradientBackground className="min-h-screen">
       <SignInContent callbackURL={callbackURL} />
-    </SafariSafeBubbleBackground>
+    </GradientBackground>
   )
 }
 
