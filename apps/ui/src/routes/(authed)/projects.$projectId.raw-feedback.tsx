@@ -77,7 +77,7 @@ interface RawFeedbackCardProps {
     id: string
     projectId: string
     email: string | null
-    feedback: string
+    content: string
     createdAt: Date | string
     safetyCheckComplete: Date | string | null
     splittingComplete: Date | string | null
@@ -89,9 +89,10 @@ interface RawFeedbackCardProps {
       sentimentCheckComplete: Date | string | null
       featureAssociationComplete: Date | string | null
       processingError: string | null
+      content: string
       feedback?: {
         id: string
-        feedback: string
+        content: string
         feature: {
           id: string
           name: string
@@ -110,7 +111,7 @@ const SENTIMENT_ICONS = {
 function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
   const safetyComplete = !!rawFeedback.safetyCheckComplete
   const splittingComplete = !!rawFeedback.splittingComplete
-  const processingComplete = !!rawFeedback.processingComplete
+  // const processingComplete = !!rawFeedback.processingComplete
   const hasError = !!rawFeedback.processingError
   const hasItems = rawFeedback.items.length > 0
 
@@ -124,7 +125,7 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <p className="text-card-foreground italic flex-1">
-            "{rawFeedback.feedback.trim()}"
+            "{rawFeedback.content.trim()}"
           </p>
         </div>
 
@@ -180,8 +181,7 @@ function RawFeedbackCard({ rawFeedback }: RawFeedbackCardProps) {
                   const itemSentimentComplete = !!item.sentimentCheckComplete
                   const itemFeatureComplete = !!item.featureAssociationComplete
                   const itemHasError = !!item.processingError
-                  const feedbackText =
-                    item.feedback?.feedback || 'Processing...'
+                  const feedbackText = item.feedback?.content || 'Processing...'
 
                   return (
                     <div

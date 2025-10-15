@@ -16,7 +16,7 @@ export const rawFeedbackAccess = {
     }
     return {
       id: rawFeedbackItem.id,
-      feedback: rawFeedbackItem.feedback,
+      content: rawFeedbackItem.content,
       projectId: rawFeedbackItem.projectId,
       email: rawFeedbackItem.email,
     }

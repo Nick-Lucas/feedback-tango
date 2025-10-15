@@ -25,7 +25,7 @@ export async function processRawFeedback({
   try {
     // Step 1: Safety check
     console.log('Running safety check...')
-    const safetyGrade = await checkFeedbackSafety(rawFeedback.feedback)
+    const safetyGrade = await checkFeedbackSafety(rawFeedback.content)
     console.log('Safety check result:', safetyGrade.object.outcome)
 
     // Update safety check completion
@@ -54,7 +54,7 @@ export async function processRawFeedback({
 
     // Step 2: Split feedback into individual items
     console.log('Splitting feedback into individual items...')
-    const splitResult = await splitFeedback(rawFeedback.feedback)
+    const splitResult = await splitFeedback(rawFeedback.content)
     console.log(
       `Feedback split into ${splitResult.object.feedbacks.length} item(s)`
     )
@@ -66,7 +66,7 @@ export async function processRawFeedback({
         .insert(RawFeedbackItems)
         .values({
           rawFeedbackId: rawFeedback.id,
-          feedback: feedbackText,
+          content: feedbackText,
         })
         .returning()
 
@@ -97,7 +97,7 @@ export async function processRawFeedback({
       try {
         // Step 3: Check sentiment for this feedback item
         console.log('Running sentiment check...')
-        const sentimentResult = await checkFeedbackSentiment(item.feedback)
+        const sentimentResult = await checkFeedbackSentiment(item.content)
         console.log('Sentiment result:', sentimentResult.object.outcome)
 
         // Update sentiment check completion for this item
@@ -115,7 +115,7 @@ export async function processRawFeedback({
         const feature = await associateFeatureWithFeedback({
           projectId: rawFeedback.projectId,
           agentUserId,
-          feedback: item.feedback,
+          feedback: item.content,
         })
 
         if (feature.type === 'error') {
@@ -149,7 +149,7 @@ export async function processRawFeedback({
           .values({
             projectId: rawFeedback.projectId,
             featureId: feature.featureId,
-            feedback: item.feedback,
+            content: item.content,
             createdBy: agentUserId,
             rawFeedbackItemId: item.id,
           })

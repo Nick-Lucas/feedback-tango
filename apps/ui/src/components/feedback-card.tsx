@@ -19,7 +19,7 @@ function FormattedDate({ date }: { date: Date | string }) {
 interface FeedbackCardProps {
   feedback: {
     id: string
-    feedback: string
+    content: string
     createdAt: Date | string
     createdBy: string
     createdByUser?: { name: string } | null
@@ -35,7 +35,7 @@ export function FeedbackCard({ feedback }: FeedbackCardProps) {
     <>
       <Card className="p-4 relative">
         <p className="text-card-foreground italic">
-          "{feedback.feedback.trim()}"
+          "{feedback.content.trim()}"
         </p>
 
         <div className="flex items-center justify-between">

@@ -103,7 +103,7 @@ export const RawFeedbacks = pgTable(
       .notNull()
       .references(() => Projects.id),
     email: text(),
-    feedback: text().notNull(),
+    content: text().notNull(),
     createdAt: timestamp().defaultNow().notNull(),
 
     // Processing status fields
@@ -141,7 +141,7 @@ export const RawFeedbackItems = pgTable(
     rawFeedbackId: uuid()
       .notNull()
       .references(() => RawFeedbacks.id),
-    feedback: text().notNull(),
+    content: text().notNull(),
     createdAt: timestamp().defaultNow().notNull(),
 
     // Processing status fields
@@ -181,7 +181,7 @@ export const Feedbacks = pgTable('feedback', {
     .notNull()
     .references(() => Features.id),
   rawFeedbackItemId: uuid().references(() => RawFeedbackItems.id),
-  feedback: text().notNull(),
+  content: text().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
   createdBy: text().notNull(),
 })
