@@ -393,7 +393,7 @@ function TangoLogoName() {
 
 function Section(props: { id?: string; children: React.ReactNode }) {
   return (
-    <section id={props.id} className="container py-6 md:py-24">
+    <section id={props.id} className="container max-w-7xl py-6 md:py-24">
       {props.children}
     </section>
   )
