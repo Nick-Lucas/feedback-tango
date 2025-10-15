@@ -1,7 +1,7 @@
 import { RawFeedbacks, Feedbacks } from '@feedback-thing/db'
 import { eq } from 'drizzle-orm'
-import { checkFeedbackSafety } from './feedback-safety.ts'
-import { handleFeedbackWithAgent } from './feedback-agent.ts'
+import { checkFeedbackSafety } from './safety-checker.agent.ts'
+import { associateFeatureWithFeedback } from './feature-associator.agent.ts'
 
 import type { Transaction } from '../db.ts'
 
@@ -51,7 +51,7 @@ export async function processRawFeedback({
 
     // Step 2: Feature association
     console.log('Running feature association...')
-    const feature = await handleFeedbackWithAgent({
+    const feature = await associateFeatureWithFeedback({
       projectId: rawFeedback.projectId,
       agentUserId,
       feedback: rawFeedback.feedback,
