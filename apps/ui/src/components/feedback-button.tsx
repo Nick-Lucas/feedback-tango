@@ -42,12 +42,12 @@ export function FeedbackButton() {
       <FeedbackWidget
         title={
           appliesToThisProject
-            ? 'Test Feedback'
+            ? 'Add Feedback'
             : 'Feedback about Feedback Thing'
         }
         button={
           appliesToThisProject
-            ? 'Test Feedback'
+            ? 'Add Feedback'
             : 'Feedback about Feedback Thing'
         }
         client={feedbackClient}
