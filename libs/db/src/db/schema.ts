@@ -185,6 +185,7 @@ export const Feedbacks = pgTable(
     rawFeedbackItemId: uuid().references(() => RawFeedbackItems.id),
     content: text().notNull(),
     sentiment: SentimentEnum(),
+    email: text(),
     createdAt: timestamp().defaultNow().notNull(),
     createdBy: text().notNull(),
   },

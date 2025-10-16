@@ -36,7 +36,7 @@ export function FeedbackCard({ feedback }: FeedbackCardProps) {
 
             <span className="mx-2">•</span>
 
-            <span>{feedback.createdByUser?.name || feedback.createdBy}</span>
+            <span>{feedback.email || 'Anonymous'}</span>
           </div>
 
           <DropdownMenu>

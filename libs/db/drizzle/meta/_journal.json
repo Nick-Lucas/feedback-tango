@@ -78,6 +78,13 @@
       "when": 1760625547293,
       "tag": "0010_happy_bloodscream",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1760648851646,
+      "tag": "0011_right_zombie",
+      "breakpoints": true
     }
   ]
 }

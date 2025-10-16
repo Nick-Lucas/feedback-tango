@@ -68,6 +68,7 @@ export async function processFeatureAssociation({ tx, agentUserId }: TaskOpts) {
         featureId: feature.featureId,
         content: item.item.content,
         sentiment: item.item.sentimentCheckResult,
+        email: item.rawFeedback.email,
         createdBy: agentUserId,
         rawFeedbackItemId: item.item.id,
       })
