@@ -1,63 +1,111 @@
 import { setTimeout } from 'timers/promises'
 import { db } from './db.ts'
-import { RawFeedbacks } from '@feedback-thing/db'
-import { and, isNull } from 'drizzle-orm'
-import { processRawFeedback } from './feedback/process-raw-feedback.ts'
+import {
+  processSafetyCheck,
+  processSplitting,
+  processSentiment,
+  processFeatureAssociation,
+} from './feedback/process-raw-feedback.ts'
 import { findAgentUser } from './feedback/agent-user.ts'
+
+// Get agent user ID once at startup
+const agentUserId = await findAgentUser()
+console.log('Agent user ID:', agentUserId)
 
 // TODO: Eventually we want to process data given an event from postgres or a queue
 // But for a prototype we can just poll the database
 while (true) {
-  console.log('Checking for new feedback...')
+  console.log('Checking for work...')
 
-  // Get agent user ID once
-  const agentUserId = await findAgentUser()
-  console.log('Agent user ID:', agentUserId)
+  let workFound = false
 
   await db
     .transaction(async (tx) => {
-      // By using "FOR UPDATE" we can ensure that multiple instances of this
-      // processing loop don't try to process the same feedback at the same time,
-      // at least until this transaction is committed or rolled back
-      const queryResult = await tx
-        .select()
-        .from(RawFeedbacks)
-        .where(
-          and(
-            isNull(RawFeedbacks.splittingComplete),
-
-            // TODO: implement retries and/or dead letter queue
-            isNull(RawFeedbacks.processingError)
-          )
-        )
-        .limit(1)
-        .for('update')
-
-      if (queryResult.length === 0) {
-        console.log('No new feedback found, sleeping...')
-
-        await setTimeout(5000)
-
-        return
-      }
-      const rawFeedback = queryResult[0]!
-
       const result = await Promise.race([
         setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
-
-        // TODO: might need to pass in an abort signal and check it frequently to avoid tx writes on a rolled back transaction logging weird errors
-        processRawFeedback({ tx, rawFeedback, agentUserId }),
+        processSafetyCheck(tx),
       ])
 
       if (result === 'TIMEOUT') {
-        console.log('Processing timed out... rolling back transaction')
-
+        console.log('Safety check timed out... rolling back transaction')
         tx.rollback()
-
         return
+      }
+
+      if (result) {
+        workFound = true
       }
     })
     .catch((err) => {
-      console.error('Transaction error bubbled:', err)
+      console.error('Safety check transaction error:', err)
     })
+
+  await db
+    .transaction(async (tx) => {
+      const result = await Promise.race([
+        setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
+        processSplitting(tx),
+      ])
+
+      if (result === 'TIMEOUT') {
+        console.log('Splitting timed out... rolling back transaction')
+        tx.rollback()
+        return
+      }
+
+      if (result) {
+        workFound = true
+      }
+    })
+    .catch((err) => {
+      console.error('Splitting transaction error:', err)
+    })
+
+  await db
+    .transaction(async (tx) => {
+      const result = await Promise.race([
+        setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
+        processSentiment(tx),
+      ])
+
+      if (result === 'TIMEOUT') {
+        console.log('Sentiment check timed out... rolling back transaction')
+        tx.rollback()
+        return
+      }
+
+      if (result) {
+        workFound = true
+      }
+    })
+    .catch((err) => {
+      console.error('Sentiment check transaction error:', err)
+    })
+
+  await db
+    .transaction(async (tx) => {
+      const result = await Promise.race([
+        setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
+        processFeatureAssociation(tx, agentUserId),
+      ])
+
+      if (result === 'TIMEOUT') {
+        console.log('Feature association timed out... rolling back transaction')
+        tx.rollback()
+        return
+      }
+
+      if (result) {
+        workFound = true
+      }
+    })
+    .catch((err) => {
+      console.error('Feature association transaction error:', err)
+    })
+
+  // If no work was found in any step, sleep before checking again
+  if (!workFound) {
+    console.log('No work found, sleeping...')
+    await setTimeout(5000)
+  }
 }
