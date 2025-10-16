@@ -20,6 +20,7 @@
     "db:migrate": "pnpm -C libs/db db:migrate",
     "db:studio": "pnpm -C libs/db db:studio",
     "db:wipe": "pnpm -C libs/db db:wipe",
+    "db:dev": "pnpm -C libs/db dev",
     "cli": "pnpm -C apps/cli cli:dev",
     "cli:prod": "pnpm -C apps/cli cli:prod",
     "cli-install": "pnpm install -g ./apps/cli",

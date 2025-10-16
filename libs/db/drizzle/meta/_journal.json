@@ -50,6 +50,34 @@
       "when": 1760358419917,
       "tag": "0006_slimy_loners",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1760539791598,
+      "tag": "0007_green_puma",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1760544678946,
+      "tag": "0008_naive_shape",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1760556946291,
+      "tag": "0009_serious_vivisector",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1760625547293,
+      "tag": "0010_happy_bloodscream",
+      "breakpoints": true
     }
   ]
 }

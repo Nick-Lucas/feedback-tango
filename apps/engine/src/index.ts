@@ -1,59 +1,57 @@
 import { setTimeout } from 'timers/promises'
 import { db } from './db.ts'
-import { RawFeedbacks } from '@feedback-thing/db'
-import { and, isNull } from 'drizzle-orm'
-import { processRawFeedback } from './feedback/process-raw-feedback.ts'
+import { processSafetyCheck } from './feedback/safety-checker.task.ts'
+import { processSplitting } from './feedback/feedback-splitter.task.ts'
+import { processSentiment } from './feedback/sentiment-checker.task.ts'
+import { processFeatureAssociation } from './feedback/feature-associator.task.ts'
 import { findAgentUser } from './feedback/agent-user.ts'
+
+// Get agent user ID once at startup
+const agentUserId = await findAgentUser()
+console.log('Agent user ID:', agentUserId)
+
+const tasks = [
+  processSafetyCheck,
+  processSplitting,
+  processSentiment,
+  processFeatureAssociation,
+]
 
 // TODO: Eventually we want to process data given an event from postgres or a queue
 // But for a prototype we can just poll the database
 while (true) {
-  console.log('Checking for new feedback...')
+  console.log('Checking for work...')
 
-  // Get agent user ID once
-  const agentUserId = await findAgentUser()
-  console.log('Agent user ID:', agentUserId)
+  let workFound = false
 
-  await db.transaction(async (tx) => {
-    // By using "FOR UPDATE" we can ensure that multiple instances of this
-    // processing loop don't try to process the same feedback at the same time,
-    // at least until this transaction is committed or rolled back
-    const queryResult = await tx
-      .select()
-      .from(RawFeedbacks)
-      .where(
-        and(
-          isNull(RawFeedbacks.featureAssociationComplete),
+  for (const task of tasks) {
+    console.log(`Running task: ${task.name}`)
 
-          // TODO: implement retries and/or dead letter queue
-          isNull(RawFeedbacks.processingError)
-        )
-      )
-      .limit(1)
-      .for('update')
+    await db
+      .transaction(async (tx) => {
+        const result = await Promise.race([
+          setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
+          task({ tx, agentUserId }),
+        ])
 
-    if (queryResult.length === 0) {
-      console.log('No new feedback found, sleeping...')
+        if (result === 'TIMEOUT') {
+          console.log(`${task.name} timed out... rolling back transaction`)
+          tx.rollback()
+          return
+        }
 
-      await setTimeout(5000)
+        if (result) {
+          workFound = true
+        }
+      })
+      .catch((err) => {
+        console.error('Safety check transaction error:', err)
+      })
+  }
 
-      return
-    }
-    const rawFeedback = queryResult[0]!
-
-    const result = await Promise.race([
-      setTimeout(2 * 60 * 1000).then(() => 'TIMEOUT' as const),
-
-      // TODO: might need to pass in an abort signal and check it frequently to avoid tx writes on a rolled back transaction logging weird errors
-      processRawFeedback({ tx, rawFeedback, agentUserId }),
-    ])
-
-    if (result === 'TIMEOUT') {
-      console.log('Processing timed out... rolling back transaction')
-
-      tx.rollback()
-
-      return
-    }
-  })
+  // If no work was found in any step, sleep before checking again
+  if (!workFound) {
+    console.log('No work found, sleeping...')
+    await setTimeout(5000)
+  }
 }

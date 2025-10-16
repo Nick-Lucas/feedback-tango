@@ -20,6 +20,8 @@ import { moveFeedbackToFeature } from '@/server-functions/moveFeedbackToFeature'
 import { searchUsers } from '@/server-functions/searchUsers'
 import { getRawFeedbacks } from '@/server-functions/getRawFeedbacks'
 import { getRawFeedbackCounts } from '@/server-functions/getRawFeedbackCounts'
+import { getRawFeedbackDetails } from '@/server-functions/getRawFeedbackDetails'
+import { getFeedbackSentimentCounts } from '@/server-functions/getFeedbackSentimentCounts'
 
 // Query Options Factories
 
@@ -81,6 +83,16 @@ export const rawFeedbackCountsQueryOptions = createQueryFactory({
   defaultFunction: getRawFeedbackCounts,
 })
 
+export const rawFeedbackDetailsQueryOptions = createQueryFactory({
+  baseKey: ['raw-feedback', 'details'],
+  defaultFunction: getRawFeedbackDetails,
+})
+
+export const feedbackSentimentCountsQueryOptions = createQueryFactory({
+  baseKey: ['feedback', 'sentiment-counts'],
+  defaultFunction: getFeedbackSentimentCounts,
+})
+
 // Query Hooks
 
 export const useProjectsQuery = () => {
@@ -114,6 +126,7 @@ export const useFeatureQuery = (featureId: string) => {
     })
   )
 }
+export type FeatureResult = Awaited<ReturnType<typeof getFeature>>
 
 export const useProjectQuery = (projectId: string) => {
   const fn = useServerFn(getProject)
@@ -161,6 +174,7 @@ export const useRawFeedbacksQuery = (
     })
   )
 }
+export type RawFeedbacksResult = Awaited<ReturnType<typeof getRawFeedbacks>>
 
 export const useRawFeedbackCountsQuery = (projectId: string) => {
   const fn = useServerFn(getRawFeedbackCounts)
@@ -172,6 +186,28 @@ export const useRawFeedbackCountsQuery = (projectId: string) => {
     }),
     refetchInterval: 5000,
   })
+}
+
+export const useRawFeedbackDetailsQuery = (rawFeedbackId: string) => {
+  const fn = useServerFn(getRawFeedbackDetails)
+
+  return useQuery(
+    rawFeedbackDetailsQueryOptions({
+      fn,
+      data: { rawFeedbackId },
+    })
+  )
+}
+
+export const useFeedbackSentimentCountsQuery = (featureId: string) => {
+  const fn = useServerFn(getFeedbackSentimentCounts)
+
+  return useSuspenseQuery(
+    feedbackSentimentCountsQueryOptions({
+      fn,
+      data: { featureId },
+    })
+  )
 }
 
 // Mutation Hooks

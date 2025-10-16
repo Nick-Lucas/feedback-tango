@@ -43,7 +43,7 @@ export function addFeedback(app: App) {
       .values({
         projectId,
         email: parsed.data.email,
-        feedback: parsed.data.feedback,
+        content: parsed.data.feedback,
       })
       .returning()
 

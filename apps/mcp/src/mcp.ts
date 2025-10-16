@@ -156,7 +156,7 @@ mcp.registerTool(
     description:
       'Create new feedback when the user has submitted some. use the search tools to find the relevant project ID, you may create a new project first if needed',
     inputSchema: {
-      feedback: z.string().describe('Feedback content'),
+      content: z.string().describe('Feedback content'),
       projectId: z.string().describe('Project ID this feedback belongs to'),
       email: z
         .string()
@@ -172,7 +172,7 @@ mcp.registerTool(
     }
 
     const result = await rawFeedbackAccess.create({
-      feedback: input.feedback,
+      content: input.content,
       projectId: input.projectId,
       email: input.email || null,
     })

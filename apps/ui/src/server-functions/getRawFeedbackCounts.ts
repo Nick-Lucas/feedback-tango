@@ -24,7 +24,7 @@ export const getRawFeedbackCounts = authedServerFn()
           RawFeedbacks,
           and(
             eq(RawFeedbacks.projectId, projectId),
-            isNull(RawFeedbacks.featureAssociationComplete),
+            isNull(RawFeedbacks.processingComplete),
             isNull(RawFeedbacks.processingError)
           )
         ),
@@ -32,8 +32,7 @@ export const getRawFeedbackCounts = authedServerFn()
           RawFeedbacks,
           and(
             eq(RawFeedbacks.projectId, projectId),
-            isNotNull(RawFeedbacks.safetyCheckComplete),
-            isNotNull(RawFeedbacks.featureAssociationComplete)
+            isNotNull(RawFeedbacks.processingComplete)
           )
         ),
         errors: db.$count(
