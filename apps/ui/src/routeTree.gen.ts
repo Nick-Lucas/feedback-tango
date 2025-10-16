@@ -23,7 +23,7 @@ import { Route as authedProjectsProjectIdRawFeedbackRouteRouteImport } from './r
 import { Route as signinCliSigninCompleteIndexRouteImport } from './routes/(signin)/cli.signin.complete.index'
 import { Route as authedProjectsProjectIdFeaturesIndexRouteImport } from './routes/(authed)/projects.$projectId.features.index'
 import { Route as authedProjectsProjectIdFeedbackFeedbackIdRouteImport } from './routes/(authed)/projects.$projectId.feedback.$feedbackId'
-import { Route as authedProjectsProjectIdFeaturesFeatureIdRouteImport } from './routes/(authed)/projects.$projectId.features.$featureId'
+import { Route as authedProjectsProjectIdFeaturesFeatureIdRouteRouteImport } from './routes/(authed)/projects.$projectId.features.$featureId/route'
 
 const authedRouteRoute = authedRouteRouteImport.update({
   id: '/(authed)',
@@ -101,8 +101,8 @@ const authedProjectsProjectIdFeedbackFeedbackIdRoute =
     path: '/feedback/$feedbackId',
     getParentRoute: () => authedProjectsProjectIdRoute,
   } as any)
-const authedProjectsProjectIdFeaturesFeatureIdRoute =
-  authedProjectsProjectIdFeaturesFeatureIdRouteImport.update({
+const authedProjectsProjectIdFeaturesFeatureIdRouteRoute =
+  authedProjectsProjectIdFeaturesFeatureIdRouteRouteImport.update({
     id: '/$featureId',
     path: '/$featureId',
     getParentRoute: () => authedProjectsProjectIdFeaturesRoute,
@@ -119,7 +119,7 @@ export interface FileRoutesByFullPath {
   '/projects/$projectId/features': typeof authedProjectsProjectIdFeaturesRouteWithChildren
   '/projects/$projectId/': typeof authedProjectsProjectIdIndexRoute
   '/cli/signin': typeof signinCliSigninIndexRoute
-  '/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRoute
+  '/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRouteRoute
   '/projects/$projectId/feedback/$feedbackId': typeof authedProjectsProjectIdFeedbackFeedbackIdRoute
   '/projects/$projectId/features/': typeof authedProjectsProjectIdFeaturesIndexRoute
   '/cli/signin/complete': typeof signinCliSigninCompleteIndexRoute
@@ -133,7 +133,7 @@ export interface FileRoutesByTo {
   '/projects/$projectId/config': typeof authedProjectsProjectIdConfigRoute
   '/projects/$projectId': typeof authedProjectsProjectIdIndexRoute
   '/cli/signin': typeof signinCliSigninIndexRoute
-  '/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRoute
+  '/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRouteRoute
   '/projects/$projectId/feedback/$feedbackId': typeof authedProjectsProjectIdFeedbackFeedbackIdRoute
   '/projects/$projectId/features': typeof authedProjectsProjectIdFeaturesIndexRoute
   '/cli/signin/complete': typeof signinCliSigninCompleteIndexRoute
@@ -151,7 +151,7 @@ export interface FileRoutesById {
   '/(authed)/projects/$projectId/features': typeof authedProjectsProjectIdFeaturesRouteWithChildren
   '/(authed)/projects/$projectId/': typeof authedProjectsProjectIdIndexRoute
   '/(signin)/cli/signin/': typeof signinCliSigninIndexRoute
-  '/(authed)/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRoute
+  '/(authed)/projects/$projectId/features/$featureId': typeof authedProjectsProjectIdFeaturesFeatureIdRouteRoute
   '/(authed)/projects/$projectId/feedback/$feedbackId': typeof authedProjectsProjectIdFeedbackFeedbackIdRoute
   '/(authed)/projects/$projectId/features/': typeof authedProjectsProjectIdFeaturesIndexRoute
   '/(signin)/cli/signin/complete/': typeof signinCliSigninCompleteIndexRoute
@@ -319,21 +319,21 @@ declare module '@tanstack/react-router' {
       id: '/(authed)/projects/$projectId/features/$featureId'
       path: '/$featureId'
       fullPath: '/projects/$projectId/features/$featureId'
-      preLoaderRoute: typeof authedProjectsProjectIdFeaturesFeatureIdRouteImport
+      preLoaderRoute: typeof authedProjectsProjectIdFeaturesFeatureIdRouteRouteImport
       parentRoute: typeof authedProjectsProjectIdFeaturesRoute
     }
   }
 }
 
 interface authedProjectsProjectIdFeaturesRouteChildren {
-  authedProjectsProjectIdFeaturesFeatureIdRoute: typeof authedProjectsProjectIdFeaturesFeatureIdRoute
+  authedProjectsProjectIdFeaturesFeatureIdRouteRoute: typeof authedProjectsProjectIdFeaturesFeatureIdRouteRoute
   authedProjectsProjectIdFeaturesIndexRoute: typeof authedProjectsProjectIdFeaturesIndexRoute
 }
 
 const authedProjectsProjectIdFeaturesRouteChildren: authedProjectsProjectIdFeaturesRouteChildren =
   {
-    authedProjectsProjectIdFeaturesFeatureIdRoute:
-      authedProjectsProjectIdFeaturesFeatureIdRoute,
+    authedProjectsProjectIdFeaturesFeatureIdRouteRoute:
+      authedProjectsProjectIdFeaturesFeatureIdRouteRoute,
     authedProjectsProjectIdFeaturesIndexRoute:
       authedProjectsProjectIdFeaturesIndexRoute,
   }

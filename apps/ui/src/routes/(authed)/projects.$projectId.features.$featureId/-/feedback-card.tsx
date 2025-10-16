@@ -9,23 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { MoreVertical } from 'lucide-react'
 import { MoveFeedbackModal } from './move-feedback-modal'
-
-function FormattedDate({ date }: { date: Date | string }) {
-  return (
-    <span suppressHydrationWarning>{new Date(date).toLocaleDateString()}</span>
-  )
-}
+import type { FeatureResult } from '@/lib/query-options'
 
 interface FeedbackCardProps {
-  feedback: {
-    id: string
-    content: string
-    createdAt: Date | string
-    createdBy: string
-    createdByUser?: { name: string } | null
-    featureId: string
-    projectId: string
-  }
+  feedback: FeatureResult['feedbacks'][number]
 }
 
 export function FeedbackCard({ feedback }: FeedbackCardProps) {
@@ -68,5 +55,11 @@ export function FeedbackCard({ feedback }: FeedbackCardProps) {
         feedback={feedback}
       />
     </>
+  )
+}
+
+function FormattedDate({ date }: { date: Date | string }) {
+  return (
+    <span suppressHydrationWarning>{new Date(date).toLocaleDateString()}</span>
   )
 }

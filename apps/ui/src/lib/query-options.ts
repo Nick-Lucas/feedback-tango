@@ -120,6 +120,7 @@ export const useFeatureQuery = (featureId: string) => {
     })
   )
 }
+export type FeatureResult = Awaited<ReturnType<typeof getFeature>>
 
 export const useProjectQuery = (projectId: string) => {
   const fn = useServerFn(getProject)

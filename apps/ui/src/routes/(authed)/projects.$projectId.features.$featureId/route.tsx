@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { FeedbackCard } from '@/components/feedback-card'
+import { FeedbackCard } from './-/feedback-card'
 import { featureQueryOptions, useFeatureQuery } from '@/lib/query-options'
 
 export const Route = createFileRoute(
@@ -19,10 +19,6 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { featureId } = Route.useParams()
   const { data: feature } = useFeatureQuery(featureId)
-
-  if (!feature) {
-    return <div className="p-8">Feature not found</div>
-  }
 
   return (
     <div className="max-w-4xl mx-auto">

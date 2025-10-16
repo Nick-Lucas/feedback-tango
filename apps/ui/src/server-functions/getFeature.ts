@@ -1,6 +1,6 @@
 import z from 'zod'
 import { authedServerFn } from './core'
-
+import { notFound } from '@tanstack/react-router'
 import { authz, getDb } from './core.server'
 
 export const getFeature = authedServerFn()
@@ -14,14 +14,20 @@ export const getFeature = authedServerFn()
       ctx.data.featureId,
     ])
 
-    return getDb().query.Features.findFirst({
+    const feature = await getDb().query.Features.findFirst({
       where(fields, operators) {
         return operators.eq(fields.id, ctx.data.featureId)
       },
       with: {
         feedbacks: {
           with: {
-            createdByUser: true,
+            createdByUser: {
+              columns: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
           },
           orderBy(fields, operators) {
             return operators.desc(fields.createdAt)
@@ -29,4 +35,10 @@ export const getFeature = authedServerFn()
         },
       },
     })
+
+    if (!feature) {
+      throw notFound()
+    }
+
+    return feature
   })
