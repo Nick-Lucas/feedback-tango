@@ -17,6 +17,10 @@ For example, if the feedback says "I love the new dashboard, but the login proce
 
 For example, if the feedback says "The search feature is great, but it would be better if it supported colour filters", you should return:
 1. "The search feature is great, but it would be better if it supported colour filters"
+
+For example, if the feedback says "I would like to sign in with apple and also I don't like the search functionality I can never find what I want", you should return:
+1. "I would like to sign in with apple"
+2. "I don't like the search functionality I can never find what I want"
 `
 
 export async function splitFeedback(feedback: string) {

@@ -43,8 +43,6 @@ export const getRawFeedbacks = authedServerFn()
       )!
     }
 
-    // Query with filtering and sorting, including items with their linked feedback and features
-    // Note: We omit the `feedback` text column from items because Drizzle will override it with the relation
     const rawFeedbacks = await db.query.RawFeedbacks.findMany({
       where: whereConditions,
       orderBy: desc(RawFeedbacks.createdAt),
