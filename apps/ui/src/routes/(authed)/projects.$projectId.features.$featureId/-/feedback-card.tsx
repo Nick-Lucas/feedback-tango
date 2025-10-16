@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { MoreVertical } from 'lucide-react'
+import { MoreVertical, ThumbsUp, ThumbsDown, Wrench } from 'lucide-react'
 import { MoveFeedbackModal } from './move-feedback-modal'
 import type { FeatureResult } from '@/lib/query-options'
 
@@ -21,9 +21,14 @@ export function FeedbackCard({ feedback }: FeedbackCardProps) {
   return (
     <>
       <Card className="p-4 relative">
-        <p className="text-card-foreground italic">
-          "{feedback.content.trim()}"
-        </p>
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <p className="text-card-foreground italic flex-1">
+            "{feedback.content.trim()}"
+          </p>
+          {feedback.sentiment && (
+            <SentimentBadge sentiment={feedback.sentiment} />
+          )}
+        </div>
 
         <div className="flex items-center justify-between">
           <div className="text-sm text-card-foreground/70">
@@ -55,6 +60,41 @@ export function FeedbackCard({ feedback }: FeedbackCardProps) {
         feedback={feedback}
       />
     </>
+  )
+}
+
+const SENTIMENT_CONFIG = {
+  positive: {
+    label: 'Positive',
+    className: 'bg-green-500/20 text-green-300 border-green-500/30',
+    icon: <ThumbsUp fill="currentColor" className="h-3 w-3" />,
+  },
+  constructive: {
+    label: 'Constructive',
+    className: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+    icon: <Wrench fill="currentColor" className="h-3 w-3" />,
+  },
+  negative: {
+    label: 'Negative',
+    className: 'bg-red-500/20 text-red-300 border-red-500/30',
+    icon: <ThumbsDown fill="currentColor" className="h-3 w-3" />,
+  },
+} as const
+
+function SentimentBadge({
+  sentiment,
+}: {
+  sentiment: 'positive' | 'constructive' | 'negative'
+}) {
+  const { label, className, icon } = SENTIMENT_CONFIG[sentiment]
+
+  return (
+    <span
+      className={`px-2 py-1 rounded text-xs font-medium border ${className} shrink-0 flex items-center gap-1.5`}
+    >
+      {icon}
+      {label}
+    </span>
   )
 }
 

@@ -1,0 +1,1 @@
+ALTER TABLE "feedback" ADD COLUMN "sentiment" "sentiment_enum";

@@ -182,6 +182,7 @@ export const Feedbacks = pgTable('feedback', {
     .references(() => Features.id),
   rawFeedbackItemId: uuid().references(() => RawFeedbackItems.id),
   content: text().notNull(),
+  sentiment: SentimentEnum(),
   createdAt: timestamp().defaultNow().notNull(),
   createdBy: text().notNull(),
 })
