@@ -75,30 +75,34 @@ function RouteComponent() {
             Feedback ({feature.feedbacks?.length || 0})
           </h2>
 
-          <div className="flex gap-2">
+          <div className="flex">
             <SentimentFilterBadge
               sentiment="all"
               count={sentimentCounts.total}
               active={!search.sentiment}
               onClick={() => handleSentimentClick(undefined)}
+              className="rounded-l rounded-r-none"
             />
             <SentimentFilterBadge
               sentiment="positive"
               count={sentimentCounts.positive}
               active={search.sentiment === 'positive'}
               onClick={() => handleSentimentClick('positive')}
+              className="rounded-none -ml-px"
             />
             <SentimentFilterBadge
               sentiment="constructive"
               count={sentimentCounts.constructive}
               active={search.sentiment === 'constructive'}
               onClick={() => handleSentimentClick('constructive')}
+              className="rounded-none -ml-px"
             />
             <SentimentFilterBadge
               sentiment="negative"
               count={sentimentCounts.negative}
               active={search.sentiment === 'negative'}
               onClick={() => handleSentimentClick('negative')}
+              className="rounded-r rounded-l-none -ml-px"
             />
           </div>
         </div>
