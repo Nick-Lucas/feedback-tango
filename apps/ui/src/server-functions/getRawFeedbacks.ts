@@ -71,5 +71,72 @@ export const getRawFeedbacks = authedServerFn()
       },
     })
 
-    return rawFeedbacks
+    return rawFeedbacks.map(appendProgress)
   })
+
+function appendProgress<
+  TRawFeedback extends {
+    processingComplete: Date | null
+    safetyCheckComplete: Date | null
+    splittingComplete: Date | null
+    items: {
+      sentimentCheckComplete: Date | null
+      featureAssociationComplete: Date | null
+    }[]
+  },
+>(rf: TRawFeedback) {
+  if (rf.processingComplete) {
+    return {
+      ...rf,
+      progress: {
+        percent: 100,
+      },
+    }
+  }
+
+  const safetyCheckComplete = truthyToNum(rf.safetyCheckComplete)
+  const splittingComplete = truthyToNum(rf.splittingComplete)
+  const rawFeedbackProgress = {
+    position: (safetyCheckComplete + splittingComplete) / 2,
+    total: 1,
+  }
+
+  const subitemProgress = rf.items
+    .map((item) => {
+      const sentimentCheckComplete = truthyToNum(item.sentimentCheckComplete)
+      const featureAssociationComplete = truthyToNum(
+        item.featureAssociationComplete
+      )
+
+      return {
+        position: sentimentCheckComplete + featureAssociationComplete,
+        total: 2,
+      }
+    })
+    .reduce(
+      (acc, item) => {
+        acc.position += item.position
+        acc.total += item.total
+        return acc
+      },
+      { position: 0, total: 0 }
+    )
+
+  // Normalise subitem progress to be out of 1
+  subitemProgress.position /= subitemProgress.total
+  subitemProgress.total = 1
+
+  return {
+    ...rf,
+    progress: {
+      percent:
+        ((rawFeedbackProgress.position + subitemProgress.position) /
+          (rawFeedbackProgress.total + subitemProgress.total)) *
+        100,
+    },
+  }
+}
+
+function truthyToNum(value: unknown) {
+  return value ? 1 : 0
+}
