@@ -98,7 +98,7 @@ export function RawFeedbackItemCard({
             ) : (
               <Clock className="h-3 w-3 text-yellow-500" />
             )}
-            <span className="text-muted-foreground">Feature Created</span>
+            <span className="text-muted-foreground">Feature Associated</span>
           </div>
         </div>
       )}
