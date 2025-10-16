@@ -48,7 +48,7 @@ export function ProjectTabs() {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden md:inline-flex h-9 items-center justify-center rounded-lg bg-card text-muted-foreground gap-1">
+      <nav className="hidden md:inline-flex px-1 h-9 items-center justify-center rounded-lg bg-card text-muted-foreground gap-1">
         <ProjectPicker />
 
         <Separator orientation="vertical" />
