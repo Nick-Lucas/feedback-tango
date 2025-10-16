@@ -5,3 +5,4 @@ database.sqlite
 dist/
 scratch.md
 .backups
+.turbo
