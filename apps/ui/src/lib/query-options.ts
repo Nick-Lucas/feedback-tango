@@ -21,6 +21,7 @@ import { searchUsers } from '@/server-functions/searchUsers'
 import { getRawFeedbacks } from '@/server-functions/getRawFeedbacks'
 import { getRawFeedbackCounts } from '@/server-functions/getRawFeedbackCounts'
 import { getRawFeedbackDetails } from '@/server-functions/getRawFeedbackDetails'
+import { getFeedbackSentimentCounts } from '@/server-functions/getFeedbackSentimentCounts'
 
 // Query Options Factories
 
@@ -85,6 +86,11 @@ export const rawFeedbackCountsQueryOptions = createQueryFactory({
 export const rawFeedbackDetailsQueryOptions = createQueryFactory({
   baseKey: ['raw-feedback', 'details'],
   defaultFunction: getRawFeedbackDetails,
+})
+
+export const feedbackSentimentCountsQueryOptions = createQueryFactory({
+  baseKey: ['feedback', 'sentiment-counts'],
+  defaultFunction: getFeedbackSentimentCounts,
 })
 
 // Query Hooks
@@ -189,6 +195,17 @@ export const useRawFeedbackDetailsQuery = (rawFeedbackId: string) => {
     rawFeedbackDetailsQueryOptions({
       fn,
       data: { rawFeedbackId },
+    })
+  )
+}
+
+export const useFeedbackSentimentCountsQuery = (featureId: string) => {
+  const fn = useServerFn(getFeedbackSentimentCounts)
+
+  return useSuspenseQuery(
+    feedbackSentimentCountsQueryOptions({
+      fn,
+      data: { featureId },
     })
   )
 }

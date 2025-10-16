@@ -170,22 +170,33 @@ export const RawFeedbackItemRelations = relations(
   })
 )
 
-export const Feedbacks = pgTable('feedback', {
-  id: uuid()
-    .primaryKey()
-    .default(sql`uuidv7()`),
-  projectId: uuid()
-    .notNull()
-    .references(() => Projects.id),
-  featureId: uuid()
-    .notNull()
-    .references(() => Features.id),
-  rawFeedbackItemId: uuid().references(() => RawFeedbackItems.id),
-  content: text().notNull(),
-  sentiment: SentimentEnum(),
-  createdAt: timestamp().defaultNow().notNull(),
-  createdBy: text().notNull(),
-})
+export const Feedbacks = pgTable(
+  'feedback',
+  {
+    id: uuid()
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    projectId: uuid()
+      .notNull()
+      .references(() => Projects.id),
+    featureId: uuid()
+      .notNull()
+      .references(() => Features.id),
+    rawFeedbackItemId: uuid().references(() => RawFeedbackItems.id),
+    content: text().notNull(),
+    sentiment: SentimentEnum(),
+    createdAt: timestamp().defaultNow().notNull(),
+    createdBy: text().notNull(),
+  },
+  (self) => {
+    return [
+      index().on(self.projectId),
+      index().on(self.featureId),
+      index().on(self.sentiment),
+      index().on(self.rawFeedbackItemId),
+    ]
+  }
+)
 
 export const FeedbackRelations = relations(Feedbacks, ({ one }) => ({
   project: one(Projects, {
