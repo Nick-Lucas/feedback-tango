@@ -18,12 +18,14 @@ function RouteComponent() {
 
   const session = authClient.useSession()
   if (session.data) {
-    return <Navigate to="/" replace />
+    return <Navigate to={window.location.origin + '/projects'} replace />
   }
 
   return (
     <GradientBackground className="min-h-screen">
-      <SignInContent callbackURL={callbackURL} />
+      <SignInContent
+        callbackURL={callbackURL || window.location.origin + '/projects'}
+      />
     </GradientBackground>
   )
 }
