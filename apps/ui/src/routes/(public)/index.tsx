@@ -64,10 +64,13 @@ function RouteComponent() {
               Make Every Customer Voice Count!
             </h1>
 
-            <p className="mb-10 text-md md:text-lg text-foreground/80 drop-shadow-md">
+            <p className="max-w-150 mb-10 text-md md:text-lg text-foreground/80 drop-shadow-md">
               Transform chaos into clarity. Tango helps you collect, analyze,
+              and act on customer feedback, turning the qualitative into
+              quantitative.
+              {/* Transform chaos into clarity. Tango helps you collect, analyze,
               and act on customer feedback with the power of AI, turning every
-              voice into actionable insights.
+              voice into actionable insights. */}
             </p>
 
             <div className="flex items-center justify-center gap-4">
@@ -239,7 +242,7 @@ function RouteComponent() {
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
                   <span className="text-muted-foreground">
-                    Sentiment analysis with precise scoring
+                    Sentiment analysis
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -312,7 +315,7 @@ function RouteComponent() {
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-green-500" />
                   <span className="text-muted-foreground">
-                    Continuous learning from your specific feedback patterns
+                    Continuous modelling of your software's unique features
                   </span>
                 </li>
               </ul>
