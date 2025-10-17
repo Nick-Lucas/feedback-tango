@@ -390,7 +390,14 @@ function TangoLogoName() {
 
       <div className="relative">
         <span className="text-xl font-bold">Tango</span>
-        <div className="absolute -right-4 -top-1 rotate-12 bg-destructive px-1.5 py-0.5 text-[8px] font-bold text-white shadow-sm rounded-sm">
+
+        <div
+          className="absolute -right-4 -top-1 rotate-12 bg-destructive px-1.5 py-0.5 text-[8px] font-bold text-white shadow-sm rounded-sm opacity-50"
+          aria-hidden
+        >
+          BETA
+        </div>
+        <div className="absolute -right-4 -top-1 rotate-25 bg-destructive px-1.5 py-0.5 text-[8px] font-bold text-white shadow-sm rounded-sm">
           BETA
         </div>
       </div>
