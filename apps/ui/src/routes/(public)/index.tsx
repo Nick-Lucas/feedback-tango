@@ -386,7 +386,12 @@ function TangoLogoName() {
         <MessageSquare className="size-5 text-gray-600" />
       </div>
 
-      <span className="text-xl font-bold">Tango</span>
+      <div className="relative">
+        <span className="text-xl font-bold">Tango</span>
+        <div className="absolute -right-4 -top-1 rotate-12 bg-destructive px-1.5 py-0.5 text-[8px] font-bold text-white shadow-sm rounded-sm">
+          BETA
+        </div>
+      </div>
     </div>
   )
 }
