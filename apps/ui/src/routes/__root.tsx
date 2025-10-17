@@ -7,6 +7,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Toaster } from '@/components/ui/sonner'
 
+import appFavicon from '../../public/favicon.svg?url'
 import appCss from '../styles.css?url'
 import { FeedbackButton } from '@/components/feedback-button'
 import type { QueryClient } from '@tanstack/react-query'
@@ -29,6 +30,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
       ],
       links: [
+        {
+          rel: 'icon',
+          type: 'image/svg+xml',
+          href: appFavicon,
+        },
         {
           rel: 'stylesheet',
           href: appCss,
