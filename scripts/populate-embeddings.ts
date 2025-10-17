@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { embedText } from '../libs/agents/src/embedding.ts'
 import { createDb } from '../libs/db/src/db/db.ts'
-import { Features } from '../@feedback-thing/db'
+import { Features } from '../libs/db/src/db/schema.ts'
 import { config } from 'dotenv'
 
 config({
