@@ -8,15 +8,14 @@ import {
   Sparkles,
   TrendingUp,
   Zap,
-  MessageSquare,
   ArrowRight,
   CheckCircle2,
   Infinity as InfinityIcon,
   ChevronDown,
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
-import { useIsMobile } from '../../hooks/use-mobile'
 import { GradientBackground } from '@/components/gradient-background'
+import { TangoLogo } from '@/components/tango-logo'
 
 export const Route = createFileRoute('/(public)/')({
   component: RouteComponent,
@@ -98,11 +97,11 @@ function RouteComponent() {
         {/* Gradient fade overlay */}
         <div
           className={cn(
-            ' absolute inset-x-0 bottom-0 z-[50] h-48 bg-gradient-to-t from-background via-background/50 to-transparent',
+            ' absolute inset-x-0 bottom-0 z-[49] h-49 bg-gradient-to-t from-background via-background/50 to-transparent',
             'flex items-end justify-center pb-10'
           )}
         >
-          <div className="mt-16 flex justify-center  z-50">
+          <div className="mt-16 flex justify-center z-49">
             <button
               onClick={(e) => {
                 e.preventDefault()
@@ -361,13 +360,13 @@ function RouteComponent() {
 }
 
 function CardImage(props: { src: string; alt: string }) {
-  const isMobile = useIsMobile()
-  if (isMobile) {
-    return null
-  }
+  // const isMobile = useIsMobile()
+  // if (isMobile) {
+  //   return null
+  // }
 
   return (
-    <div className="flex items-center justify-center opacity-75">
+    <div className="hidden lg:flex items-center justify-center opacity-75">
       <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-transparent">
         <img
           src={props.src}
@@ -382,8 +381,8 @@ function CardImage(props: { src: string; alt: string }) {
 function TangoLogoName() {
   return (
     <div className="flex items-center gap-2">
-      <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent-foreground">
-        <MessageSquare className="size-5 text-gray-600" />
+      <div className="flex size-8 items-center justify-center [&_svg]:text-primary">
+        <TangoLogo />
       </div>
 
       <div className="relative">
@@ -398,7 +397,7 @@ function TangoLogoName() {
 
 function Section(props: { id?: string; children: React.ReactNode }) {
   return (
-    <section id={props.id} className="container max-w-7xl py-6 md:py-24">
+    <section id={props.id} className="container max-w-7xl py-6 lg:py-24">
       {props.children}
     </section>
   )
