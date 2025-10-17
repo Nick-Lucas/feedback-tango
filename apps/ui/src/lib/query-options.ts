@@ -167,12 +167,13 @@ export const useRawFeedbacksQuery = (
 ) => {
   const fn = useServerFn(getRawFeedbacks)
 
-  return useSuspenseQuery(
-    rawFeedbacksQueryOptions({
+  return useSuspenseQuery({
+    ...rawFeedbacksQueryOptions({
       fn,
       data: { projectId, filter },
-    })
-  )
+    }),
+    refetchInterval: 5000,
+  })
 }
 export type RawFeedbacksResult = Awaited<ReturnType<typeof getRawFeedbacks>>
 
