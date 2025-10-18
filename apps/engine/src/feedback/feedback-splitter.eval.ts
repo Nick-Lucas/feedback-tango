@@ -6,7 +6,10 @@ import { readFileSync } from 'fs'
 
 type Result = Awaited<ReturnType<typeof splitFeedback>>['object']
 
-const LevenshteinSplitFeedbackScorer = createScorer<string, Result>({
+const LevenshteinSplitFeedbackScorer = createScorer<
+  { type: string; content: string },
+  Result
+>({
   name: 'Levenshtein Split Feedback Scorer',
   async scorer({ output, expected }) {
     if (!expected) {
@@ -37,7 +40,10 @@ const LevenshteinSplitFeedbackScorer = createScorer<string, Result>({
   },
 })
 
-const FeedbacksCountSplitFeedbackScorer = createScorer<string, Result>({
+const FeedbacksCountSplitFeedbackScorer = createScorer<
+  { type: string; content: string },
+  Result
+>({
   name: 'Feedbacks Count Split Feedback Scorer',
   async scorer({ output, expected }) {
     if (!expected) {
@@ -60,8 +66,11 @@ const FeedbacksCountSplitFeedbackScorer = createScorer<string, Result>({
 evalite('My Eval', {
   data: [
     {
-      input:
-        'I love the new dashboard, but the login process is too long and complicated',
+      input: {
+        type: 'example',
+        content:
+          'I love the new dashboard, but the login process is too long and complicated',
+      },
       expected: makeResult({
         feedbacks: [
           'I love the new dashboard',
@@ -72,8 +81,11 @@ evalite('My Eval', {
       }),
     },
     {
-      input:
-        'The search feature is great, but it would be better if it supported colour filters',
+      input: {
+        type: 'example',
+        content:
+          'The search feature is great, but it would be better if it supported colour filters',
+      },
       expected: makeResult({
         feedbacks: [
           'The search feature is great, but it would be better if it supported colour filters',
@@ -83,8 +95,11 @@ evalite('My Eval', {
       }),
     },
     {
-      input:
-        "I would like to sign in with apple and also I don't like the search functionality I can never find what I want",
+      input: {
+        type: 'example',
+        content:
+          "I would like to sign in with apple and also I don't like the search functionality I can never find what I want",
+      },
       expected: makeResult({
         feedbacks: [
           'I would like to sign in with apple',
@@ -95,27 +110,44 @@ evalite('My Eval', {
       }),
     },
     {
-      input: loadEvalFile('github-1.input.md'),
+      input: {
+        type: 'github-issue-1',
+        content: loadEvalFile('github-1.input.md'),
+      },
       expected: makeResult({
         feedbacks: [loadEvalFile('github-1.output.md')],
         reason: '',
       }),
     },
     {
-      input: loadEvalFile('github-2.input.md'),
+      input: {
+        type: 'github-issue-2',
+        content: loadEvalFile('github-2.input.md'),
+      },
       expected: makeResult({
         feedbacks: [loadEvalFile('github-2.output.md')],
         reason: '',
       }),
     },
+    {
+      input: {
+        type: 'github-issue-3',
+        content: loadEvalFile('github-3.input.md'),
+      },
+      expected: makeResult({
+        feedbacks: [loadEvalFile('github-3.output.md')],
+        reason: '',
+      }),
+    },
   ],
   task: async (input) => {
-    const result = await splitFeedback(input)
+    const result = await splitFeedback(input.content)
     return makeResult(result.object)
   },
   columns(opts) {
     return [
-      { label: 'Input', value: opts.input },
+      { label: 'Type', value: opts.input.type },
+      { label: 'Input', value: opts.input.content },
       { label: 'Reason', value: opts.output.reason },
       { label: 'Feedbacks', value: opts.output.feedbacks },
       { label: 'RawResult', value: JSON.stringify(opts.output) },
