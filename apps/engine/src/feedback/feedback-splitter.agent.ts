@@ -32,6 +32,7 @@ export async function splitFeedback(feedback: string) {
       feedbacks: z.string().array().describe('The individual feedbacks'),
       reason: z.string().max(1000).describe('The reason for the outcome'),
     }),
+    temperature: 0,
   })
 
   return result

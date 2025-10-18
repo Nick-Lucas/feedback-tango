@@ -21,6 +21,7 @@
     "db:studio": "pnpm -C libs/db db:studio",
     "db:wipe": "pnpm -C libs/db db:wipe",
     "db:dev": "pnpm -C libs/db dev",
+    "eval:dev": "evalite watch",
     "cli": "pnpm -C apps/cli cli:dev",
     "cli:prod": "pnpm -C apps/cli cli:prod",
     "cli-install": "pnpm install -g ./apps/cli",
@@ -42,9 +43,12 @@
     "@tanstack/eslint-config": "catalog:",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
+    "autoevals": "catalog:",
     "eslint": "catalog:",
+    "evalite": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
-    "turbo": "catalog:"
+    "turbo": "catalog:",
+    "vitest": "catalog:"
   }
 }
