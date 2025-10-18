@@ -25,11 +25,6 @@ const LevenshteinSplitFeedbackScorer = createScorer<string, Result>({
         })
       })
     )
-    const reasonDistance = await Levenshtein({
-      output: output.reason,
-      expected: expected.reason,
-    })
-    distances.push(reasonDistance)
 
     const totalDistance = distances.reduce(
       (sum, dist) => sum + (dist.score ?? 0),
@@ -84,7 +79,7 @@ evalite('My Eval', {
           'The search feature is great, but it would be better if it supported colour filters',
         ],
         reason:
-          'The user provided feedback on a single feature, the search functionality, and suggested an improvement for it. Therefore, no splitting was necessary.',
+          'The feedback pertains to a single feature (search) and does not require splitting.',
       }),
     },
     {
@@ -103,8 +98,14 @@ evalite('My Eval', {
       input: loadEvalFile('github-1.input.md'),
       expected: makeResult({
         feedbacks: [loadEvalFile('github-1.output.md')],
-        reason:
-          'The user provided feedback on a single feature, the issue template, and suggested an improvement for it. Therefore, no splitting was necessary.',
+        reason: '',
+      }),
+    },
+    {
+      input: loadEvalFile('github-2.input.md'),
+      expected: makeResult({
+        feedbacks: [loadEvalFile('github-2.output.md')],
+        reason: '',
       }),
     },
   ],
@@ -114,7 +115,10 @@ evalite('My Eval', {
   },
   columns(opts) {
     return [
-      { label: 'Input', value: opts.input.slice(0, 50) + '...' },
+      { label: 'Input', value: opts.input },
+      { label: 'Reason', value: opts.output.reason },
+      { label: 'Feedbacks', value: opts.output.feedbacks },
+      { label: 'RawResult', value: JSON.stringify(opts.output) },
       {
         label: 'Count',
         value: `${opts.output.feedbacks.length}/${opts.expected?.feedbacks.length}`,

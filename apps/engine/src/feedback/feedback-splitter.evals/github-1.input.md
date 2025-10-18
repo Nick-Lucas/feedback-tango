@@ -10,14 +10,18 @@ Consider the example:
 
 ```ts
 const orgProcedure = procedure
-  .input(v.object({
-    orgId: v.pipe(v.string(), v.uuid()),
-    orgAccessKey: v.string(), // Imaginary data
-  }))
+  .input(
+    v.object({
+      orgId: v.pipe(v.string(), v.uuid()),
+      orgAccessKey: v.string(), // Imaginary data
+    })
+  )
   .use(async ({ input: { orgId, orgAccessKey, ...input }, next }) => {
-    const org = await db.org.findOptional(orgId).select("id", "name")
+    const org = await db.org
+      .findOptional(orgId)
+      .select('id', 'name')
       .where({ orgAccessKey }) // Imaginary access check
-    assertHttp404NotFound(org, "Org not found")
+    assertHttp404NotFound(org, 'Org not found')
     return next({
       ctx: { org }, // Add org object to context
       input, // Remove orgId and orgAccessKey from input
@@ -25,11 +29,13 @@ const orgProcedure = procedure
   })
 
 const editAccount = orgProcedure
-  .input(v.object({
-    accountId: v.pipe(v.string(), v.uuid()),
-    name: v.string(),
-    balance: v.number(),
-  }))
+  .input(
+    v.object({
+      accountId: v.pipe(v.string(), v.uuid()),
+      name: v.string(),
+      balance: v.number(),
+    })
+  )
   .mutation(async ({ ctx: { org }, input: { accountId, ...input } }) => {
     // Here input is { name, balance } in runtime,
     // but it's typed as { orgId, orgAccessKey, name, balance }.
@@ -53,17 +59,25 @@ Currently, all procedures must deal with the entire input object. That means two
 
 ```ts
 const editAccount = orgProcedure
-  .input(v.object({
-    accountId: v.pipe(v.string(), v.uuid()),
-    name: v.string(),
-    balance: v.number(),
-  }))
-  .mutation(async ({ ctx: { org }, input: { orgId, orgAccessKey, accountId, ...input } }) => {
-    await db.account.find(accountId).where({ orgId: org.id }).update(input)
-  })
+  .input(
+    v.object({
+      accountId: v.pipe(v.string(), v.uuid()),
+      name: v.string(),
+      balance: v.number(),
+    })
+  )
+  .mutation(
+    async ({
+      ctx: { org },
+      input: { orgId, orgAccessKey, accountId, ...input },
+    }) => {
+      await db.account.find(accountId).where({ orgId: org.id }).update(input)
+    }
+  )
 ```
 
 Problems:
+
 - Unused vars are not cool.
 - If I add a new field to the upstream middleware, I will have to update ALL derived procedures that use the whole input.
 
@@ -71,22 +85,28 @@ Problems:
 
 ```ts
 const editAccount = orgProcedure
-  .input(v.object({
-    accountId: v.pipe(v.string(), v.uuid()),
-    name: v.string(),
-    balance: v.number(),
-  }))
+  .input(
+    v.object({
+      accountId: v.pipe(v.string(), v.uuid()),
+      name: v.string(),
+      balance: v.number(),
+    })
+  )
   .mutation(async ({ ctx: { org }, input: { accountId, name, balance } }) => {
-    await db.account.find(accountId).where({ orgId: org.id }).update({ name, balance })
+    await db.account
+      .find(accountId)
+      .where({ orgId: org.id })
+      .update({ name, balance })
   })
 ```
 
 This is more reliable, but then each field must be repeated thrice:
+
 1. in the validator
 2. in input extractor
 3. in update call
 
-So for 20 fields, that gives 40 extra words. 
+So for 20 fields, that gives 40 extra words.
 
 ### Additional information
 
