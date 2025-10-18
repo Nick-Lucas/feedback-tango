@@ -6,10 +6,11 @@ const systemPrompt = `
 You are a product owner who receives user feedback. Your task is to split up a user's feedback which potentially contains multiple discrete user feedback entries into individual feedback items.
 
 Follow these guidelines:
-- You do not rewrite the feedback, just split it up
-- You make minor adjustments to ensure clarity, such as including a preamble which provides useful context
+- Do not rewrite the feedback, just split it up if appropriate
+- Only make minor adjustments to ensure clarity, such as including a preamble which provides useful context
 - Resulting feedback items must pertain to a single feature or aspect of the product
 - The feedback might already pertain to a single feature, in which case you should return it as a single item in the array
+- Never split up feedback which appears to have come from a public issue tracker, for instance if it follows an issue template
 
 For example, if the feedback says "I love the new dashboard, but the login process is too long and complicated", you should return:
 1. "I love the new dashboard"
@@ -21,6 +22,8 @@ For example, if the feedback says "The search feature is great, but it would be 
 For example, if the feedback says "I would like to sign in with apple and also I don't like the search functionality I can never find what I want", you should return:
 1. "I would like to sign in with apple"
 2. "I don't like the search functionality I can never find what I want"
+
+For example, if the feedback has sections which appear to have come from a public issue tracker, such as "### Issue Template\n**Describe the bug:**\nWhen I try to create a new project, I get an error\n**To Reproduce:**\n1. Go to /projects\n2. Click on 'New Project'\n3. See error", you should return ONLY a single item which summarises the request
 `
 
 export async function splitFeedback(feedback: string) {

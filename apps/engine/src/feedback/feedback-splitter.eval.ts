@@ -42,6 +42,26 @@ const LevenshteinSplitFeedbackScorer = createScorer<string, Result>({
   },
 })
 
+const FeedbacksCountSplitFeedbackScorer = createScorer<string, Result>({
+  name: 'Feedbacks Count Split Feedback Scorer',
+  async scorer({ output, expected }) {
+    if (!expected) {
+      // Shouldn't happen anyway
+      return {
+        score: 0,
+      }
+    }
+
+    const expectedCount = expected.feedbacks.length
+    const outputCount = output.feedbacks.length
+
+    const score = expectedCount === outputCount ? 1 : 0
+    return {
+      score,
+    }
+  },
+})
+
 evalite('My Eval', {
   data: [
     {
@@ -80,9 +100,9 @@ evalite('My Eval', {
       }),
     },
     {
-      input: loadEvalFile('github-1.md'),
+      input: loadEvalFile('github-1.input.md'),
       expected: makeResult({
-        feedbacks: [loadEvalFile('github-1.md')],
+        feedbacks: [loadEvalFile('github-1.output.md')],
         reason:
           'The user provided feedback on a single feature, the issue template, and suggested an improvement for it. Therefore, no splitting was necessary.',
       }),
@@ -92,7 +112,16 @@ evalite('My Eval', {
     const result = await splitFeedback(input)
     return makeResult(result.object)
   },
-  scorers: [LevenshteinSplitFeedbackScorer],
+  columns(opts) {
+    return [
+      { label: 'Input', value: opts.input.slice(0, 50) + '...' },
+      {
+        label: 'Count',
+        value: `${opts.output.feedbacks.length}/${opts.expected?.feedbacks.length}`,
+      },
+    ]
+  },
+  scorers: [LevenshteinSplitFeedbackScorer, FeedbacksCountSplitFeedbackScorer],
 })
 
 function makeResult(object: Result) {
