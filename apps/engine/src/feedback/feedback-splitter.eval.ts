@@ -1,18 +1,24 @@
 import { createScorer, evalite } from 'evalite'
 import { Levenshtein } from 'autoevals'
 import { splitFeedback } from './feedback-splitter.agent.ts'
+import path from 'path'
+import { readFileSync } from 'fs'
 
 type Result = Awaited<ReturnType<typeof splitFeedback>>['object']
 
-const LevenshteinSplitFeedbackScorer = createScorer({
+const LevenshteinSplitFeedbackScorer = createScorer<string, Result>({
   name: 'Levenshtein Split Feedback Scorer',
   async scorer({ output, expected }) {
-    const resultFeedbacks = JSON.parse(String(output)) as Result
-    const expectedFeedbacks = JSON.parse(String(expected)) as Result
+    if (!expected) {
+      // Shouldn't happen anyway
+      return {
+        score: 0,
+      }
+    }
 
     const distances = await Promise.all(
-      expectedFeedbacks.feedbacks.map(async (expectedFeedback, index) => {
-        const resultFeedback = resultFeedbacks.feedbacks[index] || ''
+      expected.feedbacks.map(async (expectedFeedback, index) => {
+        const resultFeedback = output.feedbacks[index] || ''
         return await Levenshtein({
           output: resultFeedback,
           expected: expectedFeedback,
@@ -20,8 +26,8 @@ const LevenshteinSplitFeedbackScorer = createScorer({
       })
     )
     const reasonDistance = await Levenshtein({
-      output: resultFeedbacks.reason,
-      expected: expectedFeedbacks.reason,
+      output: output.reason,
+      expected: expected.reason,
     })
     distances.push(reasonDistance)
 
@@ -73,6 +79,14 @@ evalite('My Eval', {
           'The user provided two distinct pieces of feedback: a request for a new feature (sign in with Apple) and a complaint about an existing feature (search functionality).',
       }),
     },
+    {
+      input: loadEvalFile('github-1.md'),
+      expected: makeResult({
+        feedbacks: [loadEvalFile('github-1.md')],
+        reason:
+          'The user provided feedback on a single feature, the issue template, and suggested an improvement for it. Therefore, no splitting was necessary.',
+      }),
+    },
   ],
   task: async (input) => {
     const result = await splitFeedback(input)
@@ -82,5 +96,10 @@ evalite('My Eval', {
 })
 
 function makeResult(object: Result) {
-  return JSON.stringify(object, null, 2)
+  return object
+}
+
+function loadEvalFile(name: string) {
+  const file = path.join(import.meta.dirname, 'feedback-splitter.evals', name)
+  return readFileSync(file, 'utf-8')
 }
