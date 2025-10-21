@@ -22,6 +22,7 @@ import { getRawFeedbacks } from '@/server-functions/getRawFeedbacks'
 import { getRawFeedbackCounts } from '@/server-functions/getRawFeedbackCounts'
 import { getRawFeedbackDetails } from '@/server-functions/getRawFeedbackDetails'
 import { getFeedbackSentimentCounts } from '@/server-functions/getFeedbackSentimentCounts'
+import { reprocessAllFeedback } from '@/server-functions/reprocessAllFeedback'
 
 // Query Options Factories
 
@@ -294,6 +295,21 @@ export const useMoveFeedbackToFeatureMutation = () => {
   return useMutation({
     mutationFn: (data: { feedbackId: string; featureId: string }) =>
       requestMoveFeedbackToFeature({
+        data,
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries()
+    },
+  })
+}
+
+export const useReprocessAllFeedbackMutation = () => {
+  const queryClient = useQueryClient()
+  const requestReprocessAllFeedback = useServerFn(reprocessAllFeedback)
+
+  return useMutation({
+    mutationFn: (data: { projectId: string }) =>
+      requestReprocessAllFeedback({
         data,
       }),
     onSuccess: async () => {
