@@ -165,7 +165,7 @@ function RouteComponent() {
               </ul>
             </div>
             <CardImage
-              src="/landing/user-voices.png"
+              src="/landing/user-voices.svg"
               alt="Infinite user voices being processed"
             />
           </div>
@@ -175,7 +175,7 @@ function RouteComponent() {
         <Section>
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <CardImage
-              src="/landing/user-voices-clustered.png"
+              src="/landing/user-voices-clustered.svg"
               alt="Smart clustering of feedback topics"
             />
             <div className="order-1 flex flex-col justify-center lg:order-2">
@@ -266,7 +266,7 @@ function RouteComponent() {
               </ul>
             </div>
             <CardImage
-              src="/landing/user-voices-stats.png"
+              src="/landing/user-voices-stats.svg"
               alt="Analytics dashboard showing quantitative data"
             />
           </div>
@@ -276,7 +276,7 @@ function RouteComponent() {
         <Section>
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <CardImage
-              src="/landing/ai-brain.png"
+              src="/landing/ai-brain.svg"
               alt="AI-powered technology processing feedback"
             />
             <div className="order-1 flex flex-col justify-center lg:order-2">
@@ -369,12 +369,13 @@ function CardImage(props: { src: string; alt: string }) {
   // }
 
   return (
-    <div className="hidden lg:flex items-center justify-center opacity-75">
-      <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-transparent">
+    <div className="relative hidden lg:flex items-center justify-center opacity-75">
+      <Noise />
+      <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-neutral-500/10">
         <img
           src={props.src}
           alt={props.alt}
-          className="size-full object-cover dark:invert dark:hue-rotate-215"
+          className="size-full object-cover"
         />
       </div>
     </div>
@@ -415,4 +416,13 @@ function Section(props: { id?: string; children: React.ReactNode }) {
 
 function scrollToFeatures() {
   document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' })
+}
+
+function Noise() {
+  return (
+    <div
+      className="absolute top-0 left-0 w-full h-full content-[''] z-10 pointer-events-none bg-[url('/landing/noise.gif')]"
+      style={{ opacity: 0.04 }}
+    />
+  )
 }
