@@ -423,12 +423,3 @@ function Section(props: { id?: string; children: React.ReactNode }) {
 function scrollToFeatures() {
   document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' })
 }
-
-function Noise() {
-  return (
-    <div
-      className="absolute top-0 left-0 w-full h-full content-[''] z-10 pointer-events-none bg-[url('/landing/noise.gif')] bg-[length:200px_200px]"
-      style={{ opacity: 0.1, willChange: 'auto' }}
-    />
-  )
-}
