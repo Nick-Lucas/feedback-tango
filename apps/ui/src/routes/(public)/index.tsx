@@ -370,12 +370,14 @@ function CardImage(props: { src: string; alt: string }) {
 
   return (
     <div className="relative hidden lg:flex items-center justify-center opacity-75">
-      <Noise />
-      <div className="w-full overflow-hidden rounded-xl border-2 bg-white shadow-lg dark:bg-neutral-500/10">
+      {/* <Noise /> */}
+      <div className="w-full overflow-hidden rounded-xl  shadow-lg">
         <img
           src={props.src}
           alt={props.alt}
           className="size-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
       </div>
     </div>
@@ -408,7 +410,11 @@ function TangoLogoName() {
 
 function Section(props: { id?: string; children: React.ReactNode }) {
   return (
-    <section id={props.id} className="container max-w-7xl py-6 lg:py-24">
+    <section
+      id={props.id}
+      className="container max-w-7xl py-6 lg:py-24"
+      style={{ contentVisibility: 'auto' }}
+    >
       {props.children}
     </section>
   )
@@ -421,8 +427,8 @@ function scrollToFeatures() {
 function Noise() {
   return (
     <div
-      className="absolute top-0 left-0 w-full h-full content-[''] z-10 pointer-events-none bg-[url('/landing/noise.gif')]"
-      style={{ opacity: 0.04 }}
+      className="absolute top-0 left-0 w-full h-full content-[''] z-10 pointer-events-none bg-[url('/landing/noise.gif')] bg-[length:200px_200px]"
+      style={{ opacity: 0.1, willChange: 'auto' }}
     />
   )
 }
