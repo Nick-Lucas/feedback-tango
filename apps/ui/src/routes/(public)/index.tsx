@@ -363,15 +363,9 @@ function RouteComponent() {
 }
 
 function CardImage(props: { src: string; alt: string }) {
-  // const isMobile = useIsMobile()
-  // if (isMobile) {
-  //   return null
-  // }
-
   return (
     <div className="relative hidden lg:flex items-center justify-center opacity-75">
-      {/* <Noise /> */}
-      <div className="w-full overflow-hidden rounded-xl  shadow-lg">
+      <div className="w-full overflow-hidden rounded-xl">
         <img
           src={props.src}
           alt={props.alt}
